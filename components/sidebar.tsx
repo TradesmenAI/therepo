@@ -37,7 +37,6 @@ import {
 import HeaderBlock from './headerBlock';
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router'
-import AddResumeModal from './modals/addResumeModal';
 import { useAppContext } from '../state/appContext';
 import { useEffect } from 'react';
 import NoCreditsModal from './modals/noCreditsModal';
