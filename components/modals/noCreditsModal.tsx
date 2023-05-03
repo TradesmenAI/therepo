@@ -21,7 +21,6 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useAppContext } from '../../state/appContext';
-import SkillView from '../skillView';
 
 
 export default function NoCreditsModal() {

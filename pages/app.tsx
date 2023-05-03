@@ -30,15 +30,7 @@ BiAddToQueue,
 BiLayer,
 BiX
 } from "react-icons/bi";
-import SkillView from '../components/skillView'
-import JobBlock from '../components/jobBlock'
-import CreateProfileModal from '../components/modals/createProfileModal'
-import AddSkillModal from '../components/modals/addSkillModal'
-import AddCompanyModal from '../components/modals/addCompanyModal'
-import AddWorkXpModal from '../components/modals/addWorkXpModal'
-import { MySkeleton,SkeletonRandWidth } from '../components/skeleton'
 import NoCreditsModal from '../components/modals/noCreditsModal'
-import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
 
