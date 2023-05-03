@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+    uid         String      @id @unique
+    credits     Int         @default(0)
+    created_at  DateTime @default(now())
+}
+
+model Payment {
+    id          Int       @id @default(autoincrement())
+    user_id     String
+    product_id  String
+    created_at  DateTime @default(now())
+}
+
+model ApiKey {
+    id          Int       @id @default(autoincrement())
+    key         String    @unique
+    name        String?
+    user_id     String
+    enabled     Boolean   @default(true)
+    doc_limit   Int       @default(0)
+    created_at  DateTime @default(now())
+}
+
+model File {
+    uid             String  @id @unique
+    og_name         String
+    size            BigInt
+    api_key         String
+    summary         String?
+    status          String @default("waiting_to_start")
+    created_at      DateTime @default(now())
+}
+
+model Usage {
+    id          Int     @id @default(autoincrement())
+    api_key     String
+    tokens      Int
+    model       String
+    operation   String
+    doc_id      String
+    created_at DateTime @default(now())
+}
