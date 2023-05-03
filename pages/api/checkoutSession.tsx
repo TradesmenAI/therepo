@@ -93,7 +93,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const checkoutSession = await stripe.checkout.sessions.create({
         line_items: [
             {
-              price: process.env.CREDITS_PRICE_ID,
+              price: process.env.CREDITS_900_PRICE_ID,
               quantity: 1,
             },
           ],

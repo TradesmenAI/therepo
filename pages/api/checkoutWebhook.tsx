@@ -53,7 +53,7 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as Stripe.Checkout.Session;
 
-        const exists = await prisma.payments.findFirst({
+        const exists = await prisma.payment.findFirst({
             where: {
                 session_id: session.id
             }
@@ -62,20 +62,6 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
         if (exists) {
             return res.status(200).send({ message: 'Payment already exists' })
         }
-
-        await prisma.payments.create({
-            data: {
-                session: {
-                    id: session.id,
-                    liveMode: session.livemode,
-                    status: session.status,
-                    paymentStatus: session.payment_status,
-                    metadata: session.metadata
-                },
-                session_id: session.id
-            }
-        })
-        
 
         const customers = await stripe.customers.list({
             email: session.customer_details!.email!
@@ -97,21 +83,37 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
 
         let price = lineItems!.data[0].price
 
-        if (price!.id === process.env.CREDITS_PRICE_ID){
+
+        await prisma.payment.create({
+            data: {
+                user_id: session.metadata!.id,
+                details: JSON.stringify({
+                    id: session.id,
+                    liveMode: session.livemode,
+                    status: session.status,
+                    paymentStatus: session.payment_status,
+                    metadata: session.metadata
+                }),
+                session_id: session.id,
+                product_id: price!.id
+            }
+        })
+
+        if (price!.id === process.env.CREDITS_900_PRICE_ID){
             // give user credits
             const internalUserId = customer.metadata.userId;
 
-            const profileData = await prisma.profile.findFirst({
+            const profileData = await prisma.user.findFirst({
                 where: {
-                    owner_uid: internalUserId
+                    uid: internalUserId
                 }
             })
 
-            const newCredits = profileData!.credits + 25;
+            const newCredits = profileData!.credits + 900;
 
-            await prisma.profile.update({
+            await prisma.user.update({
                 where: {
-                    id: profileData!.id
+                    uid: profileData!.uid
                 },
                 data: {
                     credits: newCredits
