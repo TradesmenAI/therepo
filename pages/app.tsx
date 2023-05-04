@@ -14,7 +14,7 @@ import {
     Textarea
 } from '@chakra-ui/react'
 import { Show, Hide } from '@chakra-ui/react'
-
+import { Toaster, toast } from 'sonner';
 import Sidebar from '../components/sidebar'
 import ContentHeader from '../components/contentHeader'
 import TitleBlock from '../components/titleBlock'
@@ -42,6 +42,30 @@ export default function App() {
     const [msgCount, setMsgCount]= useState(0)
     const session = useSession()
     const {push} = useRouter()
+    const [feedback, setFeedback] = useState('')
+    const [sending, setSending] = useState(false)
+
+    const sendFeedback = async() => {
+        if (!feedback.trim()){
+            return
+        }
+        setSending(true)
+        const res = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({text: feedback.trim()}),
+        })
+
+        if (res.status === 200) {
+            // setCurrentModal('noCreditsModal')
+            toast.success('Feedback sent')
+            setFeedback('')
+        }
+
+        setSending(false)
+    }
 
     useEffect(()=>{
         if (profile) {
@@ -49,21 +73,15 @@ export default function App() {
             setApiKey(profile.apiKey)
             setDocsCount(profile.documents)
             setMsgCount(profile.messages)
-
-            // setCurrentModal('noCreditsModal')
         }
     }, [profile])
-
-    useEffect(()=>{
-        if (!session){
-            push('/')
-        }
-    }, [session])
 
     return (
         
         <Flex dir='row'>
             <Sidebar />
+
+            <Toaster  />
 
             <NoCreditsModal/>
 
@@ -95,7 +113,10 @@ export default function App() {
                             <Text fontSize='15px' fontWeight='normal'>
                             {apiKey}
                             </Text>
-                            <Icon as={BiCopy} w={5} h={5} color='#4F4F4F' cursor='pointer' marginLeft='10px' onClick={()=> navigator.clipboard.writeText(apiKey)} />
+                            <Icon as={BiCopy} w={5} h={5} color='#4F4F4F' cursor='pointer' marginLeft='10px' onClick={()=> {
+                                navigator.clipboard.writeText(apiKey)
+                                toast.success('Api Key Copied')
+                            }} />
                             
                         </Flex>
 
@@ -131,10 +152,12 @@ export default function App() {
                     {/* <Divider/> */}
 
                     <Text  mt={4} w='100%' fontWeight='bold'>Feedback</Text>
-                    <Textarea resize={'none'} placeholder='Have any questions or suggestions? We would love to hear!'/>
+                    <Textarea resize={'none'} value={feedback} onChange={(e:any)=>{
+                        setFeedback(e.target.value)
+                    }} placeholder='Have any questions or suggestions? We would love to hear!'/>
                     <Flex w='100%' flexDirection={'row'} justifyContent='flex-end'>
                         <Spacer/>
-                        <Button>Send</Button>
+                        <Button isLoading={sending} isDisabled={sending} onClick={sendFeedback}>Send</Button>
                     </Flex>
                 </Flex>
             </Flex>
