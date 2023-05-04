@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import styles from '../styles/Home.module.css'
 import { 
   Flex, Spacer,
   Modal,
@@ -17,7 +16,8 @@ import { useRouter } from 'next/router'
 import { Auth, ThemeSupa, ThemeMinimal } from '@supabase/auth-ui-react'
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Theme } from '@supabase/auth-ui-react/dist/esm/src/types'
-
+import WriterIcon from '../components/icons/writer'
+import CodeExample from '../components/codeExample'
 
 const ThemeCustom: Theme = {
   default: {
@@ -117,7 +117,7 @@ export default function Home() {
 
 
   return (
-    <div className={styles.container}>
+    <div className="min-h-screen">
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -138,18 +138,45 @@ export default function Home() {
 
       <Head>
         <title>Chat with Docs</title>
-        <meta name="description" content="Resumes that convert" />
+        <meta name="description" content="Ask your documents any question" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <Link href="/">Chat with docs!</Link>
-        </h1>
+      <main className="min-h-full">
+        
+        {/* Header */}
+        <div className="flex flex-row header p-3 justify-center items-center px-5">
+          <div className="text-xl font-bold justify-center cursor-default">Chat with <span className="text-blue-500">Docs</span></div>
+          <div className="flex-grow" />
+          {/* <div className="flex flrex-row gap-4">
+            <div className="cursor-pointer hover:underline">Features</div>
+            <div className="cursor-pointer hover:underline">Blog</div>
 
-        <button onClick={onOpen} className="p-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg text-white w-20" >
-          Login
-        </button>
+          </div> */}
+          <div className="flex-grow" />
+
+          <div onClick={onOpen} className="bg-gray-800 h-10 w-20 text-center rounded-md cursor-pointer hover:bg-gray-600 text-white font-semibold justify-center items-center flex">
+            Login
+          </div>
+        </div>
+
+        <div className="w-full h-full flex flex-col  items-center p-2">
+          <div className=" mt-5 flex flex-col lg:flex-row gap-5 top-block items-center">
+
+            <div className="main-title-block flex items-center px-10 lg:px-0 flex-col lg:items-start gap-8  ">
+              <div className="font-bold head-text text-center lg:text-left"><span className="text-sky-500">Chat with any document</span> in 2 lines of code using our API.</div>
+            
+              <div onClick={onOpen} className="hover:bg-blue-950 bg-blue-900 h-14 w-28 text-lg text-center rounded-md cursor-pointer  text-white font-semibold justify-center items-center flex">
+                Try it!
+              </div>
+            </div>
+          
+
+            <CodeExample code={[]}/>
+          </div>
+        </div>
+
+      
 
         
       </main>
