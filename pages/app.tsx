@@ -31,15 +31,17 @@ BiLayer,
 BiX
 } from "react-icons/bi";
 import NoCreditsModal from '../components/modals/noCreditsModal'
-
-
-
+import { useSession } from "@supabase/auth-helpers-react";
+import { redirect } from 'next/navigation';
+import { useRouter } from 'next/router'
 export default function App() {
     const { setCurrentModal, profile, purchaseCredits, purchaseInProgress} = useAppContext();
     const [credits, setCredits]= useState(0)
     const [apiKey, setApiKey]= useState('-')
     const [docsCount, setDocsCount]= useState(0)
     const [msgCount, setMsgCount]= useState(0)
+    const session = useSession()
+    const {push} = useRouter()
 
     useEffect(()=>{
         if (profile) {
@@ -51,6 +53,12 @@ export default function App() {
             // setCurrentModal('noCreditsModal')
         }
     }, [profile])
+
+    useEffect(()=>{
+        if (!session){
+            push('/')
+        }
+    }, [session])
 
     return (
         

@@ -111,9 +111,7 @@ export default function Home() {
   if (session){
     router.push('/app');
     return;
-  } else {
-    console.log(session)
-  }
+  } 
 
 
 
