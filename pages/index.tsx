@@ -19,6 +19,7 @@ import { Theme } from '@supabase/auth-ui-react/dist/esm/src/types'
 import WriterIcon from '../components/icons/writer'
 import CodeExample from '../components/codeExample'
 import { Text } from '@chakra-ui/react'
+import { CodeExampleData } from '../components/codeExample'
 
 const ThemeCustom: Theme = {
   default: {
@@ -113,6 +114,27 @@ export default function Home() {
     return;
   } 
 
+  const data:CodeExampleData[] = [
+    {
+        code: `url = "https://api.chatwithdocs.co/uploadDoc"
+headers = {"Authorization": "Bearer {YOU_API_KEY}"}
+        
+requests.post(url, data=data, headers=headers)`,
+        language: 'Python'
+    },
+    {
+        code: `fetch('URL_GOES_HERE', { 
+method: 'post', 
+headers: new Headers({
+    'Authorization': 'Basic '+('username:password'), 
+    'Content-Type': 'application/x-www-form-urlencoded'
+}), 
+body: 'A=1&B=2'
+});`,
+        language: 'JS'
+    }
+]
+
 
 
   return (
@@ -173,7 +195,7 @@ export default function Home() {
             </div>
           
 
-            <CodeExample code={[]}/>
+            <CodeExample title='Ask a question' data={data}/>
           </div>
 
 

@@ -2,23 +2,22 @@ import { useState, useRef, useEffect } from "react"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import autosize from 'autosize';
 
-export interface CodeExample {
+export interface CodeExampleData {
     code: string,
     language: string
 }
 
-export default function CodeExample({code}: {code:CodeExample[]}){
+export default function CodeExample({data, title}: {data:CodeExampleData[], title:string}){
     const [selected, setSelected] = useState(0)
     const textAreaRef = useRef(null);
     const [val, setVal] = useState('')
-    const [ style, setStyle ] = useState({})
+    const [style, setStyle ] = useState({})
     const [isCopy, setIsCopy] = useState(false)
 
     const onCopy = ()=>{
         navigator.clipboard.writeText(data[selected].code);
         setIsCopy(true)
     }
-
 
     useEffect(() => {
         if (textAreaRef && textAreaRef.current){
@@ -36,30 +35,6 @@ export default function CodeExample({code}: {code:CodeExample[]}){
         .then(mod => setStyle(mod.default));
       })
     
-
-    const data:CodeExample[] = [
-        {
-            code: `url = "https://api.chatwithdocs.co/uploadDoc"
-headers = {"Authorization": "Bearer {YOU_API_KEY}"}
-            
-requests.post(url, data=data, headers=headers)`,
-            language: 'Python'
-        },
-        {
-            code: `fetch('URL_GOES_HERE', { 
-    method: 'post', 
-    headers: new Headers({
-        'Authorization': 'Basic '+('username:password'), 
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }), 
-    body: 'A=1&B=2'
-});`,
-            language: 'JS'
-        }
-    ]
-
-
-
     useEffect(()=>{
         setVal(data[selected].code)
     }, [selected])
@@ -68,16 +43,16 @@ requests.post(url, data=data, headers=headers)`,
 
 
     return <>
-        <div className="code-examples flex flex-col code-w-big mt-10 ">
+        <div className="code-examples flex flex-col code-w-big ">
             <div className="code-header flex flex-row items-center justify-center">
-                <div>Ask question</div>
+                <div>{title}</div>
                 <div className="flex-grow" />
                 {isCopy && <div className="mr-1 text-sm">Copied!</div>}
                 <div onClick={onCopy} className="copy-icon flex items-center justify-center"><IconBxCopy/></div>
             </div>
             
             <div className="flex flex-row gap-2 p-2">
-                {data.map((item:CodeExample, index:number)=>{
+                {data.map((item:CodeExampleData, index:number)=>{
                     return (<div key={index} onClick={()=>setSelected(index)} className={`lang-button` + (selected === index?' selected':'')}>
                         {item.language}
                     </div>)

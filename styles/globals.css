@@ -46,9 +46,11 @@ a {
 }
 
 .code-w-big {
-  min-width: 500px;
-  max-width: 500px;
+  /* min-width: 500px;
+  max-width: 500px; */
   max-height: 300px;
+  width: 100%;
+  max-width: 650px;
 }
 
 .code-header {

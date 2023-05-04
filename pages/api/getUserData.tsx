@@ -68,8 +68,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         api_key: key?.key
     }})
 
+    const creditsLeft = profileData.credits - files.length * 2 - msgs.length
+
     const result = {
-        credits: profileData.credits,
+        credits: creditsLeft,
         apiKey: key?.key,
         messages: msgs.length,
         documents: files.length

@@ -23,7 +23,8 @@ import
     BiLayer,
     BiLogOut,
     BiImages,
-    BiMenu
+    BiMenu,
+    BiBookAlt
 } from "react-icons/bi";
 import {
     Modal,
@@ -82,6 +83,11 @@ export default function Sidebar()
             label: 'Dashboard',
             icon: BiListUl,
             url: '/app'
+        },
+        {
+            label: 'Documentation',
+            icon: BiBookAlt,
+            url: '/docs'
         }
     ]
 
