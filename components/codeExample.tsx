@@ -78,7 +78,7 @@ requests.post(url, data=data, headers=headers)`,
             
             <div className="flex flex-row gap-2 p-2">
                 {data.map((item:CodeExample, index:number)=>{
-                    return (<div onClick={()=>setSelected(index)} className={`lang-button` + (selected === index?' selected':'')}>
+                    return (<div key={index} onClick={()=>setSelected(index)} className={`lang-button` + (selected === index?' selected':'')}>
                         {item.language}
                     </div>)
                 })}
@@ -96,7 +96,7 @@ requests.post(url, data=data, headers=headers)`,
 
                 <div className="editor w-full">
                     <div className="line-numbers">
-                        {data[selected].code.split('\n').map((x)=><span></span>)}
+                        {data[selected].code.split('\n').map((x, index)=><span key={index}></span>)}
                     </div>
                     <textarea ref={textAreaRef} disabled className="txt w-full" value={data[selected].code}></textarea>
                 </div>
