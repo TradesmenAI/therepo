@@ -131,7 +131,7 @@ a {
   height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-
+  -webkit-text-fill-color: #fff;
   white-space: pre;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
