@@ -30,6 +30,11 @@ a {
   border-bottom: 1px solid #ededee;
 }
 
+.footer {
+  border-top: 1px solid #ededee;
+  margin-top: 20px;
+}
+
 .top-block {
   max-width: 1000px;
   min-height: 320px;
@@ -181,4 +186,13 @@ a {
 
 .copy-icon:hover {
   background-color: #282a3a;
+}
+
+.main-col {
+  max-width: 1000px;
+}
+
+.price-block {
+  background-color: #f7f7f7;
+  border-radius: 10px;
 }

@@ -18,6 +18,7 @@ import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Theme } from '@supabase/auth-ui-react/dist/esm/src/types'
 import WriterIcon from '../components/icons/writer'
 import CodeExample from '../components/codeExample'
+import { Text } from '@chakra-ui/react'
 
 const ThemeCustom: Theme = {
   default: {
@@ -161,11 +162,13 @@ export default function Home() {
         </div>
 
         <div className="w-full h-full flex flex-col  items-center p-2">
-          <div className=" mt-5 flex flex-col lg:flex-row gap-5 top-block items-center">
+
+          {/* header block */}
+          <div className=" mt-5 flex flex-col lg:flex-row gap-3 top-block items-center">
 
             <div className="main-title-block flex items-center px-10 lg:px-0 flex-col lg:items-start gap-8  ">
               <div className="font-bold head-text text-center lg:text-left"><span className="text-sky-500">Chat with any document</span> in 2 lines of code using our API.</div>
-            
+              <div>Pdf,  docx, doc, pptx, txt and many other formats supported.</div>
               <div onClick={onOpen} className="hover:bg-blue-950 bg-blue-900 h-14 w-28 text-lg text-center rounded-md cursor-pointer  text-white font-semibold justify-center items-center flex">
                 Try it!
               </div>
@@ -174,10 +177,37 @@ export default function Home() {
 
             <CodeExample code={[]}/>
           </div>
+
+
+          {/* price */}
+
+          <div className="bg-gray-100 flex w-full mt-10 flex-col lg:flex-row main-col p-5 price-block">
+            <div className="  flex w-full items-center justify-center p-5 lg:p-0">
+              <div className="text-3xl font-bold">Simple pricing</div>
+            </div>
+
+            <div className=" flex w-full items-center justify-center">
+              <Flex gap={0} border={'1px solid #e7e7e7'} flexDir='column' alignItems='center' w='350px' bgColor='rgb(255, 255, 255)' padding={4} borderRadius='8px'>
+                  <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$20</Text>
+                  <Text align={'center'} width='100%' fontWeight='bold' fontSize='18px'>900 credits</Text>
+                  <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>2 credits/doc</Text>
+                  <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 credit/question</Text>
+                  <Button onClick={onOpen} colorScheme='blue' mt={4} w='220px'>Start</Button>
+              </Flex>
+            </div>
+          </div>
+
+         
         </div>
 
-      
+        {/* Footer */}
 
+        <div className="flex flex-row footer p-3 justify-center items-center px-5">
+           <div className="flex flrex-row gap-4">
+            <div className="">© 2023 chatwithdocs.co</div>
+
+          </div>
+        </div>
         
       </main>
 
