@@ -7,6 +7,7 @@ import { SessionContextProvider, Session } from '@supabase/auth-helpers-react'
 import { useState } from 'react'
 import { extendTheme } from "@chakra-ui/react"
 import { loadStripe } from '@stripe/stripe-js';
+import Head from 'next/head'
 
 const theme = extendTheme({
   components:{
@@ -33,6 +34,13 @@ export default function App({ Component, pageProps }: AppProps<{initialSession: 
     >
       <ChakraProvider theme={theme}>
         <AppProvider>
+          <Head>
+            <link rel="shortcut icon" href="/image/favicon.ico" />
+            <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
+            <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png"/>
+            <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png"/>
+
+          </Head>
           <Component {...pageProps} />
         </AppProvider>
       </ChakraProvider>
