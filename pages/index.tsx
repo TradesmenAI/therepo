@@ -184,7 +184,7 @@ body: 'A=1&B=2'
         <div className="w-full h-full flex flex-col  items-center p-2">
 
           {/* header block */}
-          <div className=" mt-5 flex flex-col lg:flex-row gap-3 top-block items-center">
+          <div className=" mt-5 flex flex-col lg:flex-row gap-8 top-block items-center">
 
             <div className="main-title-block flex items-center px-10 lg:px-0 flex-col lg:items-start gap-8  ">
               <div className="font-bold head-text text-center lg:text-left"><span className="text-sky-500">Chat with any document</span> in 2 lines of code using our API.</div>
