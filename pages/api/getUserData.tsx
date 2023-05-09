@@ -43,7 +43,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         // new user, create data
         profileData = await prisma.user.create({data: {
             uid: user.id,
-            credits: 10
+            credits: 0
         }})
 
         // create new api key
