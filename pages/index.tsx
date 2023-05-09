@@ -219,8 +219,8 @@ r = requests.post(url, json=data, headers=headers)`,
 
             <div className=" flex w-full items-center justify-center">
               <Flex gap={0} border={'1px solid #e7e7e7'} flexDir='column' alignItems='center' w='350px' bgColor='rgb(255, 255, 255)' padding={4} borderRadius='8px'>
-                  <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$25/month</Text>
-                  <Text align={'center'} width='100%' fontWeight='bold' fontSize='18px'>900 credits</Text>
+                  <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$25</Text>
+                  <Text align={'center'} width='100%' fontWeight='bold' fontSize='18px'>900 credits/month</Text>
                   <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document upload - 2 credits</Text>
                   <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document question - 1 credit</Text>
                   <Button onClick={onOpen} colorScheme='blue' mt={4} w='220px'>Start</Button>
