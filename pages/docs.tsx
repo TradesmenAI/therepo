@@ -49,74 +49,111 @@ export default function Docs() {
     const [feedback, setFeedback] = useState('')
     const [sending, setSending] = useState(false)
 
+    // useEffect(() => {
+    //     (async ()=>{
+    //         const result = await fetch('https://api.chatwithdocs.co/document/4c7397a8-c15a-4683-93bf-1e05e72de81b', {
+    //             headers: {
+    //                 'Authorization': 'Bearer 3a9547e1-3bb0-450e-8dcd-230852a2b31b'
+    //             },
+    //         })
+
+    //         const json = await result.json()
+    //         console.log(json.status) // must equal 'ready'
+    //     })()
+    // }, [])
+
     const uploadFileData:CodeExampleData[] = [
         {
-            code: `curl --location --request POST  \\
---header 'Authorization: Bearer ${profile?.apiKey}' \\
---form file='@{FILE_PATH}' \\
-https://api.chatwithdocs.co/document`,
+            code: `curl -X POST \\
+-H 'Authorization: Bearer ${profile?.apiKey}' \\
+-F 'file=@{FILE_PATH}' https://api.chatwithdocs.co/document`,
             language: 'cUrl'
         },
         {
-            code: `import axios from "axios";
-    
-const formData = new FormData();
-formData.append("file", {YOUR_FILE});
-const resp = await axios.post('https://api.chatwithdocs.co/document', formData, {
-    headers: {
-        "content-type": "multipart/form-data",
-        Authorization: 'Bearer ${profile?.apiKey}',
-    },
-});
+            code: `files = {'file': open({FILE_PATH}, 'rb')}
+url = 'https://api.chatwithdocs.co/document'
+headers = {'Authorization': f'Bearer ${profile?.apiKey}'}
+r = requests.post(url, files=files, headers=headers)
 
-console.log(resp.id) // id of the created file`,
+document_id = r.json()['id'] # id of the created file`,
+            language: 'Python'
+        },
+        {
+            code: `const data = new FormData();
+data.append('file', {YOUR_FILE});
+
+const result = await fetch('https://api.chatwithdocs.co/document',
+    {
+        method: 'POST',
+        body: data,
+        headers: {
+            'Content-Type': 'multipart/form-data; ',
+            'Authorization': 'Bearer ${profile?.apiKey}'
+        },
+    }
+);
+
+const document_id = result.id // id of the created file`,
             language: 'JS'
-        }
+        },
+        
     ]
 
     const getFileStatusData:CodeExampleData[] = [
         {
-            code: `curl --location   \\
---header 'Authorization: Bearer ${profile?.apiKey}' \\
-localhost:8000/document/{DOCUMENT_ID}`,
+            code: `curl -H 'Authorization: Bearer ${profile?.apiKey}' \\
+https://api.chatwithdocs.co/document/{DOCUMENT_ID}`,
             language: 'cUrl'
         },
         {
-            code: `import axios from "axios";
-    
-const response = await axios.get('https://api.chatwithdocs.co/document/{DOCUMENT_ID}', {
+            code: `url = f'https://api.chatwithdocs.co/document/{DOCUMENT_ID}'
+headers = {'Authorization': f'Bearer ${profile?.apiKey}'}
+r = requests.get(url, headers=headers)
+
+status = r.json()['status'] # must equal 'ready'`,
+            language: 'Python'
+        },
+        {
+            code: `const result = await fetch('https://api.chatwithdocs.co/document/{DOCUMENT_ID}', {
     headers: {
-        Authorization: 'Bearer ${profile?.apiKey}',
+        'Authorization': 'Bearer ${profile?.apiKey}'
     },
-});
-    
-console.log(response) // file name, size, status, summary`,
+})
+
+const json = await result.json() // object {file name, size, status, summary}
+console.log(json.status) // must equal 'ready'`,
             language: 'JS'
         }
     ]
 
     const queryData:CodeExampleData[] = [
         {
-            code: `curl --location --request POST  \\
-    --header 'Authorization: Bearer ${profile?.apiKey}' \\
-    --header 'Content-Type: application/json' \\
-     --data '{"query":"What is this document about?"}' \\
-    https://api.chatwithdocs.co/query/{DOCUMENT_ID}`,
-            language: 'cUrl'
+          code: `curl -X POST -H 'Authorization: Bearer ${profile?.apiKey}' \\
+-H 'Content-Type: application/json' \\
+-d '{"query":"What is this document about"}' \\
+https://api.chatwithdocs.co/query/{DOCUMENT_ID}`,
+          language: 'cUrl'
         },
         {
-            code: `import axios from "axios";
-    
-const resp = await axios.post('https://api.chatwithdocs.co/query/{DOCUMENT_ID}', {
+            code: `data = {'query': 'What is this document about'}
+url = f'https://api.chatwithdocs.co/query/{DOCUMENT_ID}'
+headers = {'Authorization': f'Bearer ${profile?.apiKey}'}
+
+r = requests.post(url, json=data, headers=headers)`,
+            language: 'Python'
+        },
+        {
+            code: `const result = await fetch(\`https://api.chatwithdocs.co/query/\${DOCUMENT_ID}\`, {
+    method: 'POST',
     headers: {
-        "content-type": "application/json",
-        Authorization: 'Bearer ${profile?.apiKey}}',
+        'Authorization': \`Bearer \${profile?.apiKey}\`,
+        'Content-Type': 'application/json',
     },
-});
-    
-console.log(resp.result)`,
+    body: JSON.stringify({query: 'What is this document about'}),
+});`,
             language: 'JS'
-        }
+        },
+        
     ]
 
     useEffect(()=>{

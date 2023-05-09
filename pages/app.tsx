@@ -95,11 +95,11 @@ export default function App() {
                     {/* <Text fontSize='17' fontWeight='bold'>Settings</Text>
                     <Divider /> */}
 
-                    <Flex mb={5} gap={0} flexDir='column' alignItems='center' w='250px' bgColor='rgb(246, 248, 250)' padding={2} borderRadius='8px'>
-                        <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$20</Text>
+                    <Flex mb={5} gap={0} flexDir='column' alignItems='center' w='300px' bgColor='rgb(246, 248, 250)' padding={2} py={4} borderRadius='8px'>
+                        <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$25/month</Text>
                         <Text align={'center'} width='100%' fontWeight='bold' fontSize='18px'>900 credits</Text>
-                        <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>2 credits/doc</Text>
-                        <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 credit/question</Text>
+                        <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document upload - 2 credits</Text>
+                        <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document question - 1 creditn</Text>
                         <Button disabled={(purchaseInProgress || profile === null)} isLoading={purchaseInProgress} onClick={purchaseCredits} colorScheme='blue' mt={4} w='220px'>Buy</Button>
                     </Flex>
 

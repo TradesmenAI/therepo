@@ -20,6 +20,7 @@ import WriterIcon from '../components/icons/writer'
 import CodeExample from '../components/codeExample'
 import { Text } from '@chakra-ui/react'
 import { CodeExampleData } from '../components/codeExample'
+import { useEffect } from 'react'
 
 const ThemeCustom: Theme = {
   default: {
@@ -109,6 +110,7 @@ export default function Home() {
   let router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+
   if (session){
     router.push('/app');
     return;
@@ -116,23 +118,32 @@ export default function Home() {
 
   const data:CodeExampleData[] = [
     {
-        code: `url = "https://api.chatwithdocs.co/uploadDoc"
-headers = {"Authorization": "Bearer {YOU_API_KEY}"}
-        
-requests.post(url, data=data, headers=headers)`,
+      code: `curl -X POST -H 'Authorization: Bearer {API_KEY}' \\
+  -H 'Content-Type: application/json' \\
+  -d '{"query":"What is this document about"}' \\
+  https://api.chatwithdocs.co/query/{DOCUMENT_ID}`,
+      language: 'cUrl'
+    },
+    {
+        code: `data = {'query': 'What is this document about'}
+url = f'https://api.chatwithdocs.co/query/{DOCUMENT_ID}'
+headers = {'Authorization': f'Bearer {API_KEY}'}
+
+r = requests.post(url, json=data, headers=headers)`,
         language: 'Python'
     },
     {
-        code: `fetch('URL_GOES_HERE', { 
-method: 'post', 
-headers: new Headers({
-    'Authorization': 'Basic '+('username:password'), 
-    'Content-Type': 'application/x-www-form-urlencoded'
-}), 
-body: 'A=1&B=2'
+        code: `const result = await fetch(\`https://api.chatwithdocs.co/query/\${DOCUMENT_ID}\`, {
+    method: 'POST',
+    headers: {
+        'Authorization': \`Bearer \${API_KEY}\`,
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({query: 'What is this document about'}),
 });`,
         language: 'JS'
-    }
+    },
+    
 ]
 
 
@@ -195,7 +206,7 @@ body: 'A=1&B=2'
             </div>
           
 
-            <CodeExample title='Ask a question' data={data}/>
+            <CodeExample title='How to ask document a question' data={data}/>
           </div>
 
 
@@ -208,10 +219,10 @@ body: 'A=1&B=2'
 
             <div className=" flex w-full items-center justify-center">
               <Flex gap={0} border={'1px solid #e7e7e7'} flexDir='column' alignItems='center' w='350px' bgColor='rgb(255, 255, 255)' padding={4} borderRadius='8px'>
-                  <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$20</Text>
+                  <Text mt={2} align={'center'} width='100%' fontWeight='bold' fontSize='25'>$25/month</Text>
                   <Text align={'center'} width='100%' fontWeight='bold' fontSize='18px'>900 credits</Text>
-                  <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>2 credits/doc</Text>
-                  <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 credit/question</Text>
+                  <Text mt={3} align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document upload - 2 credits</Text>
+                  <Text align={'center'} width='100%'  fontSize='16px' color='#575757'>1 document question - 1 credit</Text>
                   <Button onClick={onOpen} colorScheme='blue' mt={4} w='220px'>Start</Button>
               </Flex>
             </div>
