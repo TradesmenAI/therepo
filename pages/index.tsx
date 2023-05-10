@@ -21,6 +21,9 @@ import CodeExample from '../components/codeExample'
 import { Text } from '@chakra-ui/react'
 import { CodeExampleData } from '../components/codeExample'
 import { useEffect } from 'react'
+import { setCookie, getCookie } from 'cookies-next';
+
+
 
 const ThemeCustom: Theme = {
   default: {
