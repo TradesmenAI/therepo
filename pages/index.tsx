@@ -235,8 +235,10 @@ r = requests.post(url, json=data, headers=headers)`,
 
         <div className="flex flex-row footer p-3 justify-center items-center px-5">
            <div className="flex flrex-row gap-4">
+            <Link href='/privacyPolicy'>Privacy Policy</Link>
+            <Link href='/terms'>Terms of Use</Link>
             <div className="">© 2023 chatwithdocs.co</div>
-
+            
           </div>
         </div>
         
