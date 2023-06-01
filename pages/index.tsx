@@ -22,7 +22,7 @@ import { Text } from '@chakra-ui/react'
 import { CodeExampleData } from '../components/codeExample'
 import { useEffect } from 'react'
 import { setCookie, getCookie } from 'cookies-next';
-
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 
 const ThemeCustom: Theme = {
@@ -112,6 +112,53 @@ export default function Home() {
   const supabase = useSupabaseClient()
   let router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  // useEffect(() => {
+  //   const url:string = 'http://127.0.0.1:8000/streaming/ask?query=How%20are%20you%2C%20write%20in%205%20sentences';
+
+  //   (async() => {
+
+  //     await fetchEventSource(url, {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "text/event-stream",
+  //       },
+
+
+
+  //       async onopen(res) {
+  //         if (res.ok && res.status === 200) {
+  //           console.log("Connection made ", res);
+  //         } else if (
+  //           res.status >= 400 &&
+  //           res.status < 500 &&
+  //           res.status !== 429
+  //         ) {
+  //           console.log("Client side error ", res);
+  //         }
+  //       },
+  //       onmessage(event) {
+  //         console.log('--------- OnMessage -----------')
+  //         console.log(event);
+  //         console.log('-------------------------------')
+
+
+  //         // const parsedData = JSON.parse(event.data);
+  //         // console.log(parsedData);
+
+  //         // setData((data) => [...data, parsedData]);
+  //       },
+  //       onclose() {
+  //         console.log("Connection closed by the server");
+  //       },
+  //       onerror(err) {
+  //         console.log("There was an error from server", err);
+  //       },
+  //   });
+        
+
+  //   })()
+  // }, [])
 
 
   if (session){
