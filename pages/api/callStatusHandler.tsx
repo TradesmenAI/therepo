@@ -11,7 +11,8 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
-    console.log('Incoming fordwarder webhook')
+    console.log('Incoming handler webhook')
+    console.log(req.body)
 
     
 
@@ -33,7 +34,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     const tw = new Twilio(accountSid, authToken);
 
-    
 
     
     return res.status(200)
