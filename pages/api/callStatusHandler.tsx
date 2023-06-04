@@ -31,7 +31,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     const tw = new Twilio(accountSid, authToken);
-    const call = await tw.calls('CA42ed11f93dc08b952027ffbc406d0868').fetch()
+    const call = await tw.calls(req.body['DialCallSid']).fetch()
     
     console.log(call)
     console.log(JSON.stringify(call))
