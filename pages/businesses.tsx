@@ -226,7 +226,7 @@ export default function BusinessPage() {
                     </AlertDialogHeader>
 
                     <AlertDialogBody>
-                    Are you sure? You can't undo this action afterwards.
+                    Are you sure? You can not undo this action afterwards.
                     </AlertDialogBody>
 
                     <AlertDialogFooter>
