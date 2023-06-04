@@ -1,36 +1,20 @@
 import { NextApiHandler } from 'next'
 import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
-import { loadStripe } from '@stripe/stripe-js';
+import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe'
+
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     // https://github.com/stripe/stripe-node#configuration
     apiVersion: '2022-11-15',
 })
 
-
-export type CheckoutArgs = {
-    okUrl: string,
-    errorUrl:string,
-    price_id:string,
-}
-
-
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send({ message: 'Only POST requests allowed' })
         return
     }
-
-
-    const requestData:CheckoutArgs = req.body as CheckoutArgs;
-
-    if (!requestData.okUrl || !requestData.errorUrl || !requestData.price_id) {
-        res.status(500).send({ message: 'Required fields missing' })
-        return
-    }
-
 
     const supabase = createPagesServerClient({ req, res })
     const {
@@ -48,6 +32,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
     const {data: { user },} = await supabase.auth.getUser()
+
     if (!user){
         return res.status(401).json({
             error: 'not_authenticated',
@@ -55,47 +40,50 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         })
     }
 
-    let userId:string = ''
-
-    const profileData = await prisma.user.findFirst({
+    let profileData = await prisma.user.findFirst({
         where: {
             uid: user.id
         }
     })
 
-    if (!profileData) {
-        return res.status(401).json({
-            error: 'not_authenticated',
-            description: 'The user does not have an active session or is not authenticated',
+    if (!profileData?.is_admin){
+        return res.status(405).json({
+            error: 'not_allowed',
+            description: 'Not allwoed',
         })
     }
+    
+    let users = await prisma.user.findMany();
+    let result:UserData[] = []
+    users.map(user=>{
+        result.push({
+            email: user.email,
+            details: user.description,
+            phone: user.business_number,
+            twilio_phone: user.twilio_number,
+            subscsription: user.sub_id,
+            service_enabled: user.service_enabled,
+            register_date: user.created_at,
+            uid:user.uid,
+            prompt: user.prompt,
+            bot_fail_message: user.bot_fail_message
+        })
+    })
 
-    userId  = user.id;
+    return res.status(200).json(result)
+}
 
-    //=========== actual logic ===========
-
-    const checkoutSession = await stripe.checkout.sessions.create({
-        line_items: [
-            {
-              price: requestData.price_id,
-              quantity: 1,
-            },
-          ],
-          mode: 'subscription',
-          success_url: requestData.okUrl,
-          cancel_url: requestData.errorUrl,
-          customer: profileData.stripe_id,
-          metadata: {
-            id: userId
-          }
-    });
-
-
-    if (!checkoutSession || !checkoutSession.url){
-        return res.status(500)
-    }
-
-    return res.status(200).json(checkoutSession)
+export interface UserData {
+    email: string,
+    details: string|null,
+    phone: string|null,
+    twilio_phone: string|null,
+    subscsription: string|null,
+    service_enabled: boolean,
+    register_date: Date,
+    uid:string
+    prompt:string|null
+    bot_fail_message: string|null
 }
 
 export default ProtectedRoute

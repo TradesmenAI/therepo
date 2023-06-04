@@ -7,6 +7,8 @@ export const sleep = (time:number) => new Promise(res => setTimeout(res, time, "
 import { CheckoutArgs } from "../pages/api/checkoutSession";
 import { useRouter } from 'next/router'
 import { useToast } from "@chakra-ui/react";
+import { UserData } from "../pages/api/listUsers";
+
 
 export interface AppContextType 
 {
@@ -15,9 +17,46 @@ export interface AppContextType
     setCurrentModal:any
     modalArgs:any, 
     setModalArgs:any,
-    purchaseCredits:any,
-    purchaseInProgress:boolean
+    subscribe:any,
+    purchaseInProgress:boolean,
+    updateProfile:(field_name:string, value:any)=>Promise<void>,
+    updateUser:(user_uid:string, field_name:string, value:any)=>Promise<void>,
 
+    openBillingPortal: any,
+    getUsersList:()=>Promise<UserData[]>
+}
+
+export const Config = {
+    plans: [
+        {
+            price: 14.99,
+            color: '#5999ff',
+            tierName: 'Basic',
+            replies: 25,
+            price_id: 'price_1NEYIGHNdYkf8k35cYzGdQYl'
+        },
+        {
+            price: 24.99,
+            color: '#e3d024',
+            tierName: 'Essential',
+            replies: 75,
+            price_id: 'price_1NEYIZHNdYkf8k35OHtI78Tm'
+        },
+        {
+            price: 34.99,
+            color: '#ed8447',
+            tierName: 'Advanced',
+            replies: 250,
+            price_id: 'price_1NEYJ6HNdYkf8k35sTJvikNi'
+        },
+        {
+            price: 99.99,
+            color: '#d43f87',
+            tierName: 'Ultimate',
+            replies: 1000,
+            price_id: 'price_1NEYJJHNdYkf8k35GsHsv5eu'
+        }
+    ]
 }
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -33,15 +72,17 @@ export function AppProvider({ children }: { children: ReactNode; }) {
     const [currentModal, setCurrentModal] = useState<string>('');
     const [modalArgs, setModalArgs] = useState<any>(null);
     const [purchaseInProgress, setPurchaseInProgress] = useState<boolean>(false);
+    const [isFetching, setIsFetching] = useState(false)
   
     const fetchProfile = async() => {
-
         const res = await fetch('/api/getUserData', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             }
         });
+
+        setIsFetching(false)
  
         if (res.status !== 200){
             toast({
@@ -59,21 +100,108 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         setProfile(data);
     };
 
+
+    const updateProfile = async(field_name:string, value:any) => {
+        const res = await fetch('/api/updateProfile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({field_name, value})
+        });
+ 
+        if (res.status !== 200){
+            toast({
+                title: 'Failed to update profile',
+                status: 'error',
+                position: 'top',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
+
+        await fetchProfile()
+    };
+
+    const updateUser = async(user_uid:string, field_name:string, value:any) => {
+        const res = await fetch('/api/updateUser', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({user_uid, field_name, value})
+        });
+ 
+        if (res.status !== 200){
+            toast({
+                title: 'Failed to update user',
+                status: 'error',
+                position: 'top',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
+    };
+
+    const getUsersList = async()=>{
+        const res = await fetch('/api/listUsers', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+        });
+
+        if (res.status !== 200){
+            return [];
+        }
+
+        const data = await res.json()
+
+        return (data as UserData[])
+    }
+
+    const openBillingPortal = async() => {
+        const res = await fetch('/api/manageSubscription', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+        });
+ 
+        if (res.status !== 200){
+            toast({
+                title: 'Failed to open billing portal',
+                status: 'error',
+                position: 'top',
+                duration: 3000,
+                isClosable: true,
+            })
+            return;
+        }
+
+        const data = await res.json();
+        window.location.href = data.portal_url;
+    };
+
     
     useEffect(() => {
-        if (session){
+        if (session && !isFetching){
+            setIsFetching(true)
             fetchProfile()
         }
     }, [session])
 
      
 
-    const purchaseCredits = async () => {
+    const subscribe = async (price_id:string) => {
         setPurchaseInProgress(true)
 
         const args:CheckoutArgs = {
             okUrl: window.location.href + '?purchaseResult=success&session_id={CHECKOUT_SESSION_ID}' ,
-            errorUrl: window.location.href + '?purchaseResult=error'
+            errorUrl: window.location.href + '?purchaseResult=error',
+            price_id
         }
 
         const res = await fetch('/api/checkoutSession', {
@@ -112,8 +240,12 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         setCurrentModal,
         modalArgs,
         setModalArgs,
-        purchaseCredits,
+        subscribe,
         purchaseInProgress,
+        updateProfile,
+        openBillingPortal,
+        getUsersList,
+        updateUser
     } ;
 
     return (

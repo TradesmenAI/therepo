@@ -47,7 +47,7 @@ import NoCreditsModal from './modals/noCreditsModal';
 import { Toaster, toast } from 'sonner';
 import useLocalStorage from "use-local-storage";
 
-export default function Sidebar()
+export default function AdminSidebar()
 {
     const supabase = useSupabaseClient()
     let router= useRouter()
@@ -89,12 +89,7 @@ export default function Sidebar()
         {
             label: 'Dashboard',
             icon: BiListUl,
-            url: '/app'
-        },
-        {
-            label: 'Billing',
-            icon: BiWalletAlt,
-            url: '/billing'
+            url: '/admin'
         }
     ]
 
@@ -107,9 +102,6 @@ export default function Sidebar()
         }
     }
 
-    
-
-   
 
     return (
         <>

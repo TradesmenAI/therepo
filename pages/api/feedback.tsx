@@ -1,5 +1,5 @@
 import { NextApiHandler } from 'next'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 
   
@@ -21,7 +21,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
-    const supabase = createServerSupabaseClient({ req, res })
+    const supabase = createPagesServerClient({ req, res })
     const {
         data: { session },
     } = await supabase.auth.getSession()

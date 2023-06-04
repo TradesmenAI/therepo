@@ -9,7 +9,7 @@ export default function HeaderBlock()
 {
     return (
         <Flex alignItems='center' justifyContent='center' cursor='default'>
-            <Text fontWeight='bold' fontSize='20px'>Chat with <span className="text-blue-500">Docs</span></Text>
+            <Text fontWeight='bold' fontSize='20px'>Tradesmen <span className="text-blue-500">AI</span></Text>
         </Flex>
     )
 }

@@ -9,9 +9,21 @@ datasource db {
 
 
 model User {
-    uid         String      @id @unique
-    credits     Int         @default(0)
-    created_at  DateTime @default(now())
+    uid                 String      @id @unique
+    created_at          DateTime    @default(now())
+    description         String?
+    subscription_status String      @default("")
+    sub_id              String?
+    messages_per_month  Int         @default(0)
+    twilio_number       String?
+    business_number     String?
+    service_enabled     Boolean     @default(true)
+    stripe_id           String      @unique
+    email               String
+    is_admin            Boolean     @default(false)
+    name                String?
+    prompt              String?
+    bot_fail_message    String?
 }
 
 model Payment {
@@ -23,32 +35,23 @@ model Payment {
     details     String
 }
 
-model ApiKey {
-    id          Int       @id @default(autoincrement())
-    key         String    @unique
-    name        String?
-    user_id     String
-    enabled     Boolean   @default(true)
-    doc_limit   Int       @default(0)
-    created_at  DateTime @default(now())
+model SubscriptionMeta {
+    id                  Int       @id @default(autoincrement())
+    user_id             String
+    stripe_id           String
+    price_id            String
+    subscription_id     String
 }
 
-model File {
-    uid             String  @id @unique
-    og_name         String
-    size            BigInt
-    api_key         String
-    summary         String?
-    status          String @default("waiting_to_start")
-    created_at      DateTime @default(now())
-}
 
-model Usage {
-    id          Int     @id @default(autoincrement())
-    api_key     String
-    tokens      Int
-    model       String
-    operation   String
-    doc_id      String
-    created_at DateTime @default(now())
-}
+
+
+// model Usage {
+//     id          Int     @id @default(autoincrement())
+//     api_key     String
+//     tokens      Int
+//     model       String
+//     operation   String
+//     doc_id      String
+//     created_at DateTime @default(now())
+// }

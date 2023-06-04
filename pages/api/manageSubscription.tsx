@@ -9,28 +9,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2022-11-15',
 })
 
-
-export type CheckoutArgs = {
-    okUrl: string,
-    errorUrl:string,
-    price_id:string,
-}
-
-
 const ProtectedRoute: NextApiHandler = async (req, res) => {
+    // Generic checks
     if (req.method !== 'POST') {
         res.status(405).send({ message: 'Only POST requests allowed' })
         return
     }
-
-
-    const requestData:CheckoutArgs = req.body as CheckoutArgs;
-
-    if (!requestData.okUrl || !requestData.errorUrl || !requestData.price_id) {
-        res.status(500).send({ message: 'Required fields missing' })
-        return
-    }
-
 
     const supabase = createPagesServerClient({ req, res })
     const {
@@ -70,32 +54,37 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         })
     }
 
+    
+
     userId  = user.id;
 
     //=========== actual logic ===========
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-        line_items: [
-            {
-              price: requestData.price_id,
-              quantity: 1,
-            },
-          ],
-          mode: 'subscription',
-          success_url: requestData.okUrl,
-          cancel_url: requestData.errorUrl,
-          customer: profileData.stripe_id,
-          metadata: {
-            id: userId
-          }
+    const billingSession = await stripe.billingPortal.sessions.create({
+        customer: profileData.stripe_id,
+        return_url: 'http://localhost:3000/billing',
     });
 
 
-    if (!checkoutSession || !checkoutSession.url){
+    if (!billingSession || !billingSession.url){
         return res.status(500)
     }
 
-    return res.status(200).json(checkoutSession)
+    return res.status(200).json({portal_url: billingSession.url})
 }
 
 export default ProtectedRoute
+
+
+
+// const stripe = require('stripe')('sk_test_51N3ingHNdYkf8k35tGNo0bV0TnCSYos6ZtJKW7WCkJa2JRQ4YO5VDkAlWAu8ejDcgeAHxC2dLBFx23aZuFaLpb18002ntBNcK3');
+
+// app.post('/create-customer-portal-session', async (req, res) => {
+//   // Authenticate your user.
+//   const session = await stripe.billingPortal.sessions.create({
+//     customer: '{{CUSTOMER_ID}}',
+//     return_url: 'https://example.com/account',
+//   });
+
+//   res.redirect(session.url);
+// });
