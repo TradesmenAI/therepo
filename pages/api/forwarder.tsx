@@ -11,6 +11,8 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
+    console.log('Incoming fordwarder webhook')
+
     
 
     const twilioSignature = req.headers['x-twilio-signature'];
@@ -46,7 +48,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     // hang up if no sub or no business number
     if (!user || !user.sub_id || !user.business_number?.trim()){
-        
+        console.log('Skipping call, no sub etc')
         rr.hangup()
         res.send(rr.toString());
         return
@@ -54,7 +56,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    rr.dial(forwardingNumber);
+    rr.dial({action: 'https://eonxqvzpktqzcgk.m.pipedream.net'}, forwardingNumber);
+
+    console.log(rr.toString())
     
     res.send(rr.toString());
     return
