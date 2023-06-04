@@ -56,7 +56,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    rr.dial({action: 'https://eo5ty3nozfh925f.m.pipedream.net'}, forwardingNumber);
+    rr.dial({action: 'https://upwork-callback-bot.vercel.app/api/callStatusHandler'}, forwardingNumber);
 
     console.log(rr.toString())
     
