@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next'
 import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
-import {validateRequest} from 'twilio';
+import {validateRequest, twiml} from 'twilio';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -10,6 +10,8 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
+
+    
 
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = 'https://upwork-callback-bot.vercel.app/api/forwarder'
@@ -27,7 +29,26 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return res.status(400).end()
     }
 
-    console.log(req.body['CallStatus'])
+    const status = req.body['CallStatus']
+    if (status !== 'ringing'){
+        return res.status(200).end()
+    }
+
+    const caller = req.body['From']
+    const targetNumber = req.body['To']
+
+    const user = await prisma.user.findFirst({where: {
+        twilio_number: targetNumber
+    }})
+
+    if (!user || !user.service_enabled){
+        const rr = new twiml.VoiceResponse();
+        rr.hangup()
+
+        res.setHeader('Content-Type', 'text/xml');
+        res.send(twiml.toString());
+        return
+    }
     
     
     return res.status(200).end()
