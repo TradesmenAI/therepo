@@ -48,7 +48,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     if (!user || !user.sub_id || !user.business_number?.trim()){
         
         rr.hangup()
-        res.send(twiml.toString());
+        res.send(rr.toString());
         return
     }
 
@@ -56,7 +56,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const forwardingNumber = user.business_number!;
     rr.dial(forwardingNumber);
     
-    res.send(twiml.toString());
+    res.send(rr.toString());
     return
 }
 
