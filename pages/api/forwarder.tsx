@@ -41,17 +41,23 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         twilio_number: targetNumber
     }})
 
-    if (!user || !user.service_enabled){
-        const rr = new twiml.VoiceResponse();
-        rr.hangup()
+    const rr = new twiml.VoiceResponse();
+    res.setHeader('Content-Type', 'text/xml');
 
-        res.setHeader('Content-Type', 'text/xml');
+    // hang up if no sub or no business number
+    if (!user || !user.sub_id || !user.business_number?.trim()){
+        
+        rr.hangup()
         res.send(twiml.toString());
         return
     }
+
+    //forward call
+    const forwardingNumber = user.business_number!;
+    rr.dial(forwardingNumber);
     
-    
-    return res.status(200).end()
+    res.send(twiml.toString());
+    return
 }
 
 export default ProtectedRoute
