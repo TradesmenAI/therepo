@@ -24,6 +24,8 @@ model User {
     name                String?
     prompt              String?
     bot_fail_message    String?
+    business_type       String?
+    business_id         Int?
 }
 
 model Payment {
@@ -43,6 +45,17 @@ model SubscriptionMeta {
     subscription_id     String
 }
 
+model Config {
+    key                 String @id
+    value               String @default("")
+}
+
+model BusinessType {
+  id                  Int       @id @default(autoincrement())
+  name                String
+  prompt              String
+  msg                 String
+}
 
 
 

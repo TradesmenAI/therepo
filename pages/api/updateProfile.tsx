@@ -53,11 +53,27 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         })
     }
 
-    const allowedFields = ['business_number', 'service_enabled']
+    const allowedFields = ['business_number', 'service_enabled', 'business_type', 'business_id']
 
     if (!allowedFields.includes(requestData.field_name)) {
         res.status(500).send({ message: 'Field not allowed' })
         return
+    }
+
+    if (requestData.field_name === 'business_id'){
+        const business = await prisma.businessType.findUnique({where: {
+            id: requestData.value
+        }})
+
+        await prisma.user.update({data: {
+            prompt: business?.prompt,
+            bot_fail_message: business?.msg,
+            business_id: business?.id
+        }, where: {
+            uid: profileData.uid
+        }})
+
+        return res.status(200).json({})
     }
 
     let updateData = {}

@@ -127,6 +127,7 @@ export default function Docs() {
                                 <Th>Edit</Th>
                                 <Th>Email</Th>
                                 <Th>Phone</Th>
+                                <Th>Business</Th>
                                 <Th>Virtual phone</Th>
                                 <Th>Subscription</Th>
                                 <Th>Created at</Th>
@@ -148,6 +149,7 @@ export default function Docs() {
                                 let details = user.details?user.details:''
                                 let prompt = user.prompt?user.prompt:''
                                 let fail_msg = user.bot_fail_message?user.bot_fail_message:''
+                                let business_type = user.business_type?user.business_type:''
 
                                 return (
                                     <Tr key={user.uid} >
@@ -155,6 +157,7 @@ export default function Docs() {
 
                                         <Td>{user.email}</Td>
                                         <Td>{user.phone}</Td>
+                                        <Td>{business_type}</Td>
                                         <Td>{user.twilio_phone}</Td>
                                         <Td>{subTier}</Td>
                                         <Td>{(new Date(user.register_date)).toLocaleDateString("en-GB")}</Td>

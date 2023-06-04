@@ -52,10 +52,25 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             description: 'Not allwoed',
         })
     }
+
+    const businesses = await prisma.businessType.findMany()
     
     let users = await prisma.user.findMany();
     let result:UserData[] = []
     users.map(user=>{
+        let businessType:string|null = ''
+
+        if (user.business_id){
+            const bs = businesses.find(x=>x.id === user.business_id);
+            if (bs) {
+                if (bs.id !== 29) {
+                    businessType = bs.name
+                } else {
+                    businessType = user.business_type
+                }
+            } 
+        }
+
         result.push({
             email: user.email,
             details: user.description,
@@ -66,7 +81,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             register_date: user.created_at,
             uid:user.uid,
             prompt: user.prompt,
-            bot_fail_message: user.bot_fail_message
+            bot_fail_message: user.bot_fail_message,
+            business_type: businessType
         })
     })
 
@@ -83,7 +99,8 @@ export interface UserData {
     register_date: Date,
     uid:string
     prompt:string|null
-    bot_fail_message: string|null
+    bot_fail_message: string|null,
+    business_type:string|null
 }
 
 export default ProtectedRoute

@@ -24,7 +24,7 @@ import { useEffect, useState } from 'react'
 import { useAppContext } from '../../state/appContext';
 import { PhoneInput, usePhoneValidation } from 'react-international-phone';
 import 'react-international-phone/style.css';
-
+import { Select } from '@chakra-ui/react'
 
 export default function NoCreditsModal() {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -32,6 +32,12 @@ export default function NoCreditsModal() {
     const [phone, setPhone] = useState('');
     const phoneValidation = usePhoneValidation(phone);
     const [saving, setSaving] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [jobs, setJobs] = useState<string[]>([])
+    const [otherValue, setOtherValue] = useState('')
+    const [isOther, setIsOther] = useState(false)
+    const [job, setJob] = useState('')
+
 
     useEffect(() => {
         if (currentModal === 'enterPhoneModal') {
@@ -47,12 +53,48 @@ export default function NoCreditsModal() {
       }
     }, [profile, isOpen])
 
+    useEffect(()=>{
+      setLoading(true);
+
+      (async()=>{
+        const res = await fetch('/api/jobs', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+        });
+
+        const values = await res.json();
+        setJobs(values)
+
+        setLoading(false);
+      })()
+    }, [])
+
+    useEffect(()=>{
+      console.log(job)
+      setIsOther(job === '29')
+    }, [job])
+
 
     const savePhone = async()=>{
       setSaving(true)
       await updateProfile('business_number', phone)
+      await updateProfile('business_id', parseInt(job))
+      if (job === '29'){
+        await updateProfile('business_type', otherValue)
+      }
       setSaving(false)
       onClose()
+    }
+    
+    const onSelectChange = (e:any)=>{
+      setJob(e.target.value)
+    }
+
+    let canSubmit = phoneValidation.isValid  && job;
+    if (job === 'other' && !otherValue){
+      canSubmit = false;
     }
 
     return (
@@ -60,22 +102,46 @@ export default function NoCreditsModal() {
         <Modal isOpen={isOpen} onClose={() => {}} size='md' isCentered>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Enter your phone</ModalHeader>
+            <ModalHeader>Details</ModalHeader>
 
             <ModalBody >
-              <Box justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='20px'>
-                  <Text>It will be used to redirect incoming messages from your customers</Text>
+              {loading && (<Flex flexDir='row' alignItems='center' justifyContent='center' gap='15px'>
+                <Spinner/> 
+                <Text>Loading...</Text>
+              </Flex>)}
 
-                  <PhoneInput
-                    defaultCountry="gb"
-                    value={phone}
-                    onChange={(phone) => setPhone(phone)}
-                  />
+              {!loading && (<>
+                <Box justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='20px'>
+                    <Text>Yout phone (used to redirect incoming messages from your customers)</Text>
+
+                    <PhoneInput
+                      defaultCountry="gb"
+                      value={phone}
+                      onChange={(phone) => setPhone(phone)}
+                    />
+                </Box>
+
+                <Box mt='25px' justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='10px'>
+                    <Text fontWeight='bold'>Business type:</Text>
+
+                    <Select value={job} placeholder='Select option' w='208px' onChange={onSelectChange}>
+                      {jobs.map((job:any)=>{
+                          return <option key={job.id} value={job.id}>{job.name}</option>
+                      })}
+                    </Select>
+
+                    {isOther && (<>
+                      <Input value={otherValue} onChange={(e)=>setOtherValue(e.target.value)} placeholder='Your business type' w='208px'/>
+                    </>)}
+
                </Box>
+
+              </>)}
+              
             </ModalBody>
   
             <ModalFooter>
-                <Button isLoading={saving} colorScheme='blue' isDisabled={!phoneValidation.isValid} onClick={savePhone} marginLeft='10px'>
+                <Button isLoading={saving} colorScheme='blue' isDisabled={!canSubmit} onClick={savePhone} marginLeft='10px'>
                       <Text>Save</Text>
                 </Button>
             </ModalFooter>

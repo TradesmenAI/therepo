@@ -56,6 +56,7 @@ export default function AdminSidebar()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [plan, setPlan] = useLocalStorage("buyPlan", "");
 
+
     useEffect(() => {
         if (purchaseResult === 'error'){
             toast.error('Failed to complete a purchase')
@@ -90,6 +91,11 @@ export default function AdminSidebar()
             label: 'Dashboard',
             icon: BiListUl,
             url: '/admin'
+        },
+        {
+            label: 'Businesses',
+            icon: BiListUl,
+            url: '/businesses'
         }
     ]
 
