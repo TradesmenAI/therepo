@@ -27,7 +27,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return res.status(400).end()
     }
 
-    console.log(req.body)
+    console.log(req.body['CallStatus'])
     
     
     return res.status(200).end()
