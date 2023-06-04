@@ -22,8 +22,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         req.body
     );
 
-    console.log('valid?')
-    console.log(isValidRequest)
+    if (!isValidRequest){
+        console.error('Not valid request signature')
+        return res.status(400).end()
+    }
+
+    console.log(req.body)
     
     
     return res.status(200).end()
