@@ -1,5 +1,4 @@
 import { NextApiHandler } from 'next'
-import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import {validateRequest, twiml} from 'twilio';
 
@@ -16,7 +15,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     
 
     const twilioSignature = req.headers['x-twilio-signature'];
-    const url = 'https://upwork-callback-bot.vercel.app/api/forwarder'
+    const url = process.env.TWILIO_CALL_FORWARDER_URL;
 
     const isValidRequest = validateRequest(
         authToken!,
@@ -56,7 +55,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    rr.dial({action: 'https://upwork-callback-bot.vercel.app/api/callStatusHandler'}, forwardingNumber);
+    rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER}, forwardingNumber);
 
     console.log(rr.toString())
     

@@ -82,7 +82,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             uid:user.uid,
             prompt: user.prompt,
             bot_fail_message: user.bot_fail_message,
-            business_type: businessType
+            business_type: businessType,
+            bot_intro_message: user.bot_intro_message
         })
     })
 
@@ -100,6 +101,7 @@ export interface UserData {
     uid:string
     prompt:string|null
     bot_fail_message: string|null,
+    bot_intro_message: string|null,
     business_type:string|null
 }
 

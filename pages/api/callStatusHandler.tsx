@@ -12,7 +12,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
     const twilioSignature = req.headers['x-twilio-signature'];
-    const url = 'https://upwork-callback-bot.vercel.app/api/callStatusHandler'
+    const url = process.env.TWILIO_FORWARD_CALL_HANDLER
 
     const isValidRequest = validateRequest(
         authToken!,
@@ -29,8 +29,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     try {
-        console.log('Incoming handler webhook')
-        console.log(req.body)
+        // console.log('Incoming handler webhook')
+        // console.log(req.body)
         
         const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']
@@ -50,8 +50,33 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 to, 
                 status, 
                 subcall_id,
-                user_id: user?user.uid:null
+                user_id: user?user.email:null
             }})
+
+            // TODO: check if user has messages left
+            if (status === 'no-answer' && user && user.twilio_number && user.sub_id && user.bot_intro_message){
+                const tw = new Twilio(accountSid, authToken);
+
+                try {
+                    await tw.messages.create({
+                        from: user.twilio_number,
+                        to: from,
+                        body: user.bot_intro_message,
+                    })
+
+                    await prisma.messageLog.create({data: {
+                        from: user.twilio_number,
+                        to: from,
+                        user_id: user.uid,
+                        user_email: user.email,
+                        direction: 'out',
+                        text: user.bot_intro_message
+                    }})
+                } catch(e){
+                    console.error('Error sending sms')
+                    console.error(e)
+                }
+            }
         }
     
     } catch(e){

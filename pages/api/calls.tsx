@@ -1,22 +1,16 @@
 import { NextApiHandler } from 'next'
 import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
-import { v4 as uuidv4 } from 'uuid';
 
-export type UpdateUserArgs = {
-    field_name:string,
-    value:any,
-    user_uid:string
+export interface CallData {
+    date: Date
+    from:string
+    to:string
+    status:string
+    user_id?:string
 }
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
-    if (req.method !== 'POST') {
-        res.status(405).send({ message: 'Only POST requests allowed' })
-        return
-    }
-
-    const requestData:UpdateUserArgs = req.body as UpdateUserArgs;
-
     const supabase = createPagesServerClient({ req, res })
     const {
         data: { session },
@@ -47,32 +41,39 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         }
     })
 
-    if (!profileData || !profileData.is_admin){
+    if (!profileData){
         return res.status(401).json({
             error: 'not_authenticated',
-            description: 'Profile not found',
+            description: 'The user does not have an active session or is not authenticated',
         })
     }
 
-    const allowedFields = ['description', 'prompt', 'bot_fail_message', 'bot_intro_message']
-
-    if (!allowedFields.includes(requestData.field_name)) {
-        res.status(500).send({ message: 'Field not allowed' })
-        return
+    if (req.method === 'GET'){
+        const calls = await prisma.callLog.findMany({where: {
+                user_id: profileData.email
+            }, orderBy:[
+                {created_at: 'desc'}
+            ], 
+            take: 100
+        })
+    
+    
+        const results:CallData[] = []
+    
+        calls.map((call)=>{
+            results.push({
+                date: call.created_at,
+                from: call.from,
+                to: call.to,
+                status: call.status
+            })
+        })
+    
+    
+        return res.status(200).json(results)
     }
 
-    let updateData = {}
-    //@ts-ignore
-    updateData[requestData.field_name] = requestData.value;
-
-    await prisma.user.update({
-        where: {
-            uid: requestData.user_uid
-        },
-        data: updateData
-    })
-
-    return res.status(200).json({})
+    return res.status(500).end()
 }
 
 export default ProtectedRoute

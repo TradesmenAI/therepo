@@ -68,7 +68,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         await prisma.user.update({data: {
             prompt: business?.prompt,
             bot_fail_message: business?.msg,
-            business_id: business?.id
+            business_id: business?.id,
+            bot_intro_message: business?.into_msg
         }, where: {
             uid: profileData.uid
         }})

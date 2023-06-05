@@ -35,6 +35,7 @@ export default function EditUserModal() {
     const [prompt, setPrompt] = useState('')
     const [botMsg, setBotMsg] = useState('')
     const [userId, setUserId] = useState('')
+    const [botIntroMsg, setBotIntroMsg] = useState('')
 
     const [saving, setSaving] = useState(false)
 
@@ -44,6 +45,7 @@ export default function EditUserModal() {
           setBotMsg('')
           setDetails('')
           setUserId('')
+          setBotIntroMsg('')
 
 
           const user = modalArgs.user
@@ -61,6 +63,10 @@ export default function EditUserModal() {
           if (user.bot_fail_message){
             setBotMsg(user.bot_fail_message)
           }
+
+          if (user.bot_intro_message){
+            setBotIntroMsg(user.bot_intro_message)
+          }
           
           onOpen();
 
@@ -73,6 +79,7 @@ export default function EditUserModal() {
         await updateUser(userId, 'description', details)
         await updateUser(userId, 'prompt', prompt)
         await updateUser(userId, 'bot_fail_message', botMsg)
+        await updateUser(userId, 'bot_intro_message', botIntroMsg)
 
 
         setSaving(false)
@@ -101,9 +108,15 @@ export default function EditUserModal() {
               </Box>
 
               <Box>
+                <Text>Intro message</Text>
+                <Input value={botIntroMsg} onChange={(e)=>setBotIntroMsg(e.target.value)}/>
+              </Box>
+
+              <Box>
                 <Text>Message if bot failed</Text>
                 <Input value={botMsg} onChange={(e)=>setBotMsg(e.target.value)}/>
               </Box>
+            
             </ModalBody>
   
             <ModalFooter>

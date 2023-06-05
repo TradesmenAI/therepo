@@ -134,6 +134,7 @@ export default function Docs() {
                                 <Th>User details</Th>
                                 <Th>Prompt</Th>
                                 <Th>Fail message</Th>
+                                <Th>Intro message</Th>
                             </Tr>
                             </Thead>
                             <Tbody>
@@ -150,6 +151,7 @@ export default function Docs() {
                                 let prompt = user.prompt?user.prompt:''
                                 let fail_msg = user.bot_fail_message?user.bot_fail_message:''
                                 let business_type = user.business_type?user.business_type:''
+                                let intro_msg = user.bot_intro_message?user.bot_intro_message:''
 
                                 return (
                                     <Tr key={user.uid} >
@@ -177,6 +179,12 @@ export default function Docs() {
                                         <Td minW='180px' h='80px' p='5px'>
                                             <Textarea w='100%' h='100%' resize='none' disabled textColor='black' style={{opacity: 1, cursor: 'default', padding: '3px'}} border='1px solid #cccccc'>
                                                 {fail_msg}
+                                            </Textarea>
+                                        </Td>
+
+                                        <Td minW='180px' h='80px' p='5px'>
+                                            <Textarea w='100%' h='100%' resize='none' disabled textColor='black' style={{opacity: 1, cursor: 'default', padding: '3px'}} border='1px solid #cccccc'>
+                                                {intro_msg}
                                             </Textarea>
                                         </Td>
                                     </Tr>

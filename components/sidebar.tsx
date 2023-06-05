@@ -27,7 +27,8 @@ import
     BiImages,
     BiMenu,
     BiBookAlt,
-    BiWalletAlt
+    BiWalletAlt,
+    BiPhoneCall
 } from "react-icons/bi";
 import {
     Modal,
@@ -95,6 +96,11 @@ export default function Sidebar()
             label: 'Billing',
             icon: BiWalletAlt,
             url: '/billing'
+        },
+        {
+            label: 'Call log',
+            icon: BiPhoneCall,
+            url: '/callLog'
         }
     ]
 

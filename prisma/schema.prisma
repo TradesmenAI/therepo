@@ -24,6 +24,7 @@ model User {
     name                String?
     prompt              String?
     bot_fail_message    String?
+    bot_intro_message   String?
     business_type       String?
     business_id         Int?
 }
@@ -55,6 +56,7 @@ model BusinessType {
   name                String
   prompt              String
   msg                 String
+  into_msg            String    @default("Sorry we missed your call. What service are you interested in?")
 }
 
 model CallLog {
@@ -67,14 +69,15 @@ model CallLog {
   user_id             String?
 }
 
+model MessageLog {
+  id                  Int       @id @default(autoincrement())
+  created_at          DateTime    @default(now())
+  from                String
+  to                  String
+  user_id             String?
+  user_email          String?
+  direction           String
+  text                String
+}
 
 
-// model Usage {
-//     id          Int     @id @default(autoincrement())
-//     api_key     String
-//     tokens      Int
-//     model       String
-//     operation   String
-//     doc_id      String
-//     created_at DateTime @default(now())
-// }
