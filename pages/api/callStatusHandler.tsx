@@ -41,7 +41,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         if (direction === 'inbound') {
             const user = await prisma.user.findFirst({
                 where: {
-                    business_number: to
+                    twilio_number: to
                 }
             })
 
