@@ -14,6 +14,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     console.log('Incoming handler webhook')
     console.log(req.body)
 
+    console.log('status: ' + req.body['DialCallStatus'])
+
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = 'https://upwork-callback-bot.vercel.app/api/callStatusHandler'
 
@@ -33,8 +35,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const tw = new Twilio(accountSid, authToken);
     const call = await tw.calls(req.body['DialCallSid']).fetch()
     
-    console.log(call)
-    console.log(JSON.stringify(call))
+    // console.log(call)
+    // console.log(JSON.stringify(call))
 
 
 
