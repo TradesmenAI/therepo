@@ -27,7 +27,8 @@ import
     BiImages,
     BiMenu,
     BiBookAlt,
-    BiWalletAlt
+    BiWalletAlt,
+    BiPhoneCall
 } from "react-icons/bi";
 import {
     Modal,
@@ -96,6 +97,11 @@ export default function AdminSidebar()
             label: 'Businesses',
             icon: BiListUl,
             url: '/businesses'
+        },
+        {
+            label: 'Calls log',
+            icon: BiListUl,
+            url: '/adminCallLog'
         }
     ]
 
@@ -143,7 +149,7 @@ export default function AdminSidebar()
             )}
 
             <Show above='700px'>
-                <Flex width='230px' height='100vh' backgroundColor='#f2f3f5' flexDir='column' padding='10px' gap='10px'>
+                <Flex width='230px' flexShrink='0' height='100vh' backgroundColor='#f2f3f5' flexDir='column' padding='10px' gap='10px'>
                     <HeaderBlock/>
                     <Divider borderColor='#bdbbbb'/>
                     

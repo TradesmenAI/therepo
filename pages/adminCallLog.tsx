@@ -39,6 +39,7 @@ import { useRouter } from 'next/router'
 import Pricing from '../components/pricing';
 import { Config } from '../state/appContext';
 import { CallData } from './api/calls';
+import AdminSidebar from '../components/adminSideBar';
 
 export default function CallLog() {
     const { updateProfile, profile, openBillingPortal} = useAppContext();
@@ -47,7 +48,7 @@ export default function CallLog() {
     const [loading, setLoading] = useState(false)
 
     const fetchCalls = async()=>{
-        const res = await fetch('/api/calls', {
+        const res = await fetch('/api/allCalls', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export default function CallLog() {
     return (
         
         <Flex dir='row'>
-            <Sidebar />
+            <AdminSidebar />
 
             <Toaster  />
 
@@ -79,13 +80,15 @@ export default function CallLog() {
 
                 <ContentHeader title='Call log' />
 
-                <Flex  flexDir='column' gap={2} maxW='700px' minW='250px' width='100%' alignItems={'center'} paddingBottom='20px'>
+                <Flex  flexDir='column' gap={2} maxW='900px' minW='250px' width='100%' alignItems={'center'} paddingBottom='20px'>
                     <TableContainer w='100%' >
                         <Table variant='striped' colorScheme='gray' size='sm'>
                             <Thead>
                             <Tr>
                                 <Th>Date</Th>
                                 <Th>From</Th>
+                                <Th>To</Th>
+                                <Th>User</Th>
                                 <Th isNumeric>Status</Th>
                             </Tr>
                             </Thead>
@@ -97,6 +100,8 @@ export default function CallLog() {
                                         <Tr key={index}>
                                             <Td>{(new Date(call.date)).toLocaleString("en-GB")}</Td>
                                             <Td>{call.from}</Td>
+                                            <Td>{call.to}</Td>
+                                            <Td>{call.user_id}</Td>
                                             <Td isNumeric>
                                                 {noAnswer && (<Badge variant='solid' colorScheme='red'>Missed</Badge>)}
                                                 {!noAnswer && (<Badge variant='solid' colorScheme='green'>Answered</Badge>)}
