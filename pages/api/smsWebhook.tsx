@@ -31,6 +31,26 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return res.status(400).end()
     }
 
+    const to = req.body['To']
+    const from = req.body['From']
+    const status = req.body['SmsStatus']
+    const text = req.body['Body']
+
+    const user = await prisma.user.findFirst({where: {
+        twilio_number: to
+    }})
+
+    if (user && status === 'received'){
+        await prisma.messageLog.create({data: {
+            from,
+            to,
+            text,
+            user_id: user.uid,
+            user_email: user.email,
+            direction: 'in',
+        }})
+    }
+
     return res.status(200).end()
 }
 

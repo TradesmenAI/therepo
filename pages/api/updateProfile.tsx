@@ -77,6 +77,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return res.status(200).json({})
     }
 
+    if (requestData.field_name === 'business_number') {
+        requestData.value = requestData.value.replace(' ', '')
+    }
+
     let updateData = {}
     //@ts-ignore
     updateData[requestData.field_name] = requestData.value;
