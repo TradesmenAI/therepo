@@ -69,7 +69,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             prompt: business?.prompt,
             bot_fail_message: business?.msg,
             business_id: business?.id,
-            bot_intro_message: business?.into_msg
+            bot_intro_message: business?.intro_msg
         }, where: {
             uid: profileData.uid
         }})
