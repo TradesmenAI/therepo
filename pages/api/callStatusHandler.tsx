@@ -11,11 +11,6 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
-    console.log('Incoming handler webhook')
-    console.log(req.body)
-
-    console.log('status: ' + req.body['DialCallStatus'])
-
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = 'https://upwork-callback-bot.vercel.app/api/callStatusHandler'
 
@@ -32,16 +27,45 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return res.status(400).end()
     }
 
-    const tw = new Twilio(accountSid, authToken);
-    const call = await tw.calls(req.body['DialCallSid']).fetch()
+
+    try {
+        console.log('Incoming handler webhook')
+        console.log(req.body)
+        
+        const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
+        const from = req.body['From']
+        const to = req.body['To']
+        const direction = req.body['Direction'] // must be 'inbound'
+        const subcall_id = req.body['DialCallSid']
     
-    // console.log(call)
+        if (direction === 'inbound') {
+            const user = await prisma.user.findFirst({
+                where: {
+                    business_number: to
+                }
+            })
+
+            await prisma.callLog.create({data:{
+                from, 
+                to, 
+                status, 
+                subcall_id,
+                user_id: user?user.uid:null
+            }})
+        }
+    
+    } catch(e){
+        console.error(e)
+    }
+
+
+
+    // const tw = new Twilio(accountSid, authToken);
+    // const call = await tw.calls(req.body['DialCallSid']).fetch()
+
     // console.log(JSON.stringify(call))
 
 
-
-
-    
     return res.status(200).end()
 }
 

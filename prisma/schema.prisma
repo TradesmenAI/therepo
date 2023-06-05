@@ -57,6 +57,16 @@ model BusinessType {
   msg                 String
 }
 
+model CallLog {
+  id                  Int       @id @default(autoincrement())
+  created_at          DateTime    @default(now())
+  from                String
+  to                  String
+  status              String
+  subcall_id          String
+  user_id             String?
+}
+
 
 
 // model Usage {
