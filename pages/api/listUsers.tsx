@@ -3,6 +3,7 @@ import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe'
+import { Config } from '../../state/appContext';
 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -63,7 +64,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         if (user.business_id){
             const bs = businesses.find(x=>x.id === user.business_id);
             if (bs) {
-                if (bs.id !== 29) {
+                if (bs.id !== Config.otherBusinessId) {
                     businessType = bs.name
                 } else {
                     businessType = user.business_type

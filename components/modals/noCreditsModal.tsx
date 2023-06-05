@@ -25,6 +25,9 @@ import { useAppContext } from '../../state/appContext';
 import { PhoneInput, usePhoneValidation } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { Select } from '@chakra-ui/react'
+import { Config } from '../../state/appContext';
+
+
 
 export default function NoCreditsModal() {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -33,7 +36,7 @@ export default function NoCreditsModal() {
     const phoneValidation = usePhoneValidation(phone);
     const [saving, setSaving] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [jobs, setJobs] = useState<string[]>([])
+    const [jobs, setJobs] = useState<any[]>([])
     const [otherValue, setOtherValue] = useState('')
     const [isOther, setIsOther] = useState(false)
     const [job, setJob] = useState('')
@@ -64,16 +67,20 @@ export default function NoCreditsModal() {
             }
         });
 
-        const values = await res.json();
-        setJobs(values)
-
-        setLoading(false);
+        if (res.status === 200){
+          const values = await res.json();
+          setJobs(values)
+  
+          console.log(values)
+  
+          setLoading(false);
+        }
       })()
     }, [])
 
     useEffect(()=>{
       console.log(job)
-      setIsOther(job === '29')
+      setIsOther(job === Config.otherBusinessId.toString())
     }, [job])
 
 
@@ -81,7 +88,7 @@ export default function NoCreditsModal() {
       setSaving(true)
       await updateProfile('business_number', phone)
       await updateProfile('business_id', parseInt(job))
-      if (job === '29'){
+      if (job === Config.otherBusinessId.toString()){
         await updateProfile('business_type', otherValue)
       }
       setSaving(false)
@@ -125,9 +132,12 @@ export default function NoCreditsModal() {
                     <Text fontWeight='bold'>Business type:</Text>
 
                     <Select value={job} placeholder='Select option' w='208px' onChange={onSelectChange}>
-                      {jobs.map((job:any)=>{
+                      {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
                           return <option key={job.id} value={job.id}>{job.name}</option>
                       })}
+
+                      <option value={Config.otherBusinessId}>Other</option>
+
                     </Select>
 
                     {isOther && (<>

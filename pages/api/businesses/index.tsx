@@ -8,6 +8,7 @@ export interface Business {
     name:string
     prompt:string
     msg:string
+    intro_msg:string
 }
 
 export interface BusinessArgs {
@@ -15,6 +16,7 @@ export interface BusinessArgs {
     name:string
     prompt:string
     msg:string
+    intro_msg:string
 }
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
@@ -59,7 +61,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     if (req.method === 'GET') {
-        const data = await prisma.businessType.findMany()
+        const data = await prisma.businessType.findMany({orderBy: [{id: 'asc'}]})
         return res.status(200).json(data)
     }
 
@@ -70,7 +72,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         await prisma.businessType.create({data: {
             name: reqData.name,
             prompt: reqData.prompt,
-            msg: reqData.msg
+            msg: reqData.msg,
+            intro_msg: reqData.intro_msg
         }})
 
         return res.status(200).json({})
@@ -81,7 +84,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         await prisma.businessType.update({data: {
             name: reqData.name,
             prompt: reqData.prompt,
-            msg: reqData.msg
+            msg: reqData.msg,
+            intro_msg: reqData.intro_msg
         }, where: {
             id: reqData.id!
         }})

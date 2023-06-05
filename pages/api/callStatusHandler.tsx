@@ -2,6 +2,7 @@ import { NextApiHandler } from 'next'
 import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import {validateRequest, twiml, Twilio} from 'twilio';
+import { use } from 'react';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -53,42 +54,57 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 user_id: user?user.email:null
             }})
 
-            // TODO: check if user has messages left
             if (status === 'no-answer' && user && user.twilio_number && user.sub_id && user.bot_intro_message){
-                const tw = new Twilio(accountSid, authToken);
+                const totalMessages = user.messages_per_month
+                const usedMessages = (await prisma.messageLog.findMany({
+                    where: {
+                        from: user.twilio_number
+                    }
+                })).length
 
-                try {
-                    await tw.messages.create({
+                if (usedMessages < totalMessages){
+                    // check if this user already received sms
+
+                    const existingMessages = await prisma.messageLog.findMany({where: {
                         from: user.twilio_number,
                         to: from,
-                        body: user.bot_intro_message,
-                    })
-
-                    await prisma.messageLog.create({data: {
-                        from: user.twilio_number,
-                        to: from,
-                        user_id: user.uid,
                         user_email: user.email,
-                        direction: 'out',
-                        text: user.bot_intro_message
+                        direction: 'out'
                     }})
-                } catch(e){
-                    console.error('Error sending sms')
-                    console.error(e)
+
+                    console.log(`Existing msg count: ${existingMessages.length}`)
+
+                    if (existingMessages.length === 0){
+                        const tw = new Twilio(accountSid, authToken);
+
+                        try {
+                            await tw.messages.create({
+                                from: user.twilio_number,
+                                to: from,
+                                body: user.bot_intro_message,
+                            })
+        
+                            await prisma.messageLog.create({data: {
+                                from: user.twilio_number,
+                                to: from,
+                                user_id: user.uid,
+                                user_email: user.email,
+                                direction: 'out',
+                                text: user.bot_intro_message
+                            }})
+                        } catch(e){
+                            console.error('Error sending sms')
+                            console.error(e)
+                        }
+                    }
                 }
+
             }
         }
     
     } catch(e){
         console.error(e)
     }
-
-
-
-    // const tw = new Twilio(accountSid, authToken);
-    // const call = await tw.calls(req.body['DialCallSid']).fetch()
-
-    // console.log(JSON.stringify(call))
 
 
     return res.status(200).end()

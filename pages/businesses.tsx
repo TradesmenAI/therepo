@@ -182,6 +182,7 @@ export default function BusinessPage() {
                             <Tr>
                                 <Th>Name</Th>
                                 <Th>Prompt</Th>
+                                <Th>Intro message</Th>
                                 <Th>Message</Th>
                                 <Th  textAlign='center'>Edit</Th>
                                 <Th  textAlign='center'>Delete</Th>
@@ -190,17 +191,23 @@ export default function BusinessPage() {
                             <Tbody>
                             
                             {businesses.map((bs, index)=>{
-                          
+                                
                                 return (
                                     <Tr key={bs.id} >
                                         <Td>{bs.name}</Td>
                                         <Td>{bs.prompt}</Td>
+                                        <Td>{bs.intro_msg}</Td>
+
                                         <Td>{bs.msg}</Td>
                                         <Td width='60px' isNumeric><Button colorScheme='blue' size='sm' onClick={()=>onEdit(bs.id)}>Edit</Button></Td>
-                                        <Td width='100px' isNumeric><Button colorScheme='red' size='sm' onClick={()=>{
-                                            setDeleteId(bs.id)
-                                            onOpen()
-                                        }}>Delete</Button></Td>
+                                        <Td width='100px' isNumeric>
+                                           {bs.id !== Config.otherBusinessId && (
+                                                <Button colorScheme='red' size='sm' onClick={()=>{
+                                                    setDeleteId(bs.id)
+                                                    onOpen()
+                                                }}>Delete</Button>
+                                           )}
+                                        </Td>
                                     </Tr>
                                 )
                             })}

@@ -44,7 +44,7 @@ import Pricing from '../components/pricing';
 
 export default function App() {
     const {openBillingPortal, profile, updateProfile} = useAppContext();
-    // const session = useSession()
+    const session = useSession()
     const {push} = useRouter()
     const [businessPhone, setBusinessPhone] = useState('-')
     const [redirect, setRedirect] = useState(false)
@@ -64,6 +64,13 @@ export default function App() {
     const onValidatePhone = (val:string)=>{
         return true
     } 
+
+    useEffect(()=>{
+        if (!session){
+          push('/');
+        } 
+      }, [session])
+    
 
 
 

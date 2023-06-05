@@ -50,12 +50,15 @@ import {
   } from '@chakra-ui/react'
 import { UserData } from './api/listUsers';
 import EditUserModal from '../components/modals/editUserModal';
+import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 
 
 export default function Docs() {
     const { updateProfile, profile, getUsersList, setCurrentModal, currentModal, setModalArgs} = useAppContext();
     const {push} = useRouter()
     const [users, setUsers] = useState<UserData []>([]);
+    const session = useSession()
+    let router = useRouter()
 
     useEffect(()=>{
         if (profile && profile.is_admin && users.length === 0){
@@ -72,8 +75,7 @@ export default function Docs() {
         }
     }, [currentModal, setCurrentModal])
 
-
-
+  
     if (!profile){
         return (<>
             <Modal onClose={()=>{}} size='full' isOpen={true}>
@@ -133,8 +135,8 @@ export default function Docs() {
                                 <Th>Created at</Th>
                                 <Th>User details</Th>
                                 <Th>Prompt</Th>
-                                <Th>Fail message</Th>
                                 <Th>Intro message</Th>
+                                <Th>Fail message</Th>
                             </Tr>
                             </Thead>
                             <Tbody>
@@ -178,15 +180,16 @@ export default function Docs() {
 
                                         <Td minW='180px' h='80px' p='5px'>
                                             <Textarea w='100%' h='100%' resize='none' disabled textColor='black' style={{opacity: 1, cursor: 'default', padding: '3px'}} border='1px solid #cccccc'>
-                                                {fail_msg}
+                                                {intro_msg}
                                             </Textarea>
                                         </Td>
 
                                         <Td minW='180px' h='80px' p='5px'>
                                             <Textarea w='100%' h='100%' resize='none' disabled textColor='black' style={{opacity: 1, cursor: 'default', padding: '3px'}} border='1px solid #cccccc'>
-                                                {intro_msg}
+                                                {fail_msg}
                                             </Textarea>
                                         </Td>
+
                                     </Tr>
                                 )
                             })}

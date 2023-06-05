@@ -56,7 +56,7 @@ model BusinessType {
   name                String
   prompt              String
   msg                 String
-  into_msg            String    @default("Sorry we missed your call. What service are you interested in?")
+  intro_msg           String    @default("Sorry we missed your call. What service are you interested in?")
 }
 
 model CallLog {

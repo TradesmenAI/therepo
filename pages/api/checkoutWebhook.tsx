@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 import { NextApiHandler } from 'next'
 import { assert } from 'console'
 import { Config } from '../../state/appContext'
+import { Twilio } from "twilio";
 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -13,6 +14,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 })
 
 
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 export const config = {
     api: {
@@ -94,12 +97,49 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
                 stripe_id: stripeId
             }}) 
 
+            if (!userProfile){
+                console.error(`Failed to find user profile for stripe id [${stripeId}]`)
+                return res.status(200).json({})
+            }
+
             await prisma.subscriptionMeta.create({data: {
                 user_id: userProfile!.uid,
                 stripe_id: stripeId,
                 subscription_id: subscription.id,
                 price_id: itemId
             }})
+
+            let twilio_number = userProfile.twilio_number
+
+            if (!twilio_number){
+                const client = new Twilio(accountSid, authToken);
+                const availableNumbers = await client.availablePhoneNumbers('GB').local.list({ smsEnabled: true })
+            
+                let userNumber = ''
+            
+                for(let i = 0; i < availableNumbers.length; ++i){
+                    let n = availableNumbers[i]
+                    userNumber = n.phoneNumber
+
+                    console.log(`Regsitering NEW number: [${userNumber}] for user [${userProfile.email}]`)
+
+                    try{
+                        await client.incomingPhoneNumbers.create({
+                            phoneNumber: userNumber,
+                            addressSid: process.env.TWILIO_ADDRESS_ID,
+                            voiceUrl: process.env.TWILIO_CALL_FORWARDER_URL,
+                            smsUrl: process.env.TWILIO_SMS_WEBHOOK_URL
+                        })
+
+                        twilio_number = userNumber
+
+                        break
+                    } catch(e){
+                        console.error(`Failed to register a number: [${userNumber}] for user [${userProfile.email}]`)
+                        console.error(e)
+                    }
+                }
+            }
 
             for(let i = 0; i < Config.plans.length; ++i){
                 if (itemId === Config.plans[i].price_id){
@@ -109,7 +149,8 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
                         }, data: {
                             subscription_status: itemId,
                             messages_per_month: Config.plans[i].replies,
-                            sub_id: subscription.id
+                            sub_id: subscription.id,
+                            twilio_number: twilio_number
                         }
                     })
                 }

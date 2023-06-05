@@ -27,6 +27,7 @@ export interface AppContextType
 }
 
 export const Config = {
+    otherBusinessId: 30,
     plans: [
         {
             price: 14.99,

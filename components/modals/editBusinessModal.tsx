@@ -38,6 +38,9 @@ export default function EditBusinessModal() {
     const [name, setName] = useState('')
     const [prompt, setPrompt] = useState('')
     const [msg, setMsg] = useState('')
+    const [introMsg, setIntroMsg] = useState('')
+
+    const defaultMsg = 'Sorry we missed your call. What service are you interested in?'
 
     const updateBusiness = async() => {
         setSaving(true)
@@ -49,7 +52,7 @@ export default function EditBusinessModal() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({name, prompt, id, msg})
+                body: JSON.stringify({name, prompt, id, msg, intro_msg:introMsg})
             });
         } else {
             const res = await fetch('/api/businesses', {
@@ -57,7 +60,7 @@ export default function EditBusinessModal() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({name, prompt, msg})
+                body: JSON.stringify({name, prompt, msg, intro_msg:introMsg})
             });
         }
 
@@ -72,6 +75,7 @@ export default function EditBusinessModal() {
                 setId(null)
                 setName('')
                 setPrompt('')
+                setIntroMsg(defaultMsg)
                 setMsg('')
             } else {
                 setCreateMode(false)
@@ -79,6 +83,7 @@ export default function EditBusinessModal() {
                 setId(data.id!)
                 setName(data.name)
                 setPrompt(data.prompt)
+                setIntroMsg(data.intro_msg)
                 setMsg(data.msg)
             }
 
@@ -110,6 +115,11 @@ export default function EditBusinessModal() {
               <Box>
                 <Text>Prompt</Text>
                 <Textarea value={prompt} onChange={(e)=>setPrompt(e.target.value)}/>
+              </Box>
+
+              <Box>
+                <Text>Intro message</Text>
+                <Input value={introMsg} onChange={(e)=>setIntroMsg(e.target.value)}/>
               </Box>
 
               <Box>

@@ -3,11 +3,8 @@ import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe'
-import { Twilio } from "twilio";
 
 
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -71,61 +68,23 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             });
         }
 
-        // const client = new Twilio(accountSid, authToken);
-        // const availableNumbers = await client.availablePhoneNumbers('GB').local.list({ smsEnabled: true })
-    
-        // let userNumber = ''
-    
-        // for(let i = 0; i < availableNumbers.length; ++i){
-        //     let n = availableNumbers[i]
-        //     userNumber = n.phoneNumber
-        //     console.log('Regsitering nre number: ' + userNumber)
-
-        //     try{
-        //         await client.incomingPhoneNumbers.create({
-        //             phoneNumber: userNumber,
-        //             addressSid: process.env.TWILIO_ADDRESS_ID,
-        //             voiceUrl: 'http://example.com/voice', // Replace with your voice URL
-        //             smsUrl: 'http://example.com/sms' // Replace with your SMS URL
-        //         })
-
-        //         break
-        //     } catch(e){
-        //         console.error(e)
-        //     }
-        // }
-    
         // new user, create data
         profileData = await prisma.user.create({data: {
             uid: user.id,
             stripe_id: customer.id,
             email: user.email!
         }})
-
-
-        // create new twilio number
-
     }
 
-  
-   
+    let used_messages = 0
 
-    // const key = await prisma.apiKey.findFirst({where: {
-    //     user_id: user.id
-    // }})
-
-    // const msgs = await prisma.usage.findMany({where: {
-    //     api_key: key?.key,
-    //     operation: 'query'
-    // }})
-
-    // const files = await prisma.file.findMany({where: {
-    //     api_key: key?.key
-    // }})
-
-    // const creditsLeft = profileData.credits - files.length * 2 - msgs.length
-
-    const used_messages = 0
+    if (profileData.twilio_number){
+        used_messages = (await prisma.messageLog.findMany({
+            where: {
+                from: profileData.twilio_number
+            }
+        })).length
+    }
 
     const result = {
         subscription_status: profileData.subscription_status,
