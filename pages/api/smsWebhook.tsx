@@ -58,7 +58,25 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             }
         })
 
-        console.log(history)
+        if (user.twilio_number){
+             // TODO: check date last 30 days
+            const used_messages = (await prisma.messageLog.findMany({
+                where: {
+                    from: user.twilio_number
+                }
+            })).length
+
+            if (used_messages < user.messages_per_month){
+                await prisma.chatRequest.create({data:{
+                    messages: JSON.stringify(history),
+                    target_number: from,
+                    user_email: user.email
+                }})
+        
+                console.log('Chat request created')
+            }
+        }
+
     }
 
     return res.status(200).end()

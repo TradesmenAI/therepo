@@ -82,4 +82,12 @@ model MessageLog {
   customer_number     String?
 }
 
-
+model ChatRequest {
+  id                  Int         @id @default(autoincrement())
+  created_at          DateTime    @default(now())
+  messages            String
+  responded           Boolean     @default(false)
+  response            String?
+  target_number       String
+  user_email          String
+}
