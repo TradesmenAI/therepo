@@ -97,14 +97,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
          // TODO: check date last 30 days
         const used_messages = (await prisma.messageLog.findMany({
             where: {
-                // twilio number exists as we fetched user using it
-                from: user.twilio_number!
+                from: to
             }
         })).length
 
+        console.log(1)
+
         // If user didn't hit monthly limit send him a message
         if (used_messages < user.messages_per_month){
-
+            console.log(2)
             // get message history for this conversation
             const history = await prisma.messageLog.findMany({
                 where: {
@@ -116,6 +117,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     }
                 ]
             })
+            console.log(3)
 
             // used if there is a background task
             // await prisma.chatRequest.create({data:{
@@ -138,6 +140,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 })
             })
 
+            console.log(4)
+
             const response = await openai.createChatCompletion({
                 model: "gpt-4",
                 temperature: 0.888,
@@ -147,6 +151,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 top_p: 1,
                 messages: botMessages
             }, { timeout: 60000 });
+
+            console.log(5)
 
             try {
                 // @ts-ignore
