@@ -63,7 +63,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             const used_messages = (await prisma.messageLog.findMany({
                 where: {
                     from: user.twilio_number
-                }
+                },
+                orderBy: [
+                    {
+                        id: 'asc'
+                    }
+                ]
             })).length
 
             if (used_messages < user.messages_per_month){
