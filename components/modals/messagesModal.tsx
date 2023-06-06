@@ -108,7 +108,7 @@ export default function MessagesModal() {
                         }
 
                         return (
-                            <Flex flexDir='row' justifyContent='flex-end'>
+                            <Flex flexDir='row' key={index} justifyContent='flex-end'>
                                 <Flex backgroundColor="#b6beff" maxW="77%" p='5px' minW='160px' borderRadius='5px' flexDir='column'  gap='5px'>
                                     <Flex justifyContent='flex-end'><Badge variant='solid' colorScheme='red'>Bot</Badge></Flex>
                                     <Flex flexDir='row' justifyContent='flex-end'>
