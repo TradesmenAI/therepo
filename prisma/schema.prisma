@@ -80,6 +80,7 @@ model MessageLog {
   direction           String
   text                String
   customer_number     String?
+  message_uid         String?
 }
 
 model ChatRequest {

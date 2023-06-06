@@ -37,6 +37,7 @@
     "dotenv-cli": "^6.0.0",
     "framer-motion": "^6.5.1",
     "i": "^0.3.7",
+    "inngest": "^2.0.0",
     "intl-tel-input": "^18.1.6",
     "micro": "^10.0.1",
     "micro-cors": "^0.1.1",

@@ -97,8 +97,8 @@ export default function MessagesModal() {
                         if (msg.direction === 'in'){
                             return (
                                 <Flex flexDir='row' key={index}>
-                                    <Flex backgroundColor="#f0f0f0" maxW="77%" p='5px' minW='160px' borderRadius='5px' flexDir='column' gap='5px'>
-                                        <Box><Badge variant='solid' colorScheme='blue'>Customer</Badge></Box>
+                                    <Flex backgroundColor="#f0f0f0" maxW="77%" px='10px' py='7px' minW='160px' borderRadius='15px' flexDir='column' gap='5px'>
+                                        <Flex><Badge variant='solid' colorScheme='blue'>Customer</Badge></Flex>
                                         <Flex>
                                             <Text fontSize='14px'>{msg.text}</Text>
                                         </Flex>
@@ -109,7 +109,7 @@ export default function MessagesModal() {
 
                         return (
                             <Flex flexDir='row' key={index} justifyContent='flex-end'>
-                                <Flex backgroundColor="#b6beff" maxW="77%" p='5px' minW='160px' borderRadius='5px' flexDir='column'  gap='5px'>
+                                <Flex backgroundColor="#dfe3ff" maxW="77%"  px='10px' py='7px' minW='160px' borderRadius='15px' flexDir='column'  gap='5px'>
                                     <Flex justifyContent='flex-end'><Badge variant='solid' colorScheme='red'>Bot</Badge></Flex>
                                     <Flex flexDir='row' justifyContent='flex-end'>
                                         <Text fontSize='14px'>{msg.text}</Text>
