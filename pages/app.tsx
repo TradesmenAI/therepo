@@ -48,16 +48,23 @@ export default function App() {
     const {push} = useRouter()
     const [businessPhone, setBusinessPhone] = useState('-')
     const [redirect, setRedirect] = useState(false)
+    const [introMsg, setIntroMsg] = useState('')
 
 
     useEffect(()=>{
         if (profile) {
             setBusinessPhone(profile.business_number)
+            setIntroMsg(profile.bot_intro_message)
         }
     }, [profile])
 
     const onUpdatePhone = async(val:string)=>{
         await updateProfile('business_number', val)
+        return true
+    }
+
+    const onUpdateMessage = async(val:string)=>{
+        await updateProfile('bot_intro_message', val)
         return true
     }
 
@@ -147,7 +154,12 @@ export default function App() {
                             <FieldWithRename value={businessPhone} onUpdate={onUpdatePhone} onValidate={onValidatePhone} />
                         </Flex>
 
-
+                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold'>Bot intro message</Text>
+                            <Spacer />
+                            <FieldWithRename value={introMsg} onUpdate={onUpdateMessage} onValidate={onValidatePhone} />
+                        </Flex>
+                        <Text fontSize='14px' mt='-5px' fontWeight='bold' fontStyle='italic'>* We recommend leaving this as default</Text>
 
 
                     

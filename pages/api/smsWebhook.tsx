@@ -48,7 +48,17 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             user_id: user.uid,
             user_email: user.email,
             direction: 'in',
+            customer_number: from
         }})
+
+        const history = await prisma.messageLog.findMany({
+            where: {
+                user_email: user.email,
+                customer_number: from
+            }
+        })
+
+        console.log(history)
     }
 
     return res.status(200).end()

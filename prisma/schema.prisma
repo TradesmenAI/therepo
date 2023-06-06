@@ -44,6 +44,7 @@ model SubscriptionMeta {
     stripe_id           String
     price_id            String
     subscription_id     String
+    created_at          DateTime    @default(now())
 }
 
 model Config {
@@ -78,6 +79,7 @@ model MessageLog {
   user_email          String?
   direction           String
   text                String
+  customer_number     String?
 }
 
 

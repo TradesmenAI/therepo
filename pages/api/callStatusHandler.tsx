@@ -90,7 +90,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                                 user_id: user.uid,
                                 user_email: user.email,
                                 direction: 'out',
-                                text: user.bot_intro_message
+                                text: user.bot_intro_message,
+                                customer_number: from
                             }})
                         } catch(e){
                             console.error('Error sending sms')

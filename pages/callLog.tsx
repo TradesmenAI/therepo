@@ -13,7 +13,7 @@ import {
     Accordion,
     Skeleton,
     Grid,
-    Textarea,
+    IconButton,
     Switch
 } from '@chakra-ui/react'
 import { Show, Hide } from '@chakra-ui/react'
@@ -39,9 +39,12 @@ import { useRouter } from 'next/router'
 import Pricing from '../components/pricing';
 import { Config } from '../state/appContext';
 import { CallData } from './api/calls';
+import { EmailIcon } from '@chakra-ui/icons';
+import MessagesModal from '../components/modals/messagesModal';
+
 
 export default function CallLog() {
-    const { updateProfile, profile, openBillingPortal} = useAppContext();
+    const { updateProfile, profile, setCurrentModal, setModalArgs} = useAppContext();
     const {push} = useRouter()
     const [calls, setCalls] = useState<CallData[]>([])
     const [loading, setLoading] = useState(false)
@@ -70,6 +73,7 @@ export default function CallLog() {
             <Sidebar />
 
             <Toaster  />
+            <MessagesModal/>
 
             <NoCreditsModal/>
 
@@ -87,6 +91,7 @@ export default function CallLog() {
                                 <Th>Date</Th>
                                 <Th>From</Th>
                                 <Th isNumeric>Status</Th>
+                                <Th isNumeric maxW='60px'>Messages</Th>
                             </Tr>
                             </Thead>
                             <Tbody>
@@ -100,8 +105,18 @@ export default function CallLog() {
                                             <Td isNumeric>
                                                 {noAnswer && (<Badge variant='solid' colorScheme='red'>Missed</Badge>)}
                                                 {!noAnswer && (<Badge variant='solid' colorScheme='green'>Answered</Badge>)}
-
                                             </Td>
+
+                                            <Td isNumeric><IconButton
+                                                colorScheme='blue'
+                                                aria-label='Search database'
+                                                size='sm'
+                                                icon={<EmailIcon />}
+                                                onClick={()=>{
+                                                    setModalArgs(call.from)
+                                                    setCurrentModal('messagesModal')
+                                                }}
+                                                /></Td>
                                         </Tr>
                                     )
                                 })}
