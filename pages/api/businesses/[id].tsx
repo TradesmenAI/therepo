@@ -16,7 +16,6 @@ export interface BusinessArgs {
 }
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
-    console.log(234234234)
     const supabase = createPagesServerClient({ req, res })
     const {
         data: { session },
