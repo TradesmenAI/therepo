@@ -47,14 +47,14 @@ export const Config = {
             price: 39.99,
             color: '#ed8447',
             tierName: 'Advanced',
-            replies: 250,
+            replies: 150,
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3
         },
         {
             price: 99.99,
             color: '#d43f87',
             tierName: 'Ultimate',
-            replies: 1000,
+            replies: 500,
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4
         }
     ]
@@ -231,9 +231,7 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         }
 
         const data = await res.json();
-
-        console.log(data)
-
+        
         window.location.href = data.url;
     }
 

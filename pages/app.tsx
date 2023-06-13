@@ -82,8 +82,12 @@ export default function App() {
 
 
     const onUpgrage = async()=>{
-        setRedirect(true)
-        await openBillingPortal()
+        if (profile.total_messages === 0) {
+            push('/billing');
+        } else {
+            setRedirect(true)
+            await openBillingPortal()
+        }
     }
 
 
