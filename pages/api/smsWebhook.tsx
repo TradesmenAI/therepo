@@ -64,6 +64,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const status = req.body['SmsStatus']
     const text = req.body['Body']
 
+    const isTestNumber = to === process.env.TEST_NUMBER
+
     const user = await prisma.user.findFirst({where: {
         twilio_number: to
     }})
@@ -94,17 +96,38 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         }})
 
 
-         // TODO: check date last 30 days
-        const used_messages = (await prisma.messageLog.findMany({
-            where: {
-                from: to
-            }
-        })).length
+        let canProceed = true;
+
+        
+        // test number can have max 5 replies
+        if (isTestNumber){
+            const used_ai_replies = (await prisma.messageLog.findMany({
+                where: {
+                    from: to,
+                    // because test number has limit 5 replies per number
+                    // and regular user - per account
+                    to: from,
+                    user_id: 'test'
+                }
+            })).length
+
+            canProceed = used_ai_replies < 5
+        } else {
+            // TODO: check date last 30 days
+            const used_ai_replies = (await prisma.messageLog.findMany({
+                where: {
+                    from: to,
+                    user_id: user.uid
+                }
+            })).length
+
+            canProceed = (used_ai_replies < user.messages_per_month)
+        }
 
         console.log(1)
 
         // If user didn't hit monthly limit send him a message
-        if (used_messages < user.messages_per_month){
+        if (canProceed){
             console.log(2)
             // get message history for this conversation
             const history = await prisma.messageLog.findMany({
@@ -143,7 +166,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             console.log(4)
 
             const response = await openai.createChatCompletion({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 temperature: 0.888,
                 max_tokens: 1000,
                 frequency_penalty: 0,
