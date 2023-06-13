@@ -61,7 +61,6 @@ export const Config = {
 }
 
 
-console.log(JSON.stringify(Config))
 
 const AppContext = createContext<AppContextType>({} as AppContextType);
 
@@ -200,6 +199,10 @@ export function AppProvider({ children }: { children: ReactNode; }) {
      
 
     const subscribe = async (price_id:string) => {
+        console.log(JSON.stringify(Config))
+        console.log(price_id)
+
+
         setPurchaseInProgress(true)
 
         const args:CheckoutArgs = {
