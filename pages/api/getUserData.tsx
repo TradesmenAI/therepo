@@ -49,10 +49,13 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     })
 
     if (!profileData){
+        console.log('Creating new user')
         // create stripe customer
         const customers = await stripe.customers.list({
             email: user.email,
         });
+        console.log('Stripe user created')
+
     
         let customer = undefined;
     
@@ -68,6 +71,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             });
         }
 
+        console.log('Creating profile')
+
+
         // new user, create data
         profileData = await prisma.user.create({data: {
             uid: user.id,
@@ -77,6 +83,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     let used_messages = 0
+
+    
 
     if (profileData.twilio_number){
         used_messages = (await prisma.messageLog.findMany({
