@@ -60,6 +60,9 @@ export const Config = {
     ]
 }
 
+
+console.log(JSON.stringify(Config))
+
 const AppContext = createContext<AppContextType>({} as AppContextType);
 
 export function AppProvider({ children }: { children: ReactNode; }) {
