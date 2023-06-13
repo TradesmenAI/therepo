@@ -183,19 +183,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 // @ts-ignore
                 const response_text = response.data.choices[0].message.content.trim();
                 if (response_text){
-                    // @ts-ignore
-                    const targetNumber = value.target_number;
+                    const targetNumber = from;
                     await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
-    
-                    await prisma.chatRequest.update({data: {
-                        responded: true
-                    },
-                    where: {
-                        // @ts-ignore
-                        id: value.id
-                    }})
                 }
-                console.log(response_text)
             } catch(e){
                 // @ts-ignore
                 console.error(`Failed to get response from openai for chat request [${value.id}]`)
