@@ -34,28 +34,28 @@ export const Config = {
             color: '#5999ff',
             tierName: 'Starter',
             replies: 25,
-            price_id: process.env.PRODUCT_TIER_1
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1
         },
         {
             price: 24.99,
             color: '#e3d024',
             tierName: 'Essential',
             replies: 75,
-            price_id: process.env.PRODUCT_TIER_2
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2
         },
         {
             price: 39.99,
             color: '#ed8447',
             tierName: 'Advanced',
             replies: 250,
-            price_id: process.env.PRODUCT_TIER_3
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3
         },
         {
             price: 99.99,
             color: '#d43f87',
             tierName: 'Ultimate',
             replies: 1000,
-            price_id: process.env.PRODUCT_TIER_4
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4
         }
     ]
 }
@@ -199,10 +199,6 @@ export function AppProvider({ children }: { children: ReactNode; }) {
      
 
     const subscribe = async (price_id:string) => {
-        console.log(JSON.stringify(Config))
-        console.log(price_id)
-
-
         setPurchaseInProgress(true)
 
         const args:CheckoutArgs = {
