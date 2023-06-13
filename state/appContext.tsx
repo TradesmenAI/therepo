@@ -32,30 +32,30 @@ export const Config = {
         {
             price: 14.99,
             color: '#5999ff',
-            tierName: 'Basic',
+            tierName: 'Starter',
             replies: 25,
-            price_id: 'price_1NEYIGHNdYkf8k35cYzGdQYl'
+            price_id: process.env.PRODUCT_TIER_1
         },
         {
             price: 24.99,
             color: '#e3d024',
             tierName: 'Essential',
             replies: 75,
-            price_id: 'price_1NEYIZHNdYkf8k35OHtI78Tm'
+            price_id: process.env.PRODUCT_TIER_2
         },
         {
-            price: 34.99,
+            price: 39.99,
             color: '#ed8447',
             tierName: 'Advanced',
             replies: 250,
-            price_id: 'price_1NEYJ6HNdYkf8k35sTJvikNi'
+            price_id: process.env.PRODUCT_TIER_3
         },
         {
             price: 99.99,
             color: '#d43f87',
             tierName: 'Ultimate',
             replies: 1000,
-            price_id: 'price_1NEYJJHNdYkf8k35GsHsv5eu'
+            price_id: process.env.PRODUCT_TIER_4
         }
     ]
 }
@@ -224,7 +224,7 @@ export function AppProvider({ children }: { children: ReactNode; }) {
                 isClosable: true,
             })
 
-            
+
             return;
         }
 

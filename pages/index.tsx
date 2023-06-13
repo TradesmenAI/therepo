@@ -132,7 +132,7 @@ export default function Home() {
               supabaseClient={supabase}
               appearance={{ theme: ThemeCustom }}
               theme="default"
-              providers={['google']}
+              providers={[]}
               magicLink
               // onlyThirdPartyProviders
           />
