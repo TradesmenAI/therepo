@@ -62,7 +62,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     const billingSession = await stripe.billingPortal.sessions.create({
         customer: profileData.stripe_id,
-        return_url: 'http://localhost:3000/billing',
+        return_url: process.env.BILLING_URL,
     });
 
 
