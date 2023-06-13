@@ -92,6 +92,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     if (!checkoutSession || !checkoutSession.url){
+        console.error('Failed to create checkout session')
+        console.error(checkoutSession)
         return res.status(500)
     }
 
