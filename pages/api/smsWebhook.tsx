@@ -175,7 +175,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 messages: botMessages
             }, { timeout: 60000 });
 
-            console.log(response)
+            console.log(response.data.choices)
 
             console.log(5)
 
