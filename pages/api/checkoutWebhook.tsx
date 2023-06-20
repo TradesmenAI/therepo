@@ -113,8 +113,8 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
 
             if (!twilio_number){
                 const client = new Twilio(accountSid, authToken);
-                const availableNumbers = await client.availablePhoneNumbers('GB').local.list({ smsEnabled: true })
-            
+                const availableNumbers = await client.availablePhoneNumbers('GB').mobile.list({ smsEnabled: true })
+                
                 let userNumber = ''
             
                 for(let i = 0; i < availableNumbers.length; ++i){

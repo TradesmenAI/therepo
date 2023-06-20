@@ -17,6 +17,9 @@ export type CheckoutArgs = {
 }
 
 
+
+
+
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     if (req.method !== 'POST') {
         res.status(405).send({ message: 'Only POST requests allowed' })

@@ -38,12 +38,20 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const caller = req.body['From']
     const targetNumber = req.body['To']
 
+    const rr = new twiml.VoiceResponse();
+    res.setHeader('Content-Type', 'text/xml');
+
+    if (targetNumber ===  process.env.TEST_NUMBER){
+        console.log('Test call')
+        rr.hangup()
+        res.send(rr.toString());
+        return
+    }
+
     const user = await prisma.user.findFirst({where: {
         twilio_number: targetNumber
     }})
 
-    const rr = new twiml.VoiceResponse();
-    res.setHeader('Content-Type', 'text/xml');
 
     // hang up if no sub or no business number
     if (!user || !user.sub_id || !user.business_number?.trim()){
