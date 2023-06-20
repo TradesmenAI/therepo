@@ -115,7 +115,10 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
                 console.log('CREATING TWILIO NUMBER')
                 const client = new Twilio(accountSid, authToken);
                 const availableNumbers = await client.availablePhoneNumbers('GB').local.list({ smsEnabled: true })
-            
+                
+                console.log('Available numbers')
+                console.log(availableNumbers.length)
+                
                 let userNumber = ''
             
                 for(let i = 0; i < availableNumbers.length; ++i){
