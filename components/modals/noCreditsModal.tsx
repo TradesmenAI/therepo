@@ -119,7 +119,7 @@ export default function NoCreditsModal() {
 
               {!loading && (<>
                 <Box justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='20px'>
-                    <Text>Yout phone (used to redirect incoming messages from your customers)</Text>
+                    <Text>Yout phone number:</Text>
 
                     <PhoneInput
                       defaultCountry="gb"

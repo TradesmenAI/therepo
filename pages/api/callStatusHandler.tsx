@@ -30,8 +30,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     try {
-        // console.log('Incoming handler webhook')
-        // console.log(req.body)
+        console.log('Incoming handler webhook')
+        console.log(req.body)
         
         const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']
@@ -40,6 +40,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const subcall_id = req.body['DialCallSid']
     
         if (direction === 'inbound') {
+            if (to === process.env.TEST_NUMBER){
+                
+            }
+
+
             const user = await prisma.user.findFirst({
                 where: {
                     twilio_number: to
