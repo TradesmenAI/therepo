@@ -3,6 +3,9 @@ import { PrismaClient } from '@prisma/client'
 import {validateRequest, twiml, Twilio} from 'twilio';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -38,11 +41,6 @@ const sendSms = async(text:string, from:string, to:string, user_email:string, us
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
-    console.log('Incoming sms webhook')
-
-    console.log(req.body)
-
-    
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = process.env.TWILIO_SMS_WEBHOOK_URL;
 
@@ -173,13 +171,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 presence_penalty: 0,
                 top_p: 1,
                 messages: botMessages
-            }, { timeout: 60000 });
+            }, { timeout: 40000 });
 
             console.log(response.data.choices)
 
             console.log(5)
 
             try {
+                await delay(10_000)
                 // @ts-ignore
                 const response_text = response.data.choices[0].message.content.trim();
                 if (response_text){
