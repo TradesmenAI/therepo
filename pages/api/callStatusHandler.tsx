@@ -40,16 +40,59 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const subcall_id = req.body['DialCallSid']
     
         if (direction === 'inbound') {
-            if (to === process.env.TEST_NUMBER){
-                
-            }
-
-
             const user = await prisma.user.findFirst({
                 where: {
                     twilio_number: to
                 }
             })
+
+            if (!user){
+                console.error(`User with number [${to}] not found`)
+                return res.status(500).end()
+            }
+
+
+            if (to === process.env.TEST_NUMBER){
+                const used_ai_replies = (await prisma.messageLog.findMany({
+                    where: {
+                        from: to, // from test account 
+                        // because test number has limit 5 replies per number
+                        // and regular user - per account
+                        to: from, // to user
+                        user_id: 'test'
+                    }
+                })).length
+
+                if (used_ai_replies < 5){
+                    const tw = new Twilio(accountSid, authToken);
+
+                        try {
+                            await tw.messages.create({
+                                from: user.twilio_number!,
+                                to: from,
+                                body: user.bot_intro_message!,
+                            })
+        
+                            await prisma.messageLog.create({data: {
+                                from: user.twilio_number!,
+                                to: from,
+                                user_id: user.uid,
+                                user_email: user.email,
+                                direction: 'out',
+                                text: user.bot_intro_message!,
+                                customer_number: from
+                            }})
+                        } catch(e){
+                            console.error('Error sending sms')
+                            console.error(e)
+                        }
+                }
+
+                return res.status(200).end()
+            }
+
+
+            
 
             await prisma.callLog.create({data:{
                 from, 
