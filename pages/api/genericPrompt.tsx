@@ -11,12 +11,8 @@ export interface Business {
     intro_msg:string
 }
 
-export interface BusinessArgs {
-    id?:number
-    name:string
-    prompt:string
-    msg:string
-    intro_msg:string
+export interface PromptArgs {
+    value:string
 }
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
@@ -60,33 +56,21 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     if (req.method === 'GET') {
-        const data = await prisma.businessType.findMany({orderBy: [{id: 'asc'}]})
+        const data = await prisma.config.findFirst({where: {
+            key: 'generic_prompt'
+        }})
+
         return res.status(200).json(data)
     }
 
-    const reqData:BusinessArgs = req.body as BusinessArgs;
+    const reqData:PromptArgs = req.body as PromptArgs;
 
-    // Create new business
-    if (req.method === 'POST') {
-        await prisma.businessType.create({data: {
-            name: reqData.name,
-            prompt: reqData.prompt,
-            msg: reqData.msg,
-            intro_msg: reqData.intro_msg
-        }})
 
-        return res.status(200).json({})
-    }
-
-    // Update new business
     if (req.method === 'PUT') {
-        await prisma.businessType.update({data: {
-            name: reqData.name,
-            prompt: reqData.prompt,
-            msg: reqData.msg,
-            intro_msg: reqData.intro_msg
+        await prisma.config.update({data: {
+            value: reqData.value
         }, where: {
-            id: reqData.id!
+            key: 'generic_prompt'
         }})
 
         return res.status(200).json({})

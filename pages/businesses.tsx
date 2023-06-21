@@ -70,6 +70,9 @@ export default function BusinessPage() {
     const [loading, setLoading] = useState(false)
     const [deleting, setDeleting] = useState(false)
     const [deleteId, setDeleteId] = useState(-1)
+    const [p, setP] = useState('')
+    const [s, setS] = useState(false)
+    const [m, setM] = useState('')
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
@@ -88,11 +91,66 @@ export default function BusinessPage() {
         setBusinesses(data as Business[])
 
         setLoading(false);
-      }
+    }
+
+    const fetchPrompt = async()=>{
+        const res = await fetch('/api/genericPrompt', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        setP(data.value)
+    }
+
+    const savePrompt = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericPrompt', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: p})
+        });
+
+        setS(false)
+    }
+
+    const fetchMsg = async()=>{
+        const res = await fetch('/api/genericMessage', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+        setM(data.value)
+    }
+
+    const saveMsg = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericMessage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: m})
+        });
+
+        setS(false)
+    }
 
     useEffect(()=>{
        if (profile && profile.is_admin){
             fetchBusinesses()
+            fetchPrompt()
+            fetchMsg()
        }
       }, [profile])
 
@@ -168,6 +226,19 @@ export default function BusinessPage() {
                 <Show below='700px'><Box height='40px' width='100%'></Box></Show>
                 <ContentHeader title='Businesses' />
 
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Prompt ({`{{jobs}}`} will be replaced with user-selected jobs )</Text>
+                    <Textarea value={p} onChange={(e)=>setP(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={savePrompt}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Default bot message</Text>
+                    <Textarea value={m} onChange={(e)=>setM(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveMsg}>Save</Button>
+               </Flex>
+
+
                 <Flex flexDir='row' width='100%'>
                     <Button size='sm' onClick={()=>{
                         setModalArgs(null)
@@ -181,9 +252,9 @@ export default function BusinessPage() {
                             <Thead>
                             <Tr>
                                 <Th>Name</Th>
-                                <Th>Prompt</Th>
+                                {/* <Th>Prompt</Th>
                                 <Th>Intro message</Th>
-                                <Th>Message</Th>
+                                <Th>Message</Th> */}
                                 <Th  textAlign='center'>Edit</Th>
                                 <Th  textAlign='center'>Delete</Th>
                             </Tr>
@@ -195,10 +266,10 @@ export default function BusinessPage() {
                                 return (
                                     <Tr key={bs.id} >
                                         <Td>{bs.name}</Td>
-                                        <Td>{bs.prompt}</Td>
+                                        {/* <Td>{bs.prompt}</Td>
                                         <Td>{bs.intro_msg}</Td>
 
-                                        <Td>{bs.msg}</Td>
+                                        <Td>{bs.msg}</Td> */}
                                         <Td width='60px' isNumeric><Button colorScheme='blue' size='sm' onClick={()=>onEdit(bs.id)}>Edit</Button></Td>
                                         <Td width='100px' isNumeric>
                                            {bs.id !== Config.otherBusinessId && (

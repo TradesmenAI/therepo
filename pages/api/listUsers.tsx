@@ -61,16 +61,18 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     users.map(user=>{
         let businessType:string|null = ''
 
-        if (user.business_id){
-            const bs = businesses.find(x=>x.id === user.business_id);
-            if (bs) {
-                if (bs.id !== Config.otherBusinessId) {
-                    businessType = bs.name
-                } else {
-                    businessType = user.business_type
-                }
-            } 
-        }
+        // if (user.business_id){
+        //     const bs = businesses.find(x=>x.id === user.business_id);
+        //     if (bs) {
+        //         if (bs.id !== Config.otherBusinessId) {
+        //             businessType = bs.name
+        //         } else {
+        //             businessType = user.business_type
+        //         }
+        //     } 
+        // }
+
+        businessType = user.business_type
 
         result.push({
             email: user.email,

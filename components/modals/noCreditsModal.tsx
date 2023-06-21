@@ -19,6 +19,7 @@ import {
     Divider,
     useToast,
     Box,
+    Checkbox,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useAppContext } from '../../state/appContext';
@@ -39,7 +40,6 @@ export default function NoCreditsModal() {
     const [jobs, setJobs] = useState<any[]>([])
     const [otherValue, setOtherValue] = useState('')
     const [isOther, setIsOther] = useState(false)
-    const [job, setJob] = useState('')
 
 
     useEffect(() => {
@@ -68,41 +68,62 @@ export default function NoCreditsModal() {
         });
 
         if (res.status === 200){
-          const values = await res.json();
+          let values = await res.json();
+          
+          values.map((v:any)=>v['checked'] = false)
+
           setJobs(values)
-  
-          console.log(values)
+          setIsOther(false)
   
           setLoading(false);
         }
       })()
     }, [])
 
-    useEffect(()=>{
-      console.log(job)
-      setIsOther(job === Config.otherBusinessId.toString())
-    }, [job])
 
 
     const savePhone = async()=>{
       setSaving(true)
       await updateProfile('business_number', phone)
-      await updateProfile('business_id', parseInt(job))
-      if (job === Config.otherBusinessId.toString()){
-        await updateProfile('business_type', otherValue)
+
+      let val = ''
+      const selectedJobs = jobs.filter(x=>x.checked)
+      selectedJobs.map(j=>val+=j.name + ', ')
+
+      if (isOther){
+        val += otherValue
+      } else {
+        val = val.substring(0, val.length-2)
       }
+
+      await updateProfile('business_type', val)
+
       setSaving(false)
       onClose()
     }
-    
-    const onSelectChange = (e:any)=>{
-      setJob(e.target.value)
+
+    const onChecked = (jobId:number, val:boolean)=>{
+      setJobs((prev)=>{
+        const newJobs = [...prev]
+
+        newJobs.map(j=>{
+          if (j.id === jobId){
+            j.checked = val
+          }
+        })
+
+        return newJobs
+      })
     }
 
-    let canSubmit = phoneValidation.isValid  && job;
-    if (job === 'other' && !otherValue){
+    const selectedJobs = jobs.filter(x=>x.checked)
+
+    let canSubmit = phoneValidation.isValid  && (selectedJobs.length > 0 || isOther);
+    if (isOther && !otherValue){
       canSubmit = false;
     }
+
+    console.log(selectedJobs)
 
     return (
       <>  
@@ -131,6 +152,13 @@ export default function NoCreditsModal() {
                 <Box mt='25px' justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='10px'>
                     <Text fontWeight='bold'>Business type:</Text>
 
+                    <Flex flexDir='column' maxH='100px' gap={1} overflowY='scroll' w='270px'>
+                    {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
+                          return <Checkbox checked={job.checked} onChange={(e)=>onChecked(job.id, e.target.checked)} >{job.name}</Checkbox>
+                      })}
+                      <Checkbox checked={isOther} onChange={(e:any)=>setIsOther(e.target.checked)}>Other</Checkbox>
+                    </Flex>
+{/* 
                     <Select value={job} placeholder='Select option' w='208px' onChange={onSelectChange}>
                       {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
                           return <option key={job.id} value={job.id}>{job.name}</option>
@@ -138,10 +166,10 @@ export default function NoCreditsModal() {
 
                       <option value={Config.otherBusinessId}>Other</option>
 
-                    </Select>
+                    </Select> */}
 
                     {isOther && (<>
-                      <Input value={otherValue} onChange={(e)=>setOtherValue(e.target.value)} placeholder='Your business type' w='208px'/>
+                      <Input value={otherValue} onChange={(e)=>setOtherValue(e.target.value)} placeholder='Your business type' w='270px' mt='10px'/>
                     </>)}
 
                </Box>
