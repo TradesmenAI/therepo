@@ -63,6 +63,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     }
                 })).length
 
+                console.log('Bot answers: ' + used_ai_replies)
+
                 if (used_ai_replies < 5){
                     const tw = new Twilio(accountSid, authToken);
 
