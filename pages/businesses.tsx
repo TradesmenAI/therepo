@@ -252,9 +252,7 @@ export default function BusinessPage() {
                             <Thead>
                             <Tr>
                                 <Th>Name</Th>
-                                {/* <Th>Prompt</Th>
-                                <Th>Intro message</Th>
-                                <Th>Message</Th> */}
+
                                 <Th  textAlign='center'>Edit</Th>
                                 <Th  textAlign='center'>Delete</Th>
                             </Tr>
@@ -266,10 +264,7 @@ export default function BusinessPage() {
                                 return (
                                     <Tr key={bs.id} >
                                         <Td>{bs.name}</Td>
-                                        {/* <Td>{bs.prompt}</Td>
-                                        <Td>{bs.intro_msg}</Td>
-
-                                        <Td>{bs.msg}</Td> */}
+                                       
                                         <Td width='60px' isNumeric><Button colorScheme='blue' size='sm' onClick={()=>onEdit(bs.id)}>Edit</Button></Td>
                                         <Td width='100px' isNumeric>
                                            {bs.id !== Config.otherBusinessId && (

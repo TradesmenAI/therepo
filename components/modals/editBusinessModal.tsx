@@ -112,20 +112,7 @@ export default function EditBusinessModal() {
                 <Input value={name} onChange={(e)=>setName(e.target.value)}/>
               </Box>
 
-              {/* <Box>
-                <Text>Prompt</Text>
-                <Textarea value={prompt} onChange={(e)=>setPrompt(e.target.value)}/>
-              </Box>
 
-              <Box>
-                <Text>Intro message</Text>
-                <Input value={introMsg} onChange={(e)=>setIntroMsg(e.target.value)}/>
-              </Box>
-
-              <Box>
-                <Text>Message if bot failed</Text>
-                <Input value={msg} onChange={(e)=>setMsg(e.target.value)}/>
-              </Box> */}
             </ModalBody>
   
             <ModalFooter>

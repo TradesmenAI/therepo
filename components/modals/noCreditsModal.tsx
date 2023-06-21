@@ -151,22 +151,15 @@ export default function NoCreditsModal() {
 
                 <Box mt='25px' justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='10px'>
                     <Text fontWeight='bold'>Business type:</Text>
+                    <Text mt='-10px'>(Tick all that apply)</Text>
 
                     <Flex flexDir='column' maxH='100px' gap={1} overflowY='scroll' w='270px'>
-                    {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
-                          return <Checkbox checked={job.checked} onChange={(e)=>onChecked(job.id, e.target.checked)} >{job.name}</Checkbox>
-                      })}
-                      <Checkbox checked={isOther} onChange={(e:any)=>setIsOther(e.target.checked)}>Other</Checkbox>
+                        {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
+                          return <Checkbox key={job.id} checked={job.checked} onChange={(e)=>onChecked(job.id, e.target.checked)} >{job.name}</Checkbox>
+                        })}
+
+                        <Checkbox key='other_key' checked={isOther} onChange={(e:any)=>setIsOther(e.target.checked)}>Other</Checkbox>
                     </Flex>
-{/* 
-                    <Select value={job} placeholder='Select option' w='208px' onChange={onSelectChange}>
-                      {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
-                          return <option key={job.id} value={job.id}>{job.name}</option>
-                      })}
-
-                      <option value={Config.otherBusinessId}>Other</option>
-
-                    </Select> */}
 
                     {isOther && (<>
                       <Input value={otherValue} onChange={(e)=>setOtherValue(e.target.value)} placeholder='Your business type' w='270px' mt='10px'/>
