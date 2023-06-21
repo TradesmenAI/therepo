@@ -85,6 +85,20 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     //@ts-ignore
     updateData[requestData.field_name] = requestData.value;
 
+    if (!profileData.business_type && requestData.field_name === 'business_type'){
+        const promptObj = await prisma.config.findFirst({where: {
+            key: 'generic_prompt'
+        }})
+
+        if (promptObj) {
+            let p = promptObj.value
+            p = p.replace('{{jobs}}', requestData.value)
+
+            //@ts-ignore
+            updateData['prompt'] = p;
+        }
+    }
+
     await prisma.user.update({
         where: {
             uid: profileData.uid
