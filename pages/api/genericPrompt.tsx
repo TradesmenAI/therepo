@@ -16,7 +16,6 @@ export interface PromptArgs {
 }
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
-    console.log(req.method)
     const supabase = createPagesServerClient({ req, res })
     const {
         data: { session },
