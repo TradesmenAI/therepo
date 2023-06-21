@@ -151,6 +151,7 @@ export default function NoCreditsModal() {
 
                 <Box mt='25px' justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='10px'>
                     <Text fontWeight='bold'>Business type:</Text>
+                    <Text mt='-10px'>(Tick all that apply)</Text>
 
                     <Flex flexDir='column' maxH='100px' gap={1} overflowY='scroll' w='270px'>
                         {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
