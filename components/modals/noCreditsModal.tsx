@@ -154,7 +154,7 @@ export default function NoCreditsModal() {
 
                     <Flex flexDir='column' maxH='100px' gap={1} overflowY='scroll' w='270px'>
                         {jobs.filter((x:any)=>x.id !== Config.otherBusinessId).map((job:any)=>{
-                          return <Checkbox checked={job.checked} onChange={(e)=>onChecked(job.id, e.target.checked)} >{job.name}</Checkbox>
+                          return <Checkbox key={job.id} checked={job.checked} onChange={(e)=>onChecked(job.id, e.target.checked)} >{job.name}</Checkbox>
                         })}
 
                         <Checkbox key='other_key' checked={isOther} onChange={(e:any)=>setIsOther(e.target.checked)}>Other</Checkbox>
