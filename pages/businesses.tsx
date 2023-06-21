@@ -73,6 +73,7 @@ export default function BusinessPage() {
     const [p, setP] = useState('')
     const [s, setS] = useState(false)
     const [m, setM] = useState('')
+    const [er, setEr] = useState('')
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
@@ -104,6 +105,33 @@ export default function BusinessPage() {
         const data = await res.json();
 
         setP(data.value)
+    }
+
+    const fetchError = async()=>{
+        const res = await fetch('/api/genericError', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        setEr(data.value)
+    }
+
+    const saveError = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericError', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: er})
+        });
+
+        setS(false)
     }
 
     const savePrompt = async()=>{
@@ -151,6 +179,7 @@ export default function BusinessPage() {
             fetchBusinesses()
             fetchPrompt()
             fetchMsg()
+            fetchError()
        }
       }, [profile])
 
@@ -236,6 +265,12 @@ export default function BusinessPage() {
                     <Text>Default bot message</Text>
                     <Textarea value={m} onChange={(e)=>setM(e.target.value)}/>
                     <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveMsg}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Default error</Text>
+                    <Textarea value={er} onChange={(e)=>setEr(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveError}>Save</Button>
                </Flex>
 
 
