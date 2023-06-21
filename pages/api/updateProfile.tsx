@@ -106,6 +106,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             //@ts-ignore
             updateData['bot_intro_message'] = messageObj.value;
         }
+
+        const errorObj = await prisma.config.findFirst({where: {
+            key: 'generic_error'
+        }})
+
+        if (errorObj){
+            //@ts-ignore
+            updateData['bot_fail_message'] = errorObj.value;
+        }
     }
 
     await prisma.user.update({
