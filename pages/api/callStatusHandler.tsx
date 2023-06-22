@@ -4,6 +4,14 @@ import { PrismaClient } from '@prisma/client'
 import {validateRequest, twiml, Twilio} from 'twilio';
 import { use } from 'react';
 
+export function dateDiffInDays(a:Date, b:Date) {
+    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+    // Discard the time and time-zone information.
+    const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -146,6 +154,58 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         } catch(e){
                             console.error('Error sending sms')
                             console.error(e)
+                        }
+                    }
+                } else {
+                    try {
+                        const errorMsg = (await prisma.config.findFirst({where: {
+                            key: 'generic_error'
+                        }}))!.value
+
+                        const tw = new Twilio(accountSid, authToken);
+
+                        await tw.messages.create({
+                            from: user.twilio_number,
+                            to: from,
+                            body: errorMsg,
+                        })
+                    } catch(e){
+                        console.error(`Failed to send sms with error message`)
+                    }
+
+                    const lastUserMessageDateStr = user.bot_fail_message
+                    let shouldSendWarning = false
+
+                    if (lastUserMessageDateStr){
+                        var restoredDate = new Date(parseInt(lastUserMessageDateStr))
+                        const daysDiff = dateDiffInDays(new Date(), restoredDate)
+                        if (Math.abs(daysDiff) > 3){
+                            shouldSendWarning = true
+                        }
+                    }
+
+                    if (shouldSendWarning){
+                        await prisma.user.update({data: {
+                            bot_fail_message: (new Date()).getTime().toString()
+                        }, where: {
+                            uid: user.uid
+                        }})
+
+
+                        try {
+                            const errorMsg = (await prisma.config.findFirst({where: {
+                                key: 'no_credits_warning'
+                            }}))!.value
+
+                            const tw = new Twilio(accountSid, authToken);
+
+                            await tw.messages.create({
+                                from: user.twilio_number,
+                                to: user.business_number!,
+                                body: errorMsg,
+                            })
+                        } catch(e){
+                            console.error(`Failed to send sms with error message`)
                         }
                     }
                 }

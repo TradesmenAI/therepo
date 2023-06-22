@@ -60,9 +60,9 @@ export default function EditUserModal() {
             setPrompt(user.prompt)
           }
 
-          if (user.bot_fail_message){
-            setBotMsg(user.bot_fail_message)
-          }
+          // if (user.bot_fail_message){
+          //   setBotMsg(user.bot_fail_message)
+          // }
 
           if (user.bot_intro_message){
             setBotIntroMsg(user.bot_intro_message)
@@ -78,7 +78,7 @@ export default function EditUserModal() {
         setSaving(true)
         await updateUser(userId, 'description', details)
         await updateUser(userId, 'prompt', prompt)
-        await updateUser(userId, 'bot_fail_message', botMsg)
+        // await updateUser(userId, 'bot_fail_message', botMsg)
         await updateUser(userId, 'bot_intro_message', botIntroMsg)
 
 
@@ -111,11 +111,11 @@ export default function EditUserModal() {
                 <Text>Intro message</Text>
                 <Input value={botIntroMsg} onChange={(e)=>setBotIntroMsg(e.target.value)}/>
               </Box>
-
+{/* 
               <Box>
                 <Text>Message if bot failed</Text>
                 <Input value={botMsg} onChange={(e)=>setBotMsg(e.target.value)}/>
-              </Box>
+              </Box> */}
             
             </ModalBody>
   

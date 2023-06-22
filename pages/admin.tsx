@@ -136,7 +136,7 @@ export default function Docs() {
                                 <Th>User details</Th>
                                 <Th>Prompt</Th>
                                 <Th>Intro message</Th>
-                                <Th>Fail message</Th>
+                                {/* <Th>Fail message</Th> */}
                             </Tr>
                             </Thead>
                             <Tbody>
@@ -184,11 +184,11 @@ export default function Docs() {
                                             </Textarea>
                                         </Td>
 
-                                        <Td minW='180px' h='80px' p='5px'>
+                                        {/* <Td minW='180px' h='80px' p='5px'>
                                             <Textarea w='100%' h='100%' resize='none' disabled textColor='black' style={{opacity: 1, cursor: 'default', padding: '3px'}} border='1px solid #cccccc'>
                                                 {fail_msg}
                                             </Textarea>
-                                        </Td>
+                                        </Td> */}
 
                                     </Tr>
                                 )

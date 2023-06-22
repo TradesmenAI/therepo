@@ -2,6 +2,8 @@ import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import {validateRequest, twiml, Twilio} from 'twilio';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
+import { dateDiffInDays } from './callStatusHandler';
+
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -14,10 +16,12 @@ const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+
+
 const openai = new OpenAIApi(configuration);
 
 
-const sendSms = async(text:string, from:string, to:string, user_email:string, user_id:string, prisma:PrismaClient)=>{
+const sendSms = async(text:string, from:string, to:string, user_email:string, user_id:string, prisma:PrismaClient, skipLog:boolean = false)=>{
     const tw = new Twilio(accountSid, authToken);
 
     await tw.messages.create({
@@ -26,15 +30,17 @@ const sendSms = async(text:string, from:string, to:string, user_email:string, us
         body: text,
     })
 
-    await prisma.messageLog.create({data: {
-        from,
-        to,
-        user_id,
-        user_email,
-        direction: 'out',
-        text,
-        customer_number: to
-    }})
+    if (!skipLog){
+        await prisma.messageLog.create({data: {
+            from,
+            to,
+            user_id,
+            user_email,
+            direction: 'out',
+            text,
+            customer_number: to
+        }})
+    }
 }
 
 
@@ -191,7 +197,50 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     
     
             }
+        } else {
+            if (!isTestNumber){
+                try {
+                    const errorMsg = (await prisma.config.findFirst({where: {
+                        key: 'generic_error'
+                    }}))!.value
+    
+                    const targetNumber = from;
+                    await sendSms(errorMsg, user.twilio_number!, targetNumber, user.email, user.uid, prisma, true)
+                } catch(e){
+                    console.error(`Failed to send sms with error message`)
+                }
+
+
+                const lastUserMessageDateStr = user.bot_fail_message
+                let shouldSendWarning = false
+
+                if (lastUserMessageDateStr){
+                    var restoredDate = new Date(parseInt(lastUserMessageDateStr))
+                    const daysDiff = dateDiffInDays(new Date(), restoredDate)
+                    if (Math.abs(daysDiff) > 3){
+                        shouldSendWarning = true
+                    }
+                }
+
+                if (shouldSendWarning){
+                    await prisma.user.update({data: {
+                        bot_fail_message: (new Date()).getTime().toString()
+                    }, where: {
+                        uid: user.uid
+                    }})
+
+
+                    try {
+                        const errorMsg = (await prisma.config.findFirst({where: {
+                            key: 'no_credits_warning'
+                        }}))!.value
         
+                        await sendSms(errorMsg, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
+                    } catch(e){
+                        console.error(`Failed to send sms with error message`)
+                    }
+                }
+            }
         }
 
     }
