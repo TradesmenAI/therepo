@@ -123,7 +123,6 @@ export default function NoCreditsModal() {
       canSubmit = false;
     }
 
-    console.log(selectedJobs)
 
     return (
       <>  

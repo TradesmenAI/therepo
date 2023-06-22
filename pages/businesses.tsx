@@ -74,6 +74,7 @@ export default function BusinessPage() {
     const [s, setS] = useState(false)
     const [m, setM] = useState('')
     const [er, setEr] = useState('')
+    const [warn, setWarn] = useState('')
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
@@ -160,6 +161,32 @@ export default function BusinessPage() {
         setM(data.value)
     }
 
+    const fetchWarn = async()=>{
+        const res = await fetch('/api/genericWarning', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+        setWarn(data.value)
+    }
+
+    const saveWarn = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericWarning', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: warn})
+        });
+
+        setS(false)
+    }
+
     const saveMsg = async()=>{
         setS(true)
 
@@ -180,6 +207,7 @@ export default function BusinessPage() {
             fetchPrompt()
             fetchMsg()
             fetchError()
+            fetchWarn()
        }
       }, [profile])
 
@@ -271,6 +299,12 @@ export default function BusinessPage() {
                     <Text>Default error</Text>
                     <Textarea value={er} onChange={(e)=>setEr(e.target.value)}/>
                     <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveError}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>No credits warning</Text>
+                    <Textarea value={warn} onChange={(e)=>setWarn(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveWarn}>Save</Button>
                </Flex>
 
 
