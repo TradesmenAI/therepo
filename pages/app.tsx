@@ -121,45 +121,45 @@ export default function App() {
                     {profile !== null && (<>
 
                         
-                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Virtual phone number</Text>
+                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'black'} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'white'}>Virtual phone number</Text>
                             <Spacer />
-                            <Text fontSize='15px' fontWeight='normal'>
+                            <Text fontSize='15px' fontWeight='normal' color={'white'}>
                             {profile.twilio_number}
                             </Text>
-                            <Icon as={BiCopy} w={5} h={5} color='#4F4F4F' cursor='pointer' marginLeft='10px' onClick={()=> {
+                            <Icon as={BiCopy} w={5} h={5} color='white' cursor='pointer' marginLeft='10px' onClick={()=> {
                                 navigator.clipboard.writeText(profile.twilio_number)
                                 toast.success('Phone Copied')
                             }} />
                             
                         </Flex>
 
-                        <Flex width='100%' gap='10px' flexDir='row' alignItems='center' justifyContent='center' marginTop={1} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Messages/month</Text>
+                        <Flex width='100%' bgColor={'black'} gap='10px' flexDir='row' alignItems='center' justifyContent='center' marginTop={1} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'white'}>Messages/month</Text>
                             <Spacer />
-                            <Button isDisabled={redirect} isLoading={redirect} size='xs' colorScheme='twitter' onClick={onUpgrage}>Upgrade ⚡️</Button>
-                            <Text fontSize='15px' fontWeight='bold'>
+                            <Button isDisabled={redirect} isLoading={redirect} size='xs' colorScheme='green' backgroundColor='#B0F127' _hover={{backgroundColor: '#94d10f'}}  color='black' onClick={onUpgrage}>Upgrade ⚡️</Button>
+                            <Text fontSize='15px' fontWeight='bold' color={'white'}>
                                 {profile.total_messages}
                             </Text>
                         </Flex>
 
-                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Messages left</Text>
+                        <Flex width='100%' bgColor={'black'} flexDir='row' alignItems='center' justifyContent='center' marginTop={2} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'white'}>Messages left</Text>
                             <Spacer />
-                            <Text fontSize='15px' fontWeight='bold'>
+                            <Text fontSize='15px' fontWeight='bold' color={'white'}>
                                 {profile.messages_left}
                             </Text>
                         </Flex>
 
 
-                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Your phone</Text>
+                        <Flex width='100%' bgColor={'black'} flexDir='row' alignItems='center' justifyContent='center' marginTop={2}  padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'white'}>Your phone</Text>
                             <Spacer />
                             <FieldWithRename value={businessPhone} onUpdate={onUpdatePhone} onValidate={onValidatePhone} />
                         </Flex>
 
-                        <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'rgb(246, 248, 250)'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Bot intro message</Text>
+                        <Flex width='100%' bgColor={'black'} flexDir='row' alignItems='center' justifyContent='center' marginTop={2}  padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'white'}>* Bot intro message</Text>
                             <Spacer />
                             <FieldWithRename value={introMsg} onUpdate={onUpdateMessage} onValidate={onValidatePhone} />
                         </Flex>

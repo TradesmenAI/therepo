@@ -30,33 +30,87 @@ export const Config = {
     otherBusinessId: 30,
     plans: [
         {
-            price: 14.99,
+            price: '14.99 / month',
             color: '#5999ff',
             tierName: 'Starter',
             replies: 25,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1,
+            txt: '7 day free trial',
+            btnText: 'FREE 7 DAY TRIAL',
+            annual:false
         },
         {
-            price: 24.99,
+            price: '24.99 / month',
             color: '#e3d024',
             tierName: 'Essential',
             replies: 75,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2,
+            txt: 'Most popular',
+            btnText: 'GET ESSENTIAL',
+            annual:false
         },
         {
-            price: 39.99,
+            price: '39.99 / month',
             color: '#ed8447',
             tierName: 'Advanced',
             replies: 150,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3,
+            txt: 'For busy tradesmen',
+            btnText: 'GET ADVANCED',
+            annual:false
         },
         {
-            price: 99.99,
+            price: '99.99 / month',
             color: '#d43f87',
             tierName: 'Ultimate',
             replies: 500,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4
-        }
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4,
+            txt: 'For large companies',
+            btnText: 'GET ULTIMATE',
+            annual:false
+        },
+
+        // annual
+        {
+            price: '149.99 / year',
+            color: '#5999ff',
+            tierName: 'Starter',
+            replies: 25,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1,
+            txt: '7 day free trial',
+            btnText: 'FREE 7 DAY TRIAL',
+            annual:true
+        },
+        {
+            price: '249.99 / year',
+            color: '#e3d024',
+            tierName: 'Essential',
+            replies: 75,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2,
+            txt: 'Most popular',
+            btnText: 'GET ESSENTIAL',
+            annual:true
+        },
+        {
+            price: '399.99 / year',
+            color: '#ed8447',
+            tierName: 'Advanced',
+            replies: 150,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3,
+            txt: 'For busy tradesmen',
+            btnText: 'GET ADVANCED',
+            annual:true
+        },
+        {
+            price: '999.00 / year',
+            color: '#d43f87',
+            tierName: 'Ultimate',
+            replies: 500,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4,
+            txt: 'For large companies',
+            btnText: 'GET ULTIMATE',
+            annual:true
+        },
     ]
 }
 

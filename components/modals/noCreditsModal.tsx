@@ -139,7 +139,7 @@ export default function NoCreditsModal() {
 
               {!loading && (<>
                 <Box justifyContent='center' alignItems='center' display='flex' flexDirection='column' gap='20px'>
-                    <Text>Yout phone number:</Text>
+                    <Text>Your phone number:</Text>
 
                     <PhoneInput
                       defaultCountry="gb"
@@ -171,8 +171,8 @@ export default function NoCreditsModal() {
             </ModalBody>
   
             <ModalFooter>
-                <Button isLoading={saving} colorScheme='blue' isDisabled={!canSubmit} onClick={savePhone} marginLeft='10px'>
-                      <Text>Save</Text>
+                <Button isLoading={saving} colorScheme='blackAlpha' isDisabled={!canSubmit} onClick={savePhone} marginLeft='10px' backgroundColor='#000' >
+                      <Text color='#B0F127'>Save</Text>
                 </Button>
             </ModalFooter>
           </ModalContent>

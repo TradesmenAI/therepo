@@ -90,7 +90,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
           customer: profileData.stripe_id,
           metadata: {
             id: userId
-          }
+          },
+          subscription_data: {
+            trial_period_days: 7
+         },
     });
 
 

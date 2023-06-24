@@ -24,11 +24,11 @@ export default function SidebarButton(props: { key: any, label: string, icon: an
     };
 
     const isOpened = router.pathname === props.url;
-    const bgColor = isOpened ? '#5b5e731a': 'none';
+    const bgColor = isOpened ? '#303030': 'none';
 
     return (
-        <Flex onClick={clickHandler} backgroundColor={bgColor} alignItems='center' padding='6px' gap='10px' _hover={{backgroundColor: '#5b5e731a'}} borderRadius='5px' cursor='pointer' fontSize='16px'>
-            <Icon as={props.icon} w={4} h={4} color='#4d4b4b' marginLeft='10px' />
+        <Flex onClick={clickHandler} backgroundColor={bgColor} style={{color: 'white'}} alignItems='center' padding='6px' gap='10px' _hover={{backgroundColor: '#303030'}} borderRadius='5px' cursor='pointer' fontSize='16px'>
+            <Icon as={props.icon} w={4} h={4} color='#B0F127' marginLeft='10px' />
             {props.label}
         </Flex>
     )
