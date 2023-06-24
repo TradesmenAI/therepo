@@ -76,7 +76,7 @@ export const Config = {
             color: '#5999ff',
             tierName: 'Starter',
             replies: 25,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_5,
             txt: '7 day free trial',
             btnText: 'FREE 7 DAY TRIAL',
             annual:true
@@ -86,7 +86,7 @@ export const Config = {
             color: '#e3d024',
             tierName: 'Essential',
             replies: 75,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_6,
             txt: 'Most popular',
             btnText: 'GET ESSENTIAL',
             annual:true
@@ -96,7 +96,7 @@ export const Config = {
             color: '#ed8447',
             tierName: 'Advanced',
             replies: 150,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_7,
             txt: 'For busy tradesmen',
             btnText: 'GET ADVANCED',
             annual:true
@@ -106,7 +106,7 @@ export const Config = {
             color: '#d43f87',
             tierName: 'Ultimate',
             replies: 500,
-            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4,
+            price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_8,
             txt: 'For large companies',
             btnText: 'GET ULTIMATE',
             annual:true
