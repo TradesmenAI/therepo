@@ -30,15 +30,6 @@ import
     BiWalletAlt,
     BiPhoneCall
 } from "react-icons/bi";
-import {
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-} from '@chakra-ui/react'
 import HeaderBlock from './headerBlock';
 import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useRouter } from 'next/router'
@@ -151,9 +142,9 @@ export default function Sidebar()
             )}
 
             <Show above='700px'>
-                <Flex width='230px' height='100vh' backgroundColor='#f2f3f5' flexDir='column' padding='10px' gap='10px'>
+                <Flex width='230px' height='100vh' backgroundColor='#000' flexDir='column' padding='10px' gap='10px'>
                     <HeaderBlock/>
-                    <Divider borderColor='#bdbbbb'/>
+                    <Divider borderColor='#fff'/>
                     
                     <>
                         {data.map((item, index) => {
@@ -175,7 +166,7 @@ export default function Sidebar()
 
             <Show below='700px'>
                 <Flex
-                    backgroundColor='#f8f8fa'
+                    backgroundColor='#000'
                     height='40px'
                     width='100%'
                     position='fixed'

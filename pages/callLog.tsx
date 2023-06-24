@@ -85,7 +85,7 @@ export default function CallLog() {
 
                 <Flex  flexDir='column' gap={2} maxW='700px' minW='250px' width='100%' alignItems={'center'} paddingBottom='20px'>
                     <TableContainer w='100%' >
-                        <Table variant='striped' colorScheme='gray' size='sm'>
+                        <Table variant='striped' colorScheme='blackAlpha' size='sm'>
                             <Thead>
                             <Tr>
                                 <Th>Date</Th>
@@ -104,11 +104,12 @@ export default function CallLog() {
                                             <Td>{call.from}</Td>
                                             <Td isNumeric>
                                                 {noAnswer && (<Badge variant='solid' colorScheme='red'>Missed</Badge>)}
-                                                {!noAnswer && (<Badge variant='solid' colorScheme='green'>Answered</Badge>)}
+                                                {!noAnswer && (<Badge variant='solid'  style={{backgroundColor: '#B0F127'}}>Answered</Badge>)}
                                             </Td>
 
                                             <Td isNumeric><IconButton
-                                                colorScheme='blue'
+                                                colorScheme='blackAlpha'
+                                                backgroundColor='black'
                                                 aria-label='Search database'
                                                 size='sm'
                                                 icon={<EmailIcon />}

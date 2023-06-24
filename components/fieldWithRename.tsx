@@ -99,10 +99,10 @@ export default function FieldWithRename(props:Props) {
     }
 
     return (
-        <Flex onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} flexDir='row' alignItems='center' gap='10px' cursor='text' onClick={onStartEdit} _hover={{backgroundColor: '#f8f8f8'}} borderRadius='5px'>
+        <Flex onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} flexDir='row' alignItems='center' gap='10px' cursor='text' onClick={onStartEdit}  borderRadius='5px'>
             {!isEdit && (
                 <>
-                    <Text >{props.value}</Text>
+                    <Text color={'white'}>{props.value}</Text>
                     <Spacer/>
                     <Flex onClick={onEdit} alignItems='center' justifyContent='center' backgroundColor='#ffffff' padding='5px' borderRadius='5px' cursor='pointer' >
                             <Icon as={BiPencil} w={4} h={4} color='black' />
@@ -112,7 +112,7 @@ export default function FieldWithRename(props:Props) {
 
             {isEdit && (
                 <>
-                    <Input isDisabled={isUpdating} placeholder='...' isInvalid={hasError} type={inputType}  height='30px' value={value} onChange={handleChange}   focusBorderColor={hasError?'#d42e22':'#49b9de'} onKeyPress={e=> {
+                    <Input isDisabled={isUpdating} placeholder='...' isInvalid={hasError} type={inputType}  height='30px' value={value} onChange={handleChange} color='white'   focusBorderColor={hasError?'#d42e22':'#B0F127'} onKeyPress={e=> {
                                     if (e.key === 'Enter') {
                                         onSave()
                                     }
@@ -130,7 +130,7 @@ export default function FieldWithRename(props:Props) {
                         </>
                     )}
 
-                    {isUpdating && (<Spinner size='sm' color='blue.500' />)}
+                    {isUpdating && (<Spinner size='sm' color='white' />)}
                 </>
             )}
         </Flex>

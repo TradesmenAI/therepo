@@ -36,6 +36,7 @@ export default function Docs() {
     const [feedback, setFeedback] = useState('')
     const [sending, setSending] = useState(false)
     const [upd1, setUpd1] = useState(false)
+    const [annual, setAnnual] = useState(false)
 
 
    
@@ -82,27 +83,39 @@ export default function Docs() {
 
 
                     {isSubscribed && (
-                        <Button w='220px' colorScheme='blue' isDisabled={sending} isLoading={sending} onClick={onManageSubscription}>Manage subscription</Button>
+                        <Button w='220px' colorScheme='blue' isDisabled={sending} isLoading={sending} onClick={onManageSubscription} backgroundColor='black' color='white' _hover={{backgroundColor: '#2e2e2e'}}>Manage subscription</Button>
                     )}
 
 
                     {profile !== null && (
-                        <Flex width='220px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'#edf2f7'} padding={2} borderRadius='8px'>
-                            <Text fontSize='15px' fontWeight='semibold'>Service enabled</Text>
-                            <Spacer />
-                            {upd1 && (<Spinner size='sm' />)}
-                            <Switch id='email-alerts' colorScheme='green' isChecked={profile.service_enabled} onChange={(e)=>onEnableChange(e.target.checked)} />
+                        <>
+                            <Flex width='220px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'#000'} padding={2} borderRadius='8px'>
+                                <Text fontSize='15px' fontWeight='semibold' color='#fff'>Service enabled</Text>
+                                <Spacer />
+                                {upd1 && (<Spinner size='sm' color='white' />)}
+                                <Switch id='email-alerts' colorScheme='green' isChecked={profile.service_enabled} onChange={(e)=>onEnableChange(e.target.checked)} />
 
-                        </Flex>
-                
+                            </Flex>
+
+                        </>
                     )}
 
                     {profile !== null && !isSubscribed && (
-                        <Flex marginTop='40px' flexDir='row' gap='10px' maxW='100%' flexWrap='wrap' alignItems='center' justifyContent='center'>
-                        {Config.plans.map((plan:any)=>{
-                                return (<Pricing key={plan.price_id} {...plan}/>)
-                        })}
-                        </Flex>
+                       <>
+                            <Flex width='220px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={4} bgColor={'#000'} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color='#fff'>Annual billing</Text>
+                            <Spacer />
+                            {upd1 && (<Spinner size='sm' color='white' />)}
+                            <Switch id='email-alerts' colorScheme='green' isChecked={annual} onChange={(e)=>setAnnual(e.target.checked)} />
+
+                            </Flex>
+                            
+                            <Flex marginTop='0px' flexDir='row' gap='10px' maxW='100%' flexWrap='wrap' alignItems='center' justifyContent='center'>
+                            {Config.plans.filter(x=>x.annual === annual).map((plan:any)=>{
+                                    return (<Pricing key={plan.price_id} {...plan}/>)
+                            })}
+                            </Flex>
+                       </>
                     )}
 
                 </Flex>
