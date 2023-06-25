@@ -102,9 +102,9 @@ export default function FieldWithRename(props:Props) {
         <Flex onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} flexDir='row' alignItems='center' gap='10px' cursor='text' onClick={onStartEdit}  borderRadius='5px'>
             {!isEdit && (
                 <>
-                    <Text color={'white'}>{props.value}</Text>
+                    <Text color={'black'}>{props.value}</Text>
                     <Spacer/>
-                    <Flex onClick={onEdit} alignItems='center' justifyContent='center' backgroundColor='#ffffff' padding='5px' borderRadius='5px' cursor='pointer' >
+                    <Flex onClick={onEdit} alignItems='center' justifyContent='center' backgroundColor='#f2f2f2' padding='5px' borderRadius='5px' cursor='pointer' >
                             <Icon as={BiPencil} w={4} h={4} color='black' />
                         </Flex>
                 </>
@@ -112,7 +112,7 @@ export default function FieldWithRename(props:Props) {
 
             {isEdit && (
                 <>
-                    <Input isDisabled={isUpdating} placeholder='...' isInvalid={hasError} type={inputType}  height='30px' value={value} onChange={handleChange} color='white'   focusBorderColor={hasError?'#d42e22':'#B0F127'} onKeyPress={e=> {
+                    <Input isDisabled={isUpdating} placeholder='...' isInvalid={hasError} type={inputType}  height='30px' value={value} onChange={handleChange} color='black'   focusBorderColor={hasError?'#d42e22':'#B0F127'} onKeyPress={e=> {
                                     if (e.key === 'Enter') {
                                         onSave()
                                     }
@@ -120,11 +120,11 @@ export default function FieldWithRename(props:Props) {
                 
                     {!isUpdating && (
                         <>
-                            <Flex onClick={onSave} alignItems='center' justifyContent='center' backgroundColor='#ffffff' padding='5px' borderRadius='5px' cursor='pointer' _hover={{backgroundColor: '#eeeeee'}}>
+                            <Flex onClick={onSave} alignItems='center' justifyContent='center' backgroundColor='#f2f2f2' padding='5px' borderRadius='5px' cursor='pointer' _hover={{backgroundColor: '#eeeeee'}}>
                                     <Icon as={BiCheck} w={4} h={4} color='green' />
                             </Flex>
 
-                            <Flex onClick={onCancel} alignItems='center' justifyContent='center' backgroundColor='#ffffff' padding='5px' borderRadius='5px' cursor='pointer' _hover={{backgroundColor: '#eeeeee'}}>
+                            <Flex onClick={onCancel} alignItems='center' justifyContent='center' backgroundColor='#f2f2f2' padding='5px' borderRadius='5px' cursor='pointer' _hover={{backgroundColor: '#eeeeee'}}>
                                 <Icon as={BiX} w={4} h={4} color='red' />
                             </Flex>
                         </>
