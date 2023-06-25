@@ -136,6 +136,7 @@ export function AppProvider({ children }: { children: ReactNode; }) {
 
     useEffect(()=>{
         supabase.auth.onAuthStateChange((event, session) => {
+            console.log(event)
             if (event === 'PASSWORD_RECOVERY'){
                 setCurrentModal('recoverPassword')
             }
