@@ -101,7 +101,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 return res.status(200).end()
             }
 
-
+            if (!user.service_enabled){
+                return res.status(200).end()
+            }
             
 
             await prisma.callLog.create({data:{
