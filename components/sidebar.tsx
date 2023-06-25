@@ -38,6 +38,8 @@ import { useEffect } from 'react';
 import NoCreditsModal from './modals/noCreditsModal';
 import { Toaster, toast } from 'sonner';
 import useLocalStorage from "use-local-storage";
+import PassChangeModal from './modals/passChange';
+
 
 export default function Sidebar()
 {
@@ -112,6 +114,7 @@ export default function Sidebar()
         <>
             <Toaster richColors position="bottom-right" />
             <NoCreditsModal/>
+            <PassChangeModal/>
             {isOpen && (
                 <Flex backgroundColor='white'
                     position='fixed'
