@@ -124,12 +124,29 @@ export function AppProvider({ children }: { children: ReactNode; }) {
 
     const toast = useToast()
 
+   
 
     const [profile, setProfile] = useState<any|null>(null);
     const [currentModal, setCurrentModal] = useState<string>('');
     const [modalArgs, setModalArgs] = useState<any>(null);
     const [purchaseInProgress, setPurchaseInProgress] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState(false)
+
+    const supabase = useSupabaseClient()
+
+    useEffect(()=>{
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'PASSWORD_RECOVERY'){
+                setCurrentModal('recoverPassword')
+            }
+
+            if (event === 'SIGNED_OUT'){
+                setCurrentModal('recoverPassword')
+                router.push('/')
+            }   
+          })
+    })
+
   
     const fetchProfile = async() => {
         const res = await fetch('/api/getUserData', {
