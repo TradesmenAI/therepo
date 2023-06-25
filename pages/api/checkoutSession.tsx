@@ -77,7 +77,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //=========== actual logic ===========
 
-    const checkoutSession = await stripe.checkout.sessions.create({
+    let checkoutData:any = {
         line_items: [
             {
               price: requestData.price_id,
@@ -91,10 +91,16 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
           metadata: {
             id: userId
           },
-          subscription_data: {
+          
+    }
+
+    if (requestData.price_id === process.env.NEXT_PUBLIC_PRODUCT_TIER_1 || requestData.price_id === process.env.NEXT_PUBLIC_PRODUCT_TIER_5){
+        checkoutData['subscription_data'] = {
             trial_period_days: 7
-         },
-    });
+         }
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create(checkoutData);
 
 
     if (!checkoutSession || !checkoutSession.url){
