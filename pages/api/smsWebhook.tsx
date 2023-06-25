@@ -74,6 +74,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         twilio_number: to
     }})
 
+
+
     if (user && status === 'received'){
         const uid = req.body['SmsSid']
         const exists = await prisma.messageLog.findFirst({
@@ -81,6 +83,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 message_uid: uid
             }
         })
+
+        if (!user.service_enabled){
+            return res.status(200).end()
+        }
 
         // filter out duplicates
         if (exists){
