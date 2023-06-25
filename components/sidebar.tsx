@@ -178,11 +178,11 @@ export default function Sidebar()
                     alignItems='center'
                 >
                     <Flex onClick={onOpen}  height='40px'  alignItems='center' justifyContent='center' paddingLeft='15px'>
-                        <BiMenu size={30}/>
+                        <BiMenu color='white' size={30}/>
                     </Flex>
 
                     <Spacer/>
-                    <Text marginRight='25px' fontWeight='bold' fontSize='18px'>Callback <span className="text-blue-500">Wizard</span></Text>
+                    <Text marginRight='25px' fontWeight='bold' fontSize='18px' color='white'>Tradesmen <span style={{color: '#B0F127'}}>AI</span></Text>
                 </Flex>
             
             </Show>
