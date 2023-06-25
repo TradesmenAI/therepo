@@ -30,7 +30,13 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     if (req.method === 'GET') {
-        const jobs = await prisma.businessType.findMany()
+        const jobs = await prisma.businessType.findMany({
+            orderBy: [
+                {
+                  name: 'asc',
+                },
+            ],
+        })
         let result:any[] = []
 
         jobs.map((job)=>{
