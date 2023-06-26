@@ -195,7 +195,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 const response_text = response.data.choices[0].message.content.trim();
                 if (response_text){
                     const targetNumber = from;
+                    console.log(6)
                     await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
+                    console.log(7)
+                    
                 }
             } catch(e){
                 // @ts-ignore
