@@ -181,6 +181,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         })
                     } catch(e){
                         console.error(`Failed to send sms with error message`)
+                        console.error(e)
                     }
 
                     const lastUserMessageDateStr = user.bot_fail_message
