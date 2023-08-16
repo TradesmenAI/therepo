@@ -63,7 +63,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER}, forwardingNumber);
+    const dial = rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER});
+
+    dial.number( {
+        machineDetection: 'Enable',
+    }, forwardingNumber)
 
     console.log(rr.toString())
     

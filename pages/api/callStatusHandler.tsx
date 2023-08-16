@@ -121,6 +121,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 user_id: user?user.email:null
             }})
 
+            // handle answering machine here
             if ((status === 'no-answer' || status === 'busy') && user && user.twilio_number && user.sub_id && user.bot_intro_message){
                 const totalMessages = user.messages_per_month
                 const usedMessages = (await prisma.messageLog.findMany({
