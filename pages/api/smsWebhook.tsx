@@ -121,7 +121,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 }
             })).length
 
-            canProceed = used_ai_replies < 5
+            canProceed = used_ai_replies < 5 || (from as string).includes('07392298069')
         } else {
             // TODO: check date last 30 days
             const used_ai_replies = (await prisma.messageLog.findMany({

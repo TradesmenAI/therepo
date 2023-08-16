@@ -46,7 +46,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const to = req.body['To']
         const direction = req.body['Direction'] // must be 'inbound'
         const subcall_id = req.body['DialCallSid']
-    
+        const tw = new Twilio(accountSid, authToken);
+
+
+        const lk = await tw.lookups.v2.phoneNumbers(from)
+        console.log('Lookup:')
+        console.log(lk)
+
+       
         if (direction === 'inbound') {
             const user = await prisma.user.findFirst({
                 where: {
@@ -73,8 +80,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
                 console.log('Bot answers: ' + used_ai_replies)
 
-                if (used_ai_replies < 5){
-                    const tw = new Twilio(accountSid, authToken);
+                // owner has no limits
+                if (used_ai_replies < 5 || (from as string).includes('07392298069')){
 
                         try {
                             await tw.messages.create({
