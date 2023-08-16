@@ -67,6 +67,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     dial.number( {
         machineDetection: 'Enable',
+        amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/test'
     }, forwardingNumber)
 
     console.log(rr.toString())
