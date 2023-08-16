@@ -49,7 +49,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const tw = new Twilio(accountSid, authToken);
 
 
-        const lk = await tw.lookups.v2.phoneNumbers(from)
+        const lk = await tw.lookups.v2.phoneNumbers(from).fetch({fields: 'line_type_intelligence'})
         console.log('Lookup:')
         console.log(lk)
 
