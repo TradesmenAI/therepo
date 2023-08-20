@@ -38,6 +38,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const caller = req.body['From']
     const targetNumber = req.body['To']
 
+    console.log(req.body)
+
     const rr = new twiml.VoiceResponse();
     res.setHeader('Content-Type', 'text/xml');
 
@@ -63,16 +65,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    const dial = rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER, timeout: 3});
-
-
+    const dial = rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER, timeout: 15});
 
     dial.number( {
         machineDetection: 'Enable',
         amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/test'
     }, forwardingNumber)
 
-    console.log(rr.toString())
+    // console.log(rr.toString())
     
     res.send(rr.toString());
     return
