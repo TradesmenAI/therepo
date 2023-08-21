@@ -10,21 +10,20 @@ import { loadStripe } from '@stripe/stripe-js';
 import Head from 'next/head'
 
 const theme = extendTheme({
-  components:{
-    Modal:{
-     baseStyle: {
+  components: {
+    Modal: {
+      baseStyle: {
         dialogContainer: {
-            padding: '10px'
-          }
+          padding: '10px'
         }
+      }
     }
- }
+  }
 })
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-export default function App({ Component, pageProps }: AppProps<{initialSession: Session,}>) 
-{
+export default function App({ Component, pageProps }: AppProps<{ initialSession: Session, }>) {
   const [supabaseClient] = useState(() => createPagesBrowserClient())
 
   return (
@@ -37,9 +36,14 @@ export default function App({ Component, pageProps }: AppProps<{initialSession: 
           <Head>
             <link rel="shortcut icon" href="/image/favicon.ico" />
             <link rel="apple-touch-icon" sizes="180x180" href="/image/apple-touch-icon.png" />
-            <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png"/>
-            <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png"/>
-
+            <link rel="icon" type="image/png" sizes="32x32" href="/image/favicon-32x32.png" />
+            <link rel="icon" type="image/png" sizes="16x16" href="/image/favicon-16x16.png" />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`,
+              }}
+            />
+            <script async src='https://r.wdfl.co/rw.js' data-domains='tradesmenai.com, tradesmenaiportal.com' data-rewardful='f53841'></script>
           </Head>
           <Component {...pageProps} />
         </AppProvider>

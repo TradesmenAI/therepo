@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState, useMemo, useEffect} from "react";
 import { fetcher } from "../config";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Session, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { uuidv4 } from "../utils";
 export const sleep = (time:number) => new Promise(res => setTimeout(res, time, "done sleeping"));
@@ -21,7 +21,7 @@ export interface AppContextType
     purchaseInProgress:boolean,
     updateProfile:(field_name:string, value:any)=>Promise<void>,
     updateUser:(user_uid:string, field_name:string, value:any)=>Promise<void>,
-
+    session:Session|null
     openBillingPortal: any,
     getUsersList:()=>Promise<UserData[]>
 }
@@ -319,7 +319,8 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         updateProfile,
         openBillingPortal,
         getUsersList,
-        updateUser
+        updateUser,
+        session
     } ;
 
     return (
