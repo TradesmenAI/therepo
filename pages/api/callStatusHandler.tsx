@@ -3,6 +3,20 @@ import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml, Twilio } from 'twilio';
 import { use } from 'react';
+import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
+import { sendSms } from './smsWebhook';
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
+
+
+const openai = new OpenAIApi(configuration);
 
 export function dateDiffInDays(a: Date, b: Date) {
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -159,18 +173,30 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 if (usedMessages < totalMessages) {
                     // check if this user already received sms
 
-                    const existingMessages = await prisma.messageLog.findMany({
+                    // const existingMessages = await prisma.messageLog.findMany({
+                    //     where: {
+                    //         from: user.twilio_number,
+                    //         to: from,
+                    //         user_email: user.email,
+                    //         direction: 'out'
+                    //     }
+                    // })
+
+                    const history = await prisma.messageLog.findMany({
                         where: {
-                            from: user.twilio_number,
-                            to: from,
                             user_email: user.email,
-                            direction: 'out'
-                        }
+                            customer_number: from
+                        },orderBy: [
+                            {
+                                id: 'asc'
+                            }
+                        ]
                     })
 
-                    console.log(`Existing msg count: ${existingMessages.length}`)
+                    // console.log(`Existing msg count: ${existingMessages.length}`)
 
-                    if (existingMessages.length === 0) {
+                    // if no previous messages - send intro message
+                    if (history.length === 0) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
@@ -194,6 +220,49 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         } catch (e) {
                             console.error('Error sending sms')
                             console.error(e)
+                        }
+                    } else {
+                        // continue conversation
+                        const botMessages:ChatCompletionRequestMessage[] = []
+
+                        botMessages.push({
+                            role: 'system',
+                            content: user.prompt!
+                        })
+            
+                        history.map((msg)=>{
+                            botMessages.push({
+                                role: msg.direction === 'out'?'assistant':'user',
+                                content: msg.text
+                            })
+                        })
+
+                        const response = await openai.createChatCompletion({
+                            model: "gpt-3.5-turbo",
+                            temperature: 0.888,
+                            max_tokens: 1000,
+                            frequency_penalty: 0,
+                            presence_penalty: 0,
+                            top_p: 1,
+                            messages: botMessages
+                        }, { timeout: 40000 });
+
+                        try {
+                            await delay(10_000)
+                            // @ts-ignore
+                            const response_text = response.data.choices[0].message.content.trim();
+                            if (response_text){
+                                const targetNumber = from;
+                                console.log(6)
+                                await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
+                                console.log(7)
+                                
+                            }
+                        } catch(e){
+                            // @ts-ignore
+                            console.error(`Failed to get response from openai for chat request [${value.id}]`)
+                
+                
                         }
                     }
                 } else {

@@ -21,7 +21,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-const sendSms = async(text:string, from:string, to:string, user_email:string, user_id:string, prisma:PrismaClient, skipLog:boolean = false)=>{
+export const sendSms = async(text:string, from:string, to:string, user_email:string, user_id:string, prisma:PrismaClient, skipLog:boolean = false)=>{
     const tw = new Twilio(accountSid, authToken);
 
     await tw.messages.create({
@@ -127,7 +127,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             const used_ai_replies = (await prisma.messageLog.findMany({
                 where: {
                     from: to,
-                    user_id: user.uid
+                    // user_id: user.uid
                 }
             })).length
 
