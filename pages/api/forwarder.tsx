@@ -1,6 +1,6 @@
 import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
-import {validateRequest, twiml} from 'twilio';
+import { validateRequest, twiml } from 'twilio';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -12,7 +12,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log('Incoming fordwarder webhook')
 
-    
+
 
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = process.env.TWILIO_CALL_FORWARDER_URL;
@@ -25,13 +25,13 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         req.body
     );
 
-    if (!isValidRequest){
+    if (!isValidRequest) {
         console.error('Not valid request signature')
         return res.status(400).end()
     }
 
     const status = req.body['CallStatus']
-    if (status !== 'ringing'){
+    if (status !== 'ringing') {
         return res.status(200).end()
     }
 
@@ -40,23 +40,28 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log(req.body)
 
+
+
     const rr = new twiml.VoiceResponse();
     res.setHeader('Content-Type', 'text/xml');
 
-    if (targetNumber ===  process.env.TEST_NUMBER){
+    if (targetNumber === process.env.TEST_NUMBER) {
         console.log('Test call')
         rr.hangup()
         res.send(rr.toString());
         return
     }
 
-    const user = await prisma.user.findFirst({where: {
-        twilio_number: targetNumber
-    }})
+  
+    const user = await prisma.user.findFirst({
+        where: {
+            twilio_number: targetNumber
+        }
+    })
 
 
     // hang up if no sub or no business number
-    if (!user || !user.sub_id || !user.business_number?.trim()){
+    if (!user || !user.sub_id || !user.business_number?.trim()) {
         console.log('Skipping call, no sub etc')
         rr.hangup()
         res.send(rr.toString());
@@ -65,15 +70,16 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     //forward call
     const forwardingNumber = user.business_number!;
-    const dial = rr.dial({action: process.env.TWILIO_FORWARD_CALL_HANDLER, timeout: 15});
+    const dial = rr.dial({ action: process.env.TWILIO_FORWARD_CALL_HANDLER, timeout: 15 });
 
-    dial.number( {
+    dial.number({
         machineDetection: 'Enable',
-        amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/test'
+        // amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/amd'
+        amdStatusCallback: 'https://tradesmenaiportal.com/api/amd'
     }, forwardingNumber)
 
     // console.log(rr.toString())
-    
+
     res.send(rr.toString());
     return
 }

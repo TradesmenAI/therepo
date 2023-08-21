@@ -53,6 +53,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         const lk = await tw.lookups.v2.phoneNumbers(from).fetch({ fields: 'line_type_intelligence' })
         console.log('Lookup:')
+        console.log(lk.lineTypeIntelligence)
 
 
 
@@ -67,7 +68,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 canSendSms = false;
         }
 
-        console.log(lk.lineTypeIntelligence)
+        const answeredByMachine = ((await prisma.machineCalls.findFirst({where:{callId: subcall_id}})) !== null)
+
 
 
         if (direction === 'inbound') {
@@ -146,7 +148,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             }
 
             // handle answering machine here
-            if ((status === 'no-answer' || status === 'busy') && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
+            if ((status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
                 const totalMessages = user.messages_per_month
                 const usedMessages = (await prisma.messageLog.findMany({
                     where: {

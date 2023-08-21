@@ -7,88 +7,93 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-    uid                 String      @id @unique
-    created_at          DateTime    @default(now())
-    description         String?
-    subscription_status String      @default("")
-    sub_id              String?
-    messages_per_month  Int         @default(0)
-    twilio_number       String?
-    business_number     String?
-    service_enabled     Boolean     @default(true)
-    stripe_id           String      @unique
-    email               String
-    is_admin            Boolean     @default(false)
-    name                String?
-    prompt              String?
-    bot_fail_message    String?
-    bot_intro_message   String?
-    business_type       String?
-    business_id         Int?
+  uid                 String   @id @unique
+  created_at          DateTime @default(now())
+  description         String?
+  subscription_status String   @default("")
+  sub_id              String?
+  messages_per_month  Int      @default(0)
+  twilio_number       String?
+  business_number     String?
+  service_enabled     Boolean  @default(true)
+  stripe_id           String   @unique
+  email               String
+  is_admin            Boolean  @default(false)
+  name                String?
+  prompt              String?
+  bot_fail_message    String?
+  bot_intro_message   String?
+  business_type       String?
+  business_id         Int?
 }
 
 model Payment {
-    id          Int       @id @default(autoincrement())
-    user_id     String
-    product_id  String
-    session_id  String
-    created_at  DateTime @default(now())
-    details     String
+  id         Int      @id @default(autoincrement())
+  user_id    String
+  product_id String
+  session_id String
+  created_at DateTime @default(now())
+  details    String
 }
 
 model SubscriptionMeta {
-    id                  Int       @id @default(autoincrement())
-    user_id             String
-    stripe_id           String
-    price_id            String
-    subscription_id     String
-    created_at          DateTime    @default(now())
+  id              Int      @id @default(autoincrement())
+  user_id         String
+  stripe_id       String
+  price_id        String
+  subscription_id String
+  created_at      DateTime @default(now())
 }
 
 model Config {
-    key                 String @id
-    value               String @default("")
+  key   String @id
+  value String @default("")
 }
 
 model BusinessType {
-  id                  Int       @id @default(autoincrement())
-  name                String
-  prompt              String
-  msg                 String
-  intro_msg           String    @default("Sorry we missed your call. What service are you interested in?")
+  id        Int    @id @default(autoincrement())
+  name      String
+  prompt    String
+  msg       String
+  intro_msg String @default("Sorry we missed your call. What service are you interested in?")
 }
 
 model CallLog {
-  id                  Int       @id @default(autoincrement())
-  created_at          DateTime    @default(now())
-  from                String
-  to                  String
-  status              String
-  subcall_id          String
-  user_id             String?
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  from       String
+  to         String
+  status     String
+  subcall_id String
+  user_id    String?
 }
 
 model MessageLog {
-  id                  Int       @id @default(autoincrement())
-  created_at          DateTime    @default(now())
-  from                String
-  to                  String
-  user_id             String?
-  user_email          String?
-  direction           String
-  text                String
-  customer_number     String?
-  message_uid         String?
+  id              Int      @id @default(autoincrement())
+  created_at      DateTime @default(now())
+  from            String
+  to              String
+  user_id         String?
+  user_email      String?
+  direction       String
+  text            String
+  customer_number String?
+  message_uid     String?
 }
 
 model ChatRequest {
-  id                  Int         @id @default(autoincrement())
-  created_at          DateTime    @default(now())
-  messages            String
-  responded           Boolean     @default(false)
-  response            String?
-  target_number       String
-  user_email          String
+  id            Int      @id @default(autoincrement())
+  created_at    DateTime @default(now())
+  messages      String
+  responded     Boolean  @default(false)
+  response      String?
+  target_number String
+  user_email    String
+}
+
+
+model MachineCalls {
+  id     Int    @id @default(autoincrement())
+  callId String
 }
