@@ -79,7 +79,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             details: user.description,
             phone: user.business_number,
             twilio_phone: user.twilio_number,
-            subscsription: user.sub_id,
+            subscsription: user.subscription_status,
             service_enabled: user.service_enabled,
             register_date: user.created_at,
             uid:user.uid,
