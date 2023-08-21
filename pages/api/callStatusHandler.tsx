@@ -113,7 +113,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 console.log('Bot answers: ' + used_ai_replies)
 
                 // owner has no limits
-                if (used_ai_replies < 5 || (from as string).includes('07392298069')) {
+                if (used_ai_replies < 5 || (from as string).includes('7392298069')) {
 
                     try {
                         await tw.messages.create({
