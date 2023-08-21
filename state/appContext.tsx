@@ -135,18 +135,22 @@ export function AppProvider({ children }: { children: ReactNode; }) {
     const supabase = useSupabaseClient()
 
     useEffect(()=>{
-        supabase.auth.onAuthStateChange((event, session) => {
-            console.log(event)
-            if (event === 'PASSWORD_RECOVERY'){
-                setCurrentModal('recoverPassword')
-            }
+        const action = router.query.action as string
 
+        if (action === 'pass-reset') {
+            router.replace('/app', undefined, { shallow: true });
+            setCurrentModal('recoverPassword')
+        }
+
+    }, [router])
+
+    useEffect(()=>{
+        supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_OUT'){
-                setCurrentModal('recoverPassword')
                 router.push('/')
             }   
           })
-    })
+    }, [supabase])
 
   
     const fetchProfile = async() => {
