@@ -348,7 +348,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         console.error(e)
     }
 
-
+    res.setHeader('Content-Type', 'text/xml');
     return res.status(200).end()
 }
 
