@@ -95,7 +95,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
             if (!user) {
                 console.error(`User with number [${to}] not found`)
-                return res.status(500).end()
+                return Send(res, 200)
             }
 
 
@@ -139,11 +139,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     }
                 }
 
-                return res.status(200).end()
+                return Send(res, 200)
             }
 
             if (!user.service_enabled) {
-                return res.status(200).end()
+                return Send(res, 200)
             }
 
 
@@ -158,7 +158,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             })
 
             if (!canSendSms) {
-                return res.status(200).end()
+                return Send(res, 200)
             }
 
             // handle answering machine here
@@ -351,8 +351,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     // const rr = new twiml.VoiceResponse();
     // rr.
 
+    return Send(res, 200)
+}
+
+function Send(res:any, code:number){
     res.setHeader('Content-Type', 'text/xml');
-    return res.status(200).send('<Response/>')
+    return res.status(200).send('<Response/>') 
 }
 
 export default ProtectedRoute
