@@ -348,8 +348,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         console.error(e)
     }
 
+    // const rr = new twiml.VoiceResponse();
+    // rr.
+
     res.setHeader('Content-Type', 'text/xml');
-    return res.status(200).end()
+    return res.status(200).send('<Response/>')
 }
 
 export default ProtectedRoute
