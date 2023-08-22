@@ -1,12 +1,12 @@
 import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
-import {validateRequest, twiml, Twilio} from 'twilio';
+import { validateRequest, twiml, Twilio } from 'twilio';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 import { dateDiffInDays } from './callStatusHandler';
 
 
 function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -21,7 +21,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-export const sendSms = async(text:string, from:string, to:string, user_email:string, user_id:string, prisma:PrismaClient, skipLog:boolean = false)=>{
+export const sendSms = async (text: string, from: string, to: string, user_email: string, user_id: string, prisma: PrismaClient, skipLog: boolean = false) => {
     const tw = new Twilio(accountSid, authToken);
 
     await tw.messages.create({
@@ -30,16 +30,18 @@ export const sendSms = async(text:string, from:string, to:string, user_email:str
         body: text,
     })
 
-    if (!skipLog){
-        await prisma.messageLog.create({data: {
-            from,
-            to,
-            user_id,
-            user_email,
-            direction: 'out',
-            text,
-            customer_number: to
-        }})
+    if (!skipLog) {
+        await prisma.messageLog.create({
+            data: {
+                from,
+                to,
+                user_id,
+                user_email,
+                direction: 'out',
+                text,
+                customer_number: to
+            }
+        })
     }
 }
 
@@ -58,7 +60,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         req.body
     );
 
-    if (!isValidRequest){
+    if (!isValidRequest) {
         console.error('Not valid request signature')
         return res.status(400).end()
     }
@@ -70,13 +72,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     const isTestNumber = to === process.env.TEST_NUMBER
 
-    const user = await prisma.user.findFirst({where: {
-        twilio_number: to
-    }})
+    const user = await prisma.user.findFirst({
+        where: {
+            twilio_number: to
+        }
+    })
 
 
 
-    if (user && status === 'received'){
+    if (user && status === 'received') {
         const uid = req.body['SmsSid']
         const exists = await prisma.messageLog.findFirst({
             where: {
@@ -84,33 +88,35 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             }
         })
 
-        if (!user.service_enabled){
+        if (!user.service_enabled) {
             return res.status(200).end()
         }
 
         // filter out duplicates
-        if (exists){
+        if (exists) {
             return res.status(200).end()
         }
 
         // add message to the log
-        await prisma.messageLog.create({data: {
-            from,
-            to,
-            text,
-            user_id: user.uid,
-            user_email: user.email,
-            direction: 'in',
-            customer_number: from,
-            message_uid: uid
-        }})
+        await prisma.messageLog.create({
+            data: {
+                from,
+                to,
+                text,
+                user_id: user.uid,
+                user_email: user.email,
+                direction: 'in',
+                customer_number: from,
+                message_uid: uid
+            }
+        })
 
 
         let canProceed = true;
 
-        
+
         // test number can have max 5 replies
-        if (isTestNumber){
+        if (isTestNumber) {
             const used_ai_replies = (await prisma.messageLog.findMany({
                 where: {
                     from: to,
@@ -138,14 +144,18 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         console.log(1)
 
         // If user didn't hit monthly limit send him a message
-        if (canProceed){
+        if (canProceed) {
+            if (user.business_number) {
+                await sendSms(`Customer: ${text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+            }
+
             console.log(2)
             // get message history for this conversation
             const history = await prisma.messageLog.findMany({
                 where: {
                     user_email: user.email,
                     customer_number: from
-                },orderBy: [
+                }, orderBy: [
                     {
                         id: 'asc'
                     }
@@ -159,17 +169,17 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             //     target_number: from,
             //     user_email: user.email
             // }})
-    
-            const botMessages:ChatCompletionRequestMessage[] = []
+
+            const botMessages: ChatCompletionRequestMessage[] = []
 
             botMessages.push({
                 role: 'system',
                 content: user.prompt!
             })
 
-            history.map((msg)=>{
+            history.map((msg) => {
                 botMessages.push({
-                    role: msg.direction === 'out'?'assistant':'user',
+                    role: msg.direction === 'out' ? 'assistant' : 'user',
                     content: msg.text
                 })
             })
@@ -194,29 +204,35 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 await delay(10_000)
                 // @ts-ignore
                 const response_text = response.data.choices[0].message.content.trim();
-                if (response_text){
+                if (response_text) {
                     const targetNumber = from;
                     console.log(6)
                     await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
                     console.log(7)
-                    
+
+                    if (user.business_number) {
+                        await sendSms(`AI: ${response_text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+                    }
+
                 }
-            } catch(e){
+            } catch (e) {
                 // @ts-ignore
                 console.error(`Failed to get response from openai for chat request [${value.id}]`)
-    
-    
+
+
             }
         } else {
-            if (!isTestNumber){
+            if (!isTestNumber) {
                 try {
-                    const errorMsg = (await prisma.config.findFirst({where: {
-                        key: 'generic_error'
-                    }}))!.value
-    
+                    const errorMsg = (await prisma.config.findFirst({
+                        where: {
+                            key: 'generic_error'
+                        }
+                    }))!.value
+
                     const targetNumber = from;
                     await sendSms(errorMsg, user.twilio_number!, targetNumber, user.email, user.uid, prisma, true)
-                } catch(e){
+                } catch (e) {
                     console.error(`Failed to send sms with error message`)
                 }
 
@@ -224,29 +240,33 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 const lastUserMessageDateStr = user.bot_fail_message
                 let shouldSendWarning = false
 
-                if (lastUserMessageDateStr){
+                if (lastUserMessageDateStr) {
                     var restoredDate = new Date(parseInt(lastUserMessageDateStr))
                     const daysDiff = dateDiffInDays(new Date(), restoredDate)
-                    if (Math.abs(daysDiff) > 3){
+                    if (Math.abs(daysDiff) > 3) {
                         shouldSendWarning = true
                     }
                 }
 
-                if (shouldSendWarning){
-                    await prisma.user.update({data: {
-                        bot_fail_message: (new Date()).getTime().toString()
-                    }, where: {
-                        uid: user.uid
-                    }})
+                if (shouldSendWarning) {
+                    await prisma.user.update({
+                        data: {
+                            bot_fail_message: (new Date()).getTime().toString()
+                        }, where: {
+                            uid: user.uid
+                        }
+                    })
 
 
                     try {
-                        const errorMsg = (await prisma.config.findFirst({where: {
-                            key: 'no_credits_warning'
-                        }}))!.value
-        
+                        const errorMsg = (await prisma.config.findFirst({
+                            where: {
+                                key: 'no_credits_warning'
+                            }
+                        }))!.value
+
                         await sendSms(errorMsg, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
-                    } catch(e){
+                    } catch (e) {
                         console.error(`Failed to send sms with error message`)
                     }
                 }

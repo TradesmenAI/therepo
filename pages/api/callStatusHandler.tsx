@@ -7,7 +7,7 @@ import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 import { sendSms } from './smsWebhook';
 
 function delay(ms: number) {
-    return new Promise( resolve => setTimeout(resolve, ms) );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const configuration = new Configuration({
@@ -79,10 +79,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             || phoneType === 'tollFree'
             || phoneType === 'voicemail'
             || phoneType === 'pager') {
-                canSendSms = false;
+            canSendSms = false;
         }
 
-        const answeredByMachine = ((await prisma.machineCalls.findFirst({where:{callId: subcall_id}})) !== null)
+        const answeredByMachine = ((await prisma.machineCalls.findFirst({ where: { callId: subcall_id } })) !== null)
 
 
 
@@ -157,7 +157,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 }
             })
 
-            if (!canSendSms){
+            if (!canSendSms) {
                 return res.status(200).end()
             }
 
@@ -186,7 +186,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         where: {
                             user_email: user.email,
                             customer_number: from
-                        },orderBy: [
+                        }, orderBy: [
                             {
                                 id: 'asc'
                             }
@@ -200,11 +200,22 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
+                            // Send intro message from bot to user
                             await tw.messages.create({
                                 from: user.twilio_number,
                                 to: from,
                                 body: user.bot_intro_message,
                             })
+
+
+                            if (user.business_number) {
+                                // Send copy to tradesmen
+                                await tw.messages.create({
+                                    from: user.twilio_number,
+                                    to: user.business_number,
+                                    body: `AI: ${user.bot_intro_message}`,
+                                })
+                            }
 
                             await prisma.messageLog.create({
                                 data: {
@@ -223,16 +234,16 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         }
                     } else {
                         // continue conversation
-                        const botMessages:ChatCompletionRequestMessage[] = []
+                        const botMessages: ChatCompletionRequestMessage[] = []
 
                         botMessages.push({
                             role: 'system',
                             content: user.prompt!
                         })
-            
-                        history.map((msg)=>{
+
+                        history.map((msg) => {
                             botMessages.push({
-                                role: msg.direction === 'out'?'assistant':'user',
+                                role: msg.direction === 'out' ? 'assistant' : 'user',
                                 content: msg.text
                             })
                         })
@@ -251,18 +262,22 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                             await delay(10_000)
                             // @ts-ignore
                             const response_text = response.data.choices[0].message.content.trim();
-                            if (response_text){
+                            if (response_text) {
                                 const targetNumber = from;
                                 console.log(6)
                                 await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
                                 console.log(7)
-                                
+
+                                if (user.business_number) {
+                                    //send copy to tradesmen
+                                    await sendSms(`AI: ${response_text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+                                }
                             }
-                        } catch(e){
+                        } catch (e) {
                             // @ts-ignore
                             console.error(`Failed to get response from openai for chat request [${value.id}]`)
-                
-                
+
+
                         }
                     }
                 } else {
