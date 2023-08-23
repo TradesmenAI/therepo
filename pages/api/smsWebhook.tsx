@@ -146,7 +146,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         // If user didn't hit monthly limit send him a message
         if (canProceed) {
             if (user.business_number) {
-                await sendSms(`Customer: ${text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+                await sendSms(`Customer (${from}): ${text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
             }
 
             console.log(2)
