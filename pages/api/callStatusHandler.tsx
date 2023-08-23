@@ -164,13 +164,26 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             // handle answering machine here
             if ((status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
                 const totalMessages = user.messages_per_month
+                // TODO: use date from sub date
+                const lastDay = Date.now() - (720 * 60 * 60 * 1000);
+                const lastDate = new Date(lastDay).toISOString();
+
                 const usedMessages = (await prisma.messageLog.findMany({
                     where: {
-                        from: user.twilio_number
+                        AND: [
+                            {
+                                from: user.twilio_number
+                            },
+                            {
+                                created_at: {
+                                    gte: lastDate
+                                }
+                            }
+                        ]
                     }
                 })).length
 
-                const creditsWarning = (totalMessages - usedMessages) === 5; 
+                const creditsWarning = (totalMessages - usedMessages) === 5;
                 const warningText = 'Your AI only has 5 texts remaining! To re-enable your service you will need to upgrade your account in your portal ( located here: https://tradesmenaiportal.com/billing ) or wait until next month when your credits will be reinstated.'
 
                 if (usedMessages < totalMessages) {
@@ -284,10 +297,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         }
                     }
 
-                    if (creditsWarning && user.business_number){
+                    if (creditsWarning && user.business_number) {
                         await sendSms(warningText, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
                     }
-                   
+
                 } else {
                     try {
                         const errorMsg = (await prisma.config.findFirst({
@@ -362,9 +375,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     return Send(res, 200)
 }
 
-function Send(res:any, code:number){
+function Send(res: any, code: number) {
     res.setHeader('Content-Type', 'text/xml');
-    return res.status(200).send('<Response/>') 
+    return res.status(200).send('<Response/>')
 }
 
 export default ProtectedRoute
