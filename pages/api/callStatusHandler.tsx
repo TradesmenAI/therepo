@@ -170,6 +170,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     }
                 })).length
 
+                const creditsWarning = (totalMessages - usedMessages) === 5; 
+                const warningText = 'Your AI only has 5 texts remaining! To re-enable your service you will need to upgrade your account in your portal ( located here: https://tradesmenaiportal.com/billing ) or wait until next month when your credits will be reinstated.'
+
                 if (usedMessages < totalMessages) {
                     // check if this user already received sms
 
@@ -213,7 +216,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                                 await tw.messages.create({
                                     from: user.twilio_number,
                                     to: user.business_number,
-                                    body: `AI: ${user.bot_intro_message}`,
+                                    body: `You missed a call from ${from} and your AI responded with: ${user.bot_intro_message}`,
                                 })
                             }
 
@@ -280,6 +283,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
                         }
                     }
+
+                    if (creditsWarning && user.business_number){
+                        await sendSms(warningText, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+                    }
+                   
                 } else {
                     try {
                         const errorMsg = (await prisma.config.findFirst({

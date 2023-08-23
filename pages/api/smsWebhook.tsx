@@ -114,6 +114,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         let canProceed = true;
 
+        let creditsWarning = false; 
+        const warningText = 'Your AI only has 5 texts remaining! To re-enable your service you will need to upgrade your account in your portal ( located here: https://tradesmenaiportal.com/billing ) or wait until next month when your credits will be reinstated.'
 
         // test number can have max 5 replies
         if (isTestNumber) {
@@ -139,6 +141,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             })).length
 
             canProceed = (used_ai_replies < user.messages_per_month)
+            creditsWarning = (user.messages_per_month - used_ai_replies) === 5
+        }
+
+        if (creditsWarning && user.business_number){
+            await sendSms(warningText, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
         }
 
         console.log(1)
