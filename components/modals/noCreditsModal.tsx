@@ -27,6 +27,7 @@ import { PhoneInput, usePhoneValidation } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { Select } from '@chakra-ui/react'
 import { Config } from '../../state/appContext';
+import { useRouter } from 'next/router';
 
 
 
@@ -40,6 +41,8 @@ export default function NoCreditsModal() {
     const [jobs, setJobs] = useState<any[]>([])
     const [otherValue, setOtherValue] = useState('')
     const [isOther, setIsOther] = useState(false)
+
+    const {push} = useRouter()
 
 
     useEffect(() => {
@@ -100,6 +103,8 @@ export default function NoCreditsModal() {
 
       setSaving(false)
       onClose()
+
+      push('/billing')
     }
 
     const onChecked = (jobId:number, val:boolean)=>{
