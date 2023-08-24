@@ -33,7 +33,7 @@ export const Config = {
             price: '14.99 / month',
             color: '#5999ff',
             tierName: 'Starter',
-            replies: 25,
+            replies: 15,
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1,
             txt: '7 day free trial',
             btnText: 'FREE 7 DAY TRIAL',
