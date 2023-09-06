@@ -278,7 +278,8 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         setPurchaseInProgress(true)
 
         const args:CheckoutArgs = {
-            okUrl: window.location.href + '?purchaseResult=success&session_id={CHECKOUT_SESSION_ID}' ,
+            okUrl: 'https://www.tradesmenai.com/purchase-complete',
+            // okUrl: window.location.href + '?purchaseResult=success&session_id={CHECKOUT_SESSION_ID}' ,
             errorUrl: window.location.href + '?purchaseResult=error',
             price_id
         }
