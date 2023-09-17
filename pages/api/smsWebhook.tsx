@@ -164,16 +164,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         // If user didn't hit monthly limit send him a message
         if (canProceed) {
-            if (user.business_number) {
-                await sendSms(`Customer (${from}): ${text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
-            }
-
             console.log(2)
             // get message history for this conversation
             const history = await prisma.messageLog.findMany({
                 where: {
-                    user_email: user.email,
-                    customer_number: from
+                    user_email: user.email, // email of the tradesmen
+                    customer_number: from   // number of the calling/writing customer
                 }, orderBy: [
                     {
                         id: 'asc'
@@ -181,6 +177,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                 ]
             })
             console.log(3)
+
+            const incomingMessagesLength = history.filter(h => h.direction === 'in').length;
+
+            // if this is first message from user - notify tradesman
+            if (incomingMessagesLength === 0 && !isTestNumber && user.business_number) {
+                const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${from}`
+                await sendSms(txt, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
+            }
 
             // used if there is a background task
             // await prisma.chatRequest.create({data:{
@@ -228,17 +232,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     console.log(6)
                     await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
                     console.log(7)
-
-                    if (user.business_number) {
-                        await sendSms(`AI: ${response_text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
-                    }
-
                 }
             } catch (e) {
                 // @ts-ignore
                 console.error(`Failed to get response from openai for chat request [${value.id}]`)
-
-
             }
         } else {
             if (!isTestNumber) {

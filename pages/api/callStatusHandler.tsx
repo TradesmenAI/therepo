@@ -56,8 +56,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         console.log(req.body)
 
         const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
-        const from = req.body['From']
-        const to = req.body['To']
+        const from = req.body['From']   // Customer number 
+        const to = req.body['To']       // Tradesmen twilio number
         const direction = req.body['Direction'] // must be 'inbound'
         const subcall_id = req.body['DialCallSid']
         const tw = new Twilio(accountSid, authToken);
@@ -65,6 +65,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         let canSendSms = true;
 
+        // Check caller phone number type - landline, mobile, etc
         const lk = await tw.lookups.v2.phoneNumbers(from).fetch({ fields: 'line_type_intelligence' })
         console.log('Lookup:')
         console.log(lk.lineTypeIntelligence)
@@ -85,11 +86,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const answeredByMachine = ((await prisma.machineCalls.findFirst({ where: { callId: subcall_id } })) !== null)
 
 
-
         if (direction === 'inbound') {
+            // Find tradesmen profile
             const user = await prisma.user.findFirst({
                 where: {
-                    twilio_number: to
+                    twilio_number: to // tradesment twilio number
                 }
             })
 
@@ -99,33 +100,35 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             }
 
 
+            // check if the call was made to test number
+            // if yes - answer user only if total number of SENT messages by AI is < 5
             if (to === process.env.TEST_NUMBER) {
                 const used_ai_replies = (await prisma.messageLog.findMany({
                     where: {
-                        from: to, // from test account 
+                        from: to, // find calls from test twilio number
                         // because test number has limit 5 replies per number
                         // and regular user - per account
-                        to: from, // to user
-                        user_id: 'test'
+                        to: from, // to customer that made this call
+                        user_id: user.uid
                     }
                 })).length
 
-                console.log('Bot answers: ' + used_ai_replies)
+                // console.log('Bot answers: ' + used_ai_replies)
 
                 // owner has no limits
                 if (used_ai_replies < 5 || (from as string).includes('7392298069')) {
 
                     try {
                         await tw.messages.create({
-                            from: user.twilio_number!,
-                            to: from,
-                            body: user.bot_intro_message!,
+                            from: to, // from twilio test number
+                            to: from, // to customer number
+                            body: user.bot_intro_message!, // send intro message
                         })
 
                         await prisma.messageLog.create({
                             data: {
-                                from: user.twilio_number!,
-                                to: from,
+                                from: to, // from twilio test number
+                                to: from, // to customer number
                                 user_id: user.uid,
                                 user_email: user.email,
                                 direction: 'out',
@@ -172,7 +175,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     where: {
                         AND: [
                             {
-                                from: user.twilio_number
+                                from: to // from user twilio number (basically from AI)
                             },
                             {
                                 created_at: {
@@ -222,16 +225,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                                 to: from,
                                 body: user.bot_intro_message,
                             })
-
-
-                            if (user.business_number) {
-                                // Send copy to tradesmen
-                                await tw.messages.create({
-                                    from: user.twilio_number,
-                                    to: user.business_number,
-                                    body: `You missed a call from ${from} and your AI responded with: ${user.bot_intro_message}`,
-                                })
-                            }
 
                             await prisma.messageLog.create({
                                 data: {
@@ -283,24 +276,16 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                                 console.log(6)
                                 await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
                                 console.log(7)
-
-                                if (user.business_number) {
-                                    //send copy to tradesmen
-                                    await sendSms(`AI: ${response_text}`, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
-                                }
                             }
                         } catch (e) {
                             // @ts-ignore
                             console.error(`Failed to get response from openai for chat request [${value.id}]`)
-
-
                         }
                     }
 
                     if (creditsWarning && user.business_number) {
                         await sendSms(warningText, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
                     }
-
                 } else {
                     try {
                         const errorMsg = (await prisma.config.findFirst({
