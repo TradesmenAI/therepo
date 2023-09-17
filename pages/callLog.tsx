@@ -32,7 +32,7 @@ import {
     Td,
     TableCaption,
     TableContainer,
-  } from '@chakra-ui/react'
+} from '@chakra-ui/react'
 import NoCreditsModal from '../components/modals/noCreditsModal'
 import { redirect } from 'next/navigation';
 import { useRouter } from 'next/router'
@@ -44,16 +44,23 @@ import MessagesModal from '../components/modals/messagesModal';
 
 
 export default function CallLog() {
-    const { updateProfile, profile, setCurrentModal, setModalArgs} = useAppContext();
-    const {push} = useRouter()
+    const { updateProfile, profile, setCurrentModal, setModalArgs } = useAppContext();
+    const { push, query: { from } } = useRouter()
     const [calls, setCalls] = useState<CallData[]>([])
     const [loading, setLoading] = useState(false)
 
-    const fetchCalls = async()=>{
+    useEffect(() => {
+        if (from && calls.length > 0) {
+            setModalArgs(from)
+            setCurrentModal('messagesModal')
+        }
+    }, [from, calls])
+
+    const fetchCalls = async () => {
         const res = await fetch('/api/calls', {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             }
         });
 
@@ -61,21 +68,21 @@ export default function CallLog() {
         setCalls(data as CallData[])
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setLoading(true)
         fetchCalls()
     }, [])
 
 
     return (
-        
+
         <Flex dir='row'>
             <Sidebar />
 
-            <Toaster  />
-            <MessagesModal/>
+            <Toaster />
+            <MessagesModal />
 
-            <NoCreditsModal/>
+            <NoCreditsModal />
 
             <Flex padding='20px' flexDir='column' flexGrow={1} gap={5} alignItems='center' height='100vh' overflowY='scroll' overflowX='hidden'>
 
@@ -83,20 +90,20 @@ export default function CallLog() {
 
                 <ContentHeader title='Call log' />
 
-                <Flex  flexDir='column' gap={2} maxW='700px' minW='250px' width='100%' alignItems={'center'} paddingBottom='20px'>
+                <Flex flexDir='column' gap={2} maxW='700px' minW='250px' width='100%' alignItems={'center'} paddingBottom='20px'>
                     <TableContainer w='100%' >
                         <Table variant='striped' colorScheme='blackAlpha' size='sm'>
                             <Thead>
-                            <Tr>
-                                <Th>Date</Th>
-                                <Th>From</Th>
-                                <Th isNumeric>Status</Th>
-                                <Th isNumeric maxW='60px'>Messages</Th>
-                            </Tr>
+                                <Tr>
+                                    <Th>Date</Th>
+                                    <Th>From</Th>
+                                    <Th isNumeric>Status</Th>
+                                    <Th isNumeric maxW='60px'>Messages</Th>
+                                </Tr>
                             </Thead>
                             <Tbody>
 
-                                {calls.map((call, index)=>{
+                                {calls.map((call, index) => {
                                     const noAnswer = call.status === 'no-answer'
                                     return (
                                         <Tr key={index}>
@@ -104,7 +111,7 @@ export default function CallLog() {
                                             <Td>{call.from}</Td>
                                             <Td isNumeric>
                                                 {noAnswer && (<Badge variant='solid' colorScheme='red'>Missed</Badge>)}
-                                                {!noAnswer && (<Badge variant='solid'  style={{backgroundColor: '#B0F127'}}>Answered</Badge>)}
+                                                {!noAnswer && (<Badge variant='solid' style={{ backgroundColor: '#B0F127' }}>Answered</Badge>)}
                                             </Td>
 
                                             <Td isNumeric><IconButton
@@ -113,17 +120,17 @@ export default function CallLog() {
                                                 aria-label='Search database'
                                                 size='sm'
                                                 icon={<EmailIcon />}
-                                                onClick={()=>{
+                                                onClick={() => {
                                                     setModalArgs(call.from)
                                                     setCurrentModal('messagesModal')
                                                 }}
-                                                /></Td>
+                                            /></Td>
                                         </Tr>
                                     )
                                 })}
-                           
+
                             </Tbody>
-                          
+
                         </Table>
                     </TableContainer>
 

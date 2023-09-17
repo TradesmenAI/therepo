@@ -23,7 +23,7 @@ BiCodeAlt,
 BiPencil,
 BiLayer,
 BiLogOut,
-BiImages,
+BiVoicemail,
 BiMenu,
 BiBookAlt,
 BiWalletAlt,
@@ -99,7 +99,12 @@ export default function Sidebar() {
             label: 'Call log',
             icon: BiPhoneCall,
             url: '/callLog'
-        }
+        },
+        // {
+        //     label: 'Voicemail',
+        //     icon: BiVoicemail,
+        //     url: '/voicemail'
+        // },
     ]
 
     const signOut = async () => {
