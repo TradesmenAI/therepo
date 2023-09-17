@@ -12,12 +12,18 @@
     "prismaPush": "dotenv -e .env.local prisma db push ",
     "prismaStudio": "dotenv -e .env.local prisma studio "
   },
+  "pkg": {
+    "assets": [
+      "./node_modules/@ffmpeg-installer/**"
+    ]
+  },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffmpeg/core": "^0.12.3",
     "@ffmpeg/ffmpeg": "^0.12.6",
     "@microsoft/fetch-event-source": "^2.0.1",
