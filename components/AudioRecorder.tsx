@@ -5,7 +5,7 @@
 
 // const mimeType = "audio/mp3";
 
- const AudioRecorder = () => {
+ export default function AudioRecorder() {
     return <></>
  }
 
