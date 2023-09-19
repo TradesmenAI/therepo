@@ -26,6 +26,7 @@ model User {
   bot_intro_message   String?
   business_type       String?
   business_id         Int?
+  voicemail_enabled   Boolean  @default(false)
 }
 
 model Payment {
@@ -92,8 +93,12 @@ model ChatRequest {
   user_email    String
 }
 
-
 model MachineCalls {
   id     Int    @id @default(autoincrement())
   callId String
+}
+
+model Voicemail {
+  user_id   String @id @unique
+  recording Bytes
 }

@@ -52,11 +52,9 @@ export default function Voicemail() {
         }
 
         setUpd1(true)
-        // await updateProfile('service_enabled', val)
+        await updateProfile('voicemail_enabled', val)
         setUpd1(false)
     }
-
-    const isSubscribed = profile && profile.total_messages > 0;
 
     return (
         
@@ -84,18 +82,20 @@ export default function Voicemail() {
 
                     {profile !== null && (
                         <>
-                            <Flex width='220px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'#000'} padding={2} borderRadius='8px'>
+                            <Flex width='300px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'#000'} padding={2} borderRadius='8px'>
                                 <Text fontSize='15px' fontWeight='semibold' color='#fff'>Voicemail enabled</Text>
                                 <Spacer />
                                 {upd1 && (<Spinner size='sm' color='white' />)}
-                                <Switch id='email-alerts' colorScheme='green' isChecked={profile.service_enabled} onChange={(e)=>onEnableChange(e.target.checked)} />
+                                <Switch id='email-alerts' colorScheme='green' isChecked={profile.voicemail_enabled} onChange={(e)=>onEnableChange(e.target.checked)} />
 
                             </Flex>
 
+
+                            {profile.voicemail_enabled && (<AudioRecorder/>)}
                         </>
                     )}
 
-                    <AudioRecorder/>
+                    
 
 
                 </Flex>

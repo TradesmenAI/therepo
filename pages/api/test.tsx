@@ -1,59 +1,64 @@
-/* eslint-disable import/no-anonymous-default-export */
-import multer from 'multer';
 import { exec } from 'child_process';
-import { promises as fs } from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client'
+import { IncomingForm } from "formidable";
+import fs from 'fs'
+import { Readable, Stream } from 'stream';
 
-
-const upload = multer({ dest: '/tmp' }); // Store the uploaded file temporarily in /tmp
 
 export const config = {
-  api: {
-    bodyParser: false,
-  },
+    api: {
+        bodyParser: false,
+    },
 };
 
-export default async function handler(req: NextApiRequest& { [key: string]: any }, res: NextApiResponse<any>) {
-  if (req.method === 'POST') {
-    const convertAudio = async (filePath:string, outputFormat:string) => {
-      return new Promise((resolve, reject) => {
-        const outputPath = `/tmp/output.${outputFormat}`;
-        exec(`ffmpeg -i ${filePath} ${outputPath}`, (error) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(outputPath);
-          }
-        });
-      });
-    };
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
+    const prisma = new PrismaClient()
 
-    const fileHandlingMiddleware = upload.single('audioFile');
 
-    //@ts-ignore
-    fileHandlingMiddleware(req, res, async (err) => {
-      if (err) {
-        console.log(err)
-        return res.status(500).json({ error: 'Error uploading file.' });
-      }
-
-      try {
-        const convertedFilePath:any = await convertAudio(req.file.path, 'mp3'); // Convert to mp3 for this example
-        const fileBuffer = await fs.readFile(convertedFilePath);
-
-        res.setHeader('Content-Disposition', 'attachment; filename=converted.mp3');
+    if (req.method === 'GET') {
         res.setHeader('Content-Type', 'audio/mpeg');
-        res.end(fileBuffer);
+        res.setHeader('Content-Disposition', `attachment; filename=voicemail.mp3`);
 
-        // Cleanup temp files
-        await fs.unlink(req.file.path);
-        await fs.unlink(convertedFilePath);
-      } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: 'Error converting audio.' });
-      }
+        const dt = await prisma.voicemail.findUnique({ where: { user_id: 'test' } })
+
+        if (dt) {
+            const stream = Readable.from(dt.recording);
+            res.send(stream)
+            return;
+        }
+
+       
+        return res.status(500).json({})
+    }
+
+    if (req.method !== 'POST') {
+
+        return res.status(500).json({})
+    }
+
+    const data = await new Promise((resolve, reject) => {
+        const form = new IncomingForm();
+        form.parse(req, (err, fields, files) => {
+            if (err) return reject(err);
+            resolve({ fields, files });
+        });
     });
-  } else {
-    res.status(405).json({ error: 'Only POST requests are allowed.' });
-  }
-};
+
+    const srcToFile = (src: string) => fs.readFileSync(src);
+
+    const path = data.files.file[0].filepath
+
+
+    await prisma.voicemail.create({
+        data: {
+            user_id: 'test',
+            recording: srcToFile(path)
+        }
+    })
+
+    console.log(srcToFile(path));
+
+
+    res.status(200).json({})
+}

@@ -53,7 +53,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         })
     }
 
-    const allowedFields = ['business_number', 'service_enabled', 'business_type', 'business_id', 'bot_intro_message']
+    const allowedFields = ['business_number', 'service_enabled', 'business_type', 'business_id', 'bot_intro_message', 'voicemail_enabled']
 
     if (!allowedFields.includes(requestData.field_name)) {
         res.status(500).send({ message: 'Field not allowed' })

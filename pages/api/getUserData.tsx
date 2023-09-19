@@ -103,7 +103,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         messages_left: profileData.messages_per_month - used_messages,
         is_admin: profileData.is_admin,
         business_type: profileData.business_type,
-        bot_intro_message: profileData.bot_intro_message
+        bot_intro_message: profileData.bot_intro_message,
+        voicemail_enabled: profileData.voicemail_enabled,
     }
 
 
