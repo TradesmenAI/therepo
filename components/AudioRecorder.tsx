@@ -93,17 +93,22 @@ const AudioRecorder = () => {
         //create new Media recorder instance using the stream
         const media = new MediaRecorder(stream, { mimeType });
         //set the MediaRecorder instance to the mediaRecorder ref
+        //@ts-ignore
         mediaRecorder.current = media;
         //invokes the start method to start the recording process
+        //@ts-ignore
         mediaRecorder.current.start();
 
-        let localAudioChunks = [];
+        let localAudioChunks:any[] = [];
 
+        //@ts-ignore
         mediaRecorder.current.ondataavailable = (event: any) => {
             if (typeof event.data === "undefined") return;
             if (event.data.size === 0) return;
             localAudioChunks.push(event.data);
         };
+
+        //@ts-ignore
         setAudioChunks(localAudioChunks);
     };
 
@@ -111,7 +116,10 @@ const AudioRecorder = () => {
         setRecordingStatus("inactive");
         setLoadingPlayer(true)
         //stops the recording instance
+        //@ts-ignore
         mediaRecorder.current.stop();
+
+        //@ts-ignore
         mediaRecorder.current.onstop = () => {
             //creates a blob file from the audiochunks data
             const audioBlob = new Blob(audioChunks, { type: mimeType });
