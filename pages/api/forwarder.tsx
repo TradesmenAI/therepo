@@ -70,17 +70,17 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     let actionUrl = process.env.TWILIO_FORWARD_CALL_HANDLER;
-    let timeout = 12;
+    let timeout = 3;
 
 
     const voicemail = await prisma.voicemail.findUnique({ where: { user_id: user.uid } })
     const useVoicemail = voicemail && user.voicemail_enabled;
     
-    if (useVoicemail) {
-        console.log('Forwargind to voicemail...')
-        actionUrl = process.env.TWILIO_VOICEMAIL_FORWARD_CALL_HANDLER + `?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`;
-        timeout = 15
-    }
+    // if (useVoicemail) {
+    //     console.log('Forwargind to voicemail...')
+    //     actionUrl = process.env.TWILIO_VOICEMAIL_FORWARD_CALL_HANDLER + `?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`;
+    //     timeout = 15
+    // }
 
     //forward call
     const forwardingNumber = user.business_number!;
