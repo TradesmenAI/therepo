@@ -8,53 +8,33 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
+    const userId = req.query.userId as string;
+    const code = req.query.code as string;
+
+    if (!userId || !code || code !== process.env.WEBHOOK_SECRET_CUSTOM){
+        return res.status(401).end()
+    }
+
     const prisma = new PrismaClient()
 
     console.log('Incoming voicemail webhook')
 
     console.log(req.body)
 
-    const twilioSignature = req.headers['x-twilio-signature'];
-    const url = process.env.TWILIO_CALL_FORWARDER_URL;
-
-    const isValidRequest = validateRequest(
-        authToken!,
-        //@ts-ignore
-        twilioSignature,
-        url,
-        req.body
-    );
-
-    if (!isValidRequest) {
-        console.error('Not valid request signature')
-        return res.status(400).end()
-    }
-
-
-
+   
     const status = req.body['CallStatus']
-    if (status !== 'ringing') {
-        return res.status(200).end()
-    }
+    // if (status !== 'ringing') {
+    //     return res.status(200).end()
+    // }
 
     const caller = req.body['From']
     const targetNumber = req.body['To']
-
-    console.log(req.body)
-
 
 
     const rr = new twiml.VoiceResponse();
     res.setHeader('Content-Type', 'text/xml');
 
-    if (targetNumber === process.env.TEST_NUMBER) {
-        console.log('Test call')
-        rr.hangup()
-        res.send(rr.toString());
-        return
-    }
-
-  
+    
     const user = await prisma.user.findFirst({
         where: {
             twilio_number: targetNumber
@@ -70,6 +50,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
+    let actionUrl = process.env.TWILIO_FORWARD_CALL_HANDLER;
+    let timeout = 12;
+
+    // const dial = rr.dial({ action: actionUrl, timeout });
+
+    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+
+    res.send(rr.toString());
     return
 }
 
