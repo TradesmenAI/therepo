@@ -13,7 +13,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         await prisma.machineCalls.create({data:{'callId': callId}})
     }
 
-    console.log(req.body)
    
     return res.status(200).end()
 }

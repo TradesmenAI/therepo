@@ -1,7 +1,6 @@
 import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml } from 'twilio';
-import { profile, time } from 'console';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -11,9 +10,9 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const prisma = new PrismaClient()
 
-    console.log('Incoming fordwarder webhook')
+    console.log('Incoming voicemail webhook')
 
-
+    console.log(req.body)
 
     const twilioSignature = req.headers['x-twilio-signature'];
     const url = process.env.TWILIO_CALL_FORWARDER_URL;
@@ -30,6 +29,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         console.error('Not valid request signature')
         return res.status(400).end()
     }
+
+
 
     const status = req.body['CallStatus']
     if (status !== 'ringing') {
@@ -53,7 +54,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
-
+  
     const user = await prisma.user.findFirst({
         where: {
             twilio_number: targetNumber
@@ -69,34 +70,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
-    let actionUrl = process.env.TWILIO_FORWARD_CALL_HANDLER;
-    let timeout = 12;
-
-
-
-    const voicemail = await prisma.voicemail.findUnique({ where: { user_id: user.uid } })
-    const useVoicemail = voicemail && user.voicemail_enabled;
-
-    if (useVoicemail) {
-        console.log('Forwargind to voicemail...')
-        actionUrl = process.env.TWILIO_VOICEMAIL_FORWARD_CALL_HANDLER;
-        timeout = 15
-    }
-
-    //forward call
-    const forwardingNumber = user.business_number!;
-    const dial = rr.dial({ action: actionUrl, timeout });
-
-    if (!useVoicemail) {
-        dial.number({
-            machineDetection: 'Enable',
-            // amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/amd'
-            amdStatusCallback: 'https://tradesmenaiportal.com/api/amd'
-        }, forwardingNumber)
-    }
-    // console.log(rr.toString())
-
-    res.send(rr.toString());
     return
 }
 

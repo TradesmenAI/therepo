@@ -75,7 +75,7 @@ export const Config = {
             price: '149.99 / year',
             color: '#5999ff',
             tierName: 'Starter',
-            replies: 25,
+            replies: 15,
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_5,
             txt: '7 day free trial',
             btnText: 'FREE 7 DAY TRIAL',
