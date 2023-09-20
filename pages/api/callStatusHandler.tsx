@@ -32,6 +32,9 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
+    console.log(req.body)
+
+    
     const prisma = new PrismaClient()
 
     const twilioSignature = req.headers['x-twilio-signature'];
@@ -53,7 +56,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     try {
         console.log('Incoming handler webhook')
-        console.log(req.body)
 
         const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']   // Customer number 
