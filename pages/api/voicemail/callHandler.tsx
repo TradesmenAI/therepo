@@ -57,11 +57,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     
-    rr.record({
+    const conf = {
         action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
-    })
+    }
+
+    console.log(JSON.stringify(conf))
+
+    rr.record(conf)
 
     res.send(rr.toString());
     return
