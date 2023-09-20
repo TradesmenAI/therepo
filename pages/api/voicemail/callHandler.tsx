@@ -6,7 +6,7 @@ import { validateRequest, twiml } from 'twilio';
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
-
+// this can be called also if the call is already completed (e.g. timeout is 15 seconds and user hangs up after 3 or voicemail kicks in)
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     const userId = req.query.userId as string;
     const code = req.query.code as string;
@@ -58,7 +58,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     
     const conf = {
-        action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
+        action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
     }

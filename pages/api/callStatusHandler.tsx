@@ -34,7 +34,7 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const ProtectedRoute: NextApiHandler = async (req, res) => {
     console.log(req.body)
 
-    
+
     const prisma = new PrismaClient()
 
     const twilioSignature = req.headers['x-twilio-signature'];
@@ -61,8 +61,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const from = req.body['From']   // Customer number 
         const to = req.body['To']       // Tradesmen twilio number
         const direction = req.body['Direction'] // must be 'inbound'
-        const subcall_id = req.body['DialCallSid']
+        const subcall_id = req.body['DialCallSid']??'none'
         const tw = new Twilio(accountSid, authToken);
+
+        const recordingUrl = req.body['RecordingUrl']
+
+        if (recordingUrl){
+            console.log('RECORDING: >>> ' + recordingUrl)
+        }
 
 
         let canSendSms = true;
@@ -85,7 +91,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             canSendSms = false;
         }
 
-        const answeredByMachine = ((await prisma.machineCalls.findFirst({ where: { callId: subcall_id } })) !== null)
+        const answeredByMachine = (recordingUrl) || ((await prisma.machineCalls.findFirst({ where: { callId: subcall_id } })) !== null)
 
 
         if (direction === 'inbound') {
@@ -217,7 +223,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     // console.log(`Existing msg count: ${existingMessages.length}`)
 
                     // if no previous messages - send intro message
-                    if (history.length === 0) {
+                    // test number send every time
+                    if (history.length === 0 || from.includes('8396')) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
