@@ -70,17 +70,17 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     let actionUrl = process.env.TWILIO_FORWARD_CALL_HANDLER;
-    let timeout = 3;
+    let timeout = 12;
 
 
     const voicemail = await prisma.voicemail.findUnique({ where: { user_id: user.uid } })
     const useVoicemail = voicemail && user.voicemail_enabled;
     
-    // if (useVoicemail) {
-    //     console.log('Forwargind to voicemail...')
-    //     actionUrl = process.env.TWILIO_VOICEMAIL_FORWARD_CALL_HANDLER + `?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`;
-    //     timeout = 15
-    // }
+    if (useVoicemail) {
+        console.log('Forwargind to voicemail...')
+        actionUrl = process.env.TWILIO_VOICEMAIL_FORWARD_CALL_HANDLER + `?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`;
+        timeout = 7
+    }
 
     //forward call
     const forwardingNumber = user.business_number!;
@@ -92,6 +92,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             // amdStatusCallback: 'https://upwork-callback-bot.vercel.app/api/amd'
             amdStatusCallback: 'https://tradesmenaiportal.com/api/amd'
         }, forwardingNumber)
+    } else {
+        dial.number({}, forwardingNumber)
     }
     // console.log(rr.toString())
 
