@@ -57,7 +57,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     try {
         console.log('Incoming handler webhook')
 
-        const status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
+        let status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']   // Customer number 
         const to = req.body['To']       // Tradesmen twilio number
         const direction = req.body['Direction'] // must be 'inbound'
@@ -67,6 +67,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const recordingUrl = req.body['RecordingUrl']
 
         if (recordingUrl){
+            status = 'user-voicemail-answered'
             console.log('RECORDING: >>> ' + recordingUrl)
         }
 
