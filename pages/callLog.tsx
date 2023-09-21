@@ -105,13 +105,14 @@ export default function CallLog() {
 
                                 {calls.map((call, index) => {
                                     const noAnswer = call.status === 'no-answer'
+                                    const isVoicemail = call.status === 'user-voicemail-answered'
                                     return (
                                         <Tr key={index}>
                                             <Td>{(new Date(call.date)).toLocaleString("en-GB")}</Td>
                                             <Td>{call.from}</Td>
                                             <Td isNumeric>
-                                                {noAnswer && (<Badge variant='solid' colorScheme='red'>Missed</Badge>)}
-                                                {!noAnswer && (<Badge variant='solid' style={{ backgroundColor: '#B0F127' }}>Answered</Badge>)}
+                                                {(noAnswer || isVoicemail) && (<Badge variant='solid' colorScheme={noAnswer?'red':'orange'}>{noAnswer?'Missed':'Voicemail'}</Badge>)}
+                                                {!noAnswer && !isVoicemail && (<Badge variant='solid' style={{ backgroundColor: '#B0F127' }}>Answered</Badge>)}
                                             </Td>
 
                                             <Td isNumeric><IconButton

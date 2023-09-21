@@ -5,6 +5,7 @@ import { validateRequest, twiml, Twilio } from 'twilio';
 import { use } from 'react';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 import { sendSms } from './smsWebhook';
+import { v4 as uuidv4 } from 'uuid';
 
 function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -14,6 +15,8 @@ const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+
+export const VoicemailPrefix = 'voicemail-url://'
 
 
 const openai = new OpenAIApi(configuration);
@@ -68,7 +71,6 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         if (recordingUrl){
             status = 'user-voicemail-answered'
-            console.log('RECORDING: >>> ' + recordingUrl)
         }
 
 
@@ -174,7 +176,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             }
 
             // handle answering machine here
-            if ((status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
+            if ((status === 'user-voicemail-answered' || status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
                 const totalMessages = user.messages_per_month
                 // TODO: use date from sub date
                 const lastDay = Date.now() - (720 * 60 * 60 * 1000);
@@ -355,6 +357,21 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                             console.error(`Failed to send sms with error message`)
                         }
                     }
+                }
+
+                if (status === 'user-voicemail-answered'){
+                    await prisma.messageLog.create({
+                        data: {
+                            from,
+                            to,
+                            text: `${VoicemailPrefix}${recordingUrl}`,
+                            user_id: user.uid,
+                            user_email: user.email,
+                            direction: 'in',
+                            customer_number: from,
+                            message_uid: uuidv4()
+                        }
+                    })
                 }
 
             }
