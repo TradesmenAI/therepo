@@ -56,6 +56,10 @@ export default function Voicemail() {
         setUpd1(false)
     }
 
+    useEffect(()=>{
+        console.log(upd1)
+    }, [upd1])
+
     return (
         
         <Flex dir='row'>
@@ -84,8 +88,9 @@ export default function Voicemail() {
                         <>
                             <Flex width='300px' gap='5px' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'#000'} padding={2} borderRadius='8px'>
                                 <Text fontSize='15px' fontWeight='semibold' color='#fff'>Voicemail enabled</Text>
+                                {upd1 && <>KEK</>}
                                 <Spacer />
-                                {upd1 && (<Spinner size='sm' color='white' />)}
+                                {upd1 && (<Spinner size='sm' />)}
                                 <Switch id='email-alerts' colorScheme='green' isChecked={profile.voicemail_enabled} onChange={(e)=>onEnableChange(e.target.checked)} />
 
                             </Flex>

@@ -54,6 +54,8 @@ const AudioRecorder = () => {
             if (res.status === 200){
                 setAudio('/api/voicemail/download')
             }
+        }).catch(e=>{
+            
         }).finally(()=>{
             setLoadingPlayer(false)
         })

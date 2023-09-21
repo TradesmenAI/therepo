@@ -29,9 +29,9 @@ import { BiCopy, BiPlusMedical } from "react-icons/bi";
 import { Icon } from '@chakra-ui/react'
 import { uuidv4, selectFile } from '../utils'
 import {
-BiAddToQueue,
-BiLayer,
-BiX
+    BiAddToQueue,
+    BiLayer,
+    BiX
 } from "react-icons/bi";
 import NoCreditsModal from '../components/modals/noCreditsModal'
 import { useSession } from "@supabase/auth-helpers-react";
@@ -40,48 +40,50 @@ import { useRouter } from 'next/router'
 import FieldWithRename from '../components/fieldWithRename';
 import { Switch } from '@chakra-ui/react'
 import Pricing from '../components/pricing';
+import AudioRecorder from '../components/AudioRecorder';
 
 
 export default function App() {
-    const {openBillingPortal, profile, updateProfile} = useAppContext();
+    const { openBillingPortal, profile, updateProfile } = useAppContext();
     const session = useSession()
-    const {push} = useRouter()
+    const { push } = useRouter()
     const [businessPhone, setBusinessPhone] = useState('-')
     const [redirect, setRedirect] = useState(false)
     const [introMsg, setIntroMsg] = useState('')
+    const [upd1, setUpd1] = useState(false)
 
 
-    useEffect(()=>{
+    useEffect(() => {
         if (profile) {
             setBusinessPhone(profile.business_number)
             setIntroMsg(profile.bot_intro_message)
         }
     }, [profile])
 
-    const onUpdatePhone = async(val:string)=>{
+    const onUpdatePhone = async (val: string) => {
         await updateProfile('business_number', val)
         return true
     }
 
-    const onUpdateMessage = async(val:string)=>{
+    const onUpdateMessage = async (val: string) => {
         await updateProfile('bot_intro_message', val)
         return true
     }
 
-    const onValidatePhone = (val:string)=>{
+    const onValidatePhone = (val: string) => {
         return true
-    } 
+    }
 
-    useEffect(()=>{
-        if (!session){
-          push('/');
-        } 
-      }, [session])
-    
-
+    useEffect(() => {
+        if (!session) {
+            push('/');
+        }
+    }, [session])
 
 
-    const onUpgrage = async()=>{
+
+
+    const onUpgrage = async () => {
         if (profile.total_messages === 0) {
             push('/billing');
         } else {
@@ -90,15 +92,25 @@ export default function App() {
         }
     }
 
+    const onEnableChange = async (val: boolean) => {
+        if (upd1) {
+            return
+        }
+
+        setUpd1(true)
+        await updateProfile('voicemail_enabled', val)
+        setUpd1(false)
+    }
+
 
     return (
-        
+
         <Flex dir='row'>
             <Sidebar />
 
-            <Toaster  />
+            <Toaster />
 
-            <NoCreditsModal/>
+            <NoCreditsModal />
 
             <Flex padding='20px' flexDir='column' flexGrow={1} gap={5} alignItems='center' height='100vh' overflowY='scroll' overflowX='hidden'>
 
@@ -111,7 +123,7 @@ export default function App() {
                 </Flex> */}
 
                 <Flex flexDir='column' gap={2} maxW='450px' minW='250px' width='100%' alignItems={'center'}>
-                    
+
 
                     {profile === null && <Flex gap={3} marginTop={20}>
                         <Spinner color='blue.500' />
@@ -120,24 +132,24 @@ export default function App() {
 
                     {profile !== null && (<>
 
-                        
+
                         <Flex width='100%' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} bgColor={'white'} border='1px solid black' padding={2} borderRadius='8px'>
                             <Text fontSize='15px' fontWeight='semibold' color={'black'}>Virtual phone number</Text>
                             <Spacer />
                             <Text fontSize='15px' fontWeight='normal' color={'black'}>
-                            {profile.twilio_number}
+                                {profile.twilio_number}
                             </Text>
-                            <Icon as={BiCopy} w={5} h={5} color='black' cursor='pointer' marginLeft='10px' onClick={()=> {
+                            <Icon as={BiCopy} w={5} h={5} color='black' cursor='pointer' marginLeft='10px' onClick={() => {
                                 navigator.clipboard.writeText(profile.twilio_number)
                                 toast.success('Phone Copied')
                             }} />
-                            
+
                         </Flex>
 
                         <Flex width='100%' border='1px solid black' bgColor={'white'} gap='10px' flexDir='row' alignItems='center' justifyContent='center' marginTop={1} padding={2} borderRadius='8px'>
                             <Text fontSize='15px' fontWeight='semibold' color={'black'}>Messages/month</Text>
                             <Spacer />
-                            <Button isDisabled={redirect} isLoading={redirect} size='xs' colorScheme='green' backgroundColor='#B0F127' _hover={{backgroundColor: '#94d10f'}}  color='black' onClick={onUpgrage}>Upgrade ⚡️</Button>
+                            <Button isDisabled={redirect} isLoading={redirect} size='xs' colorScheme='green' backgroundColor='#B0F127' _hover={{ backgroundColor: '#94d10f' }} color='black' onClick={onUpgrage}>Upgrade ⚡️</Button>
                             <Text fontSize='15px' fontWeight='bold' color={'black'}>
                                 {profile.total_messages}
                             </Text>
@@ -152,21 +164,30 @@ export default function App() {
                         </Flex>
 
 
-                        <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='row' alignItems='center' justifyContent='center' marginTop={2}  padding={2} borderRadius='8px'>
+                        <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} padding={2} borderRadius='8px'>
                             <Text fontSize='15px' fontWeight='semibold' color={'black'}>Your phone</Text>
                             <Spacer />
                             <FieldWithRename value={businessPhone} onUpdate={onUpdatePhone} onValidate={onValidatePhone} />
                         </Flex>
 
-                        <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='row' alignItems='center' justifyContent='center' marginTop={2}  padding={2} borderRadius='8px'>
+                        <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} padding={2} borderRadius='8px'>
                             <Text fontSize='15px' fontWeight='semibold' color={'black'}>* Bot intro message</Text>
                             <Spacer />
                             <FieldWithRename value={introMsg} onUpdate={onUpdateMessage} onValidate={onValidatePhone} />
                         </Flex>
                         <Text fontSize='14px' mt='-5px' fontWeight='bold' fontStyle='italic'>* We recommend leaving this as default</Text>
 
+                        <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='column' alignItems='center' justifyContent='center' marginTop={2} padding={2} borderRadius='8px'>
+                            <Flex width='100%' alignItems='center' mb='10px'>
+                                <Text fontSize='15px' fontWeight='semibold' color={'black'}>Voicemail enabled</Text>
+                                <Spacer />
+                                {upd1 && (<Spinner size='sm' color='black' mr='4px' />)}
+                                <Switch id='email-alerts' colorScheme='green' isChecked={profile.voicemail_enabled} onChange={(e) => onEnableChange(e.target.checked)} />
+                            </Flex>
+                            {profile.voicemail_enabled && (<AudioRecorder />)}
+                        </Flex>
 
-                    
+
                     </>)}
 
                 </Flex>
