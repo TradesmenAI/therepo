@@ -8,6 +8,8 @@ import { useState } from 'react'
 import { extendTheme } from "@chakra-ui/react"
 import { loadStripe } from '@stripe/stripe-js';
 import Head from 'next/head'
+import { useEffect } from 'react'
+
 
 const theme = extendTheme({
   components: {
@@ -25,6 +27,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 export default function App({ Component, pageProps }: AppProps<{ initialSession: Session, }>) {
   const [supabaseClient] = useState(() => createPagesBrowserClient())
+
 
   return (
     <SessionContextProvider

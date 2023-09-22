@@ -1,29 +1,29 @@
-import { createContext, ReactNode, useContext, useState, useMemo, useEffect} from "react";
+import { createContext, ReactNode, useContext, useState, useMemo, useEffect } from "react";
 import { fetcher } from "../config";
 import { Session, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { uuidv4 } from "../utils";
-export const sleep = (time:number) => new Promise(res => setTimeout(res, time, "done sleeping"));
+export const sleep = (time: number) => new Promise(res => setTimeout(res, time, "done sleeping"));
 import { CheckoutArgs } from "../pages/api/checkoutSession";
 import { useRouter } from 'next/router'
 import { useToast } from "@chakra-ui/react";
 import { UserData } from "../pages/api/listUsers";
 
 
-export interface AppContextType 
-{
-    profile: any|null,
-    currentModal:string,
-    setCurrentModal:any
-    modalArgs:any, 
-    setModalArgs:any,
-    subscribe:any,
-    purchaseInProgress:boolean,
-    updateProfile:(field_name:string, value:any)=>Promise<void>,
-    updateUser:(user_uid:string, field_name:string, value:any)=>Promise<void>,
-    session:Session|null
+
+export interface AppContextType {
+    profile: any | null,
+    currentModal: string,
+    setCurrentModal: any
+    modalArgs: any,
+    setModalArgs: any,
+    subscribe: any,
+    purchaseInProgress: boolean,
+    updateProfile: (field_name: string, value: any) => Promise<void>,
+    updateUser: (user_uid: string, field_name: string, value: any) => Promise<void>,
+    session: Session | null
     openBillingPortal: any,
-    getUsersList:()=>Promise<UserData[]>
+    getUsersList: () => Promise<UserData[]>
 }
 
 export const Config = {
@@ -37,7 +37,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_1,
             txt: '7 day free trial',
             btnText: 'FREE 7 DAY TRIAL',
-            annual:false
+            annual: false
         },
         {
             price: '24.99 / month',
@@ -47,7 +47,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_2,
             txt: 'Most popular',
             btnText: 'GET ESSENTIAL',
-            annual:false
+            annual: false
         },
         {
             price: '39.99 / month',
@@ -57,7 +57,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_3,
             txt: 'For busy tradesmen',
             btnText: 'GET ADVANCED',
-            annual:false
+            annual: false
         },
         {
             price: '99.99 / month',
@@ -67,7 +67,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_4,
             txt: 'For large companies',
             btnText: 'GET ULTIMATE',
-            annual:false
+            annual: false
         },
 
         // annual
@@ -79,7 +79,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_5,
             txt: '7 day free trial',
             btnText: 'FREE 7 DAY TRIAL',
-            annual:true
+            annual: true
         },
         {
             price: '249.99 / year',
@@ -89,7 +89,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_6,
             txt: 'Most popular',
             btnText: 'GET ESSENTIAL',
-            annual:true
+            annual: true
         },
         {
             price: '399.99 / year',
@@ -99,7 +99,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_7,
             txt: 'For busy tradesmen',
             btnText: 'GET ADVANCED',
-            annual:true
+            annual: true
         },
         {
             price: '999.00 / year',
@@ -109,7 +109,7 @@ export const Config = {
             price_id: process.env.NEXT_PUBLIC_PRODUCT_TIER_8,
             txt: 'For large companies',
             btnText: 'GET ULTIMATE',
-            annual:true
+            annual: true
         },
     ]
 }
@@ -124,17 +124,18 @@ export function AppProvider({ children }: { children: ReactNode; }) {
 
     const toast = useToast()
 
-   
 
-    const [profile, setProfile] = useState<any|null>(null);
+
+    const [profile, setProfile] = useState<any | null>(null);
     const [currentModal, setCurrentModal] = useState<string>('');
     const [modalArgs, setModalArgs] = useState<any>(null);
     const [purchaseInProgress, setPurchaseInProgress] = useState<boolean>(false);
     const [isFetching, setIsFetching] = useState(false)
+    const [refId, setRefId] = useState<string | undefined>(undefined)
 
     const supabase = useSupabaseClient()
 
-    useEffect(()=>{
+    useEffect(() => {
         const action = router.query.action as string
 
         if (action === 'pass-reset') {
@@ -144,26 +145,46 @@ export function AppProvider({ children }: { children: ReactNode; }) {
 
     }, [router])
 
-    useEffect(()=>{
+    useEffect(() => {
         supabase.auth.onAuthStateChange((event, session) => {
-            if (event === 'SIGNED_OUT'){
+            if (event === 'SIGNED_OUT') {
                 router.push('/')
-            }   
-          })
+            }
+        })
     }, [supabase])
 
-  
-    const fetchProfile = async() => {
-        const res = await fetch('/api/getUserData', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
+    useEffect(() => {
+        //@ts-ignore
+        window.rewardful('ready', function () {
+            //@ts-ignore
+            if (window.Rewardful.referral) {
+                //@ts-ignore
+                console.log('Current referral ID: ', window.Rewardful.referral);
+
+                //@ts-ignore
+                setRefId(window.Rewardful.referral)
+            } else {
+                console.log('No referral present.');
             }
         });
 
+    }, [])
+
+
+    const fetchProfile = async () => {
+        const payload = { refId }
+        
+        const res = await fetch('/api/getUserData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+        });
+
         setIsFetching(false)
- 
-        if (res.status !== 200){
+
+        if (res.status !== 200) {
             toast({
                 title: 'Failed to load profile',
                 status: 'error',
@@ -180,16 +201,16 @@ export function AppProvider({ children }: { children: ReactNode; }) {
     };
 
 
-    const updateProfile = async(field_name:string, value:any) => {
+    const updateProfile = async (field_name: string, value: any) => {
         const res = await fetch('/api/updateProfile', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({field_name, value})
+            body: JSON.stringify({ field_name, value })
         });
- 
-        if (res.status !== 200){
+
+        if (res.status !== 200) {
             toast({
                 title: 'Failed to update profile',
                 status: 'error',
@@ -203,16 +224,16 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         await fetchProfile()
     };
 
-    const updateUser = async(user_uid:string, field_name:string, value:any) => {
+    const updateUser = async (user_uid: string, field_name: string, value: any) => {
         const res = await fetch('/api/updateUser', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({user_uid, field_name, value})
+            body: JSON.stringify({ user_uid, field_name, value })
         });
- 
-        if (res.status !== 200){
+
+        if (res.status !== 200) {
             toast({
                 title: 'Failed to update user',
                 status: 'error',
@@ -224,15 +245,15 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         }
     };
 
-    const getUsersList = async()=>{
+    const getUsersList = async () => {
         const res = await fetch('/api/listUsers', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             }
         });
 
-        if (res.status !== 200){
+        if (res.status !== 200) {
             return [];
         }
 
@@ -241,15 +262,15 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         return (data as UserData[])
     }
 
-    const openBillingPortal = async() => {
+    const openBillingPortal = async () => {
         const res = await fetch('/api/manageSubscription', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             }
         });
- 
-        if (res.status !== 200){
+
+        if (res.status !== 200) {
             toast({
                 title: 'Failed to open billing portal',
                 status: 'error',
@@ -264,20 +285,20 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         window.location.href = data.portal_url;
     };
 
-    
+
     useEffect(() => {
-        if (session && !isFetching){
+        if (session && !isFetching) {
             setIsFetching(true)
             fetchProfile()
         }
     }, [session])
 
-     
 
-    const subscribe = async (price_id:string) => {
+
+    const subscribe = async (price_id: string) => {
         setPurchaseInProgress(true)
 
-        const args:CheckoutArgs = {
+        const args: CheckoutArgs = {
             okUrl: 'https://www.tradesmenai.com/purchase-complete',
             // okUrl: window.location.href + '?purchaseResult=success&session_id={CHECKOUT_SESSION_ID}' ,
             errorUrl: window.location.href + '?purchaseResult=error',
@@ -287,14 +308,14 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         const res = await fetch('/api/checkoutSession', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(args),
         })
 
         setPurchaseInProgress(false)
 
-        if (res.status !== 200){
+        if (res.status !== 200) {
             toast({
                 title: 'Failed to complete a purchase',
                 status: 'error',
@@ -308,12 +329,12 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         }
 
         const data = await res.json();
-        
+
         window.location.href = data.url;
     }
 
     // todo use memo here
-    const ctxVal:AppContextType = {
+    const ctxVal: AppContextType = {
         profile,
         currentModal,
         setCurrentModal,
@@ -326,7 +347,7 @@ export function AppProvider({ children }: { children: ReactNode; }) {
         getUsersList,
         updateUser,
         session
-    } ;
+    };
 
     return (
         <AppContext.Provider value={ctxVal}>

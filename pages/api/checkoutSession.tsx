@@ -60,7 +60,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     let userId:string = ''
 
-    const profileData = await prisma.user.findFirst({
+    let profileData = await prisma.user.findFirst({
         where: {
             uid: user.id
         }
@@ -71,6 +71,38 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             error: 'not_authenticated',
             description: 'The user does not have an active session or is not authenticated',
         })
+    }
+
+    if (!profileData.stripe_id){
+        // create stripe customer
+        const customers = await stripe.customers.list({
+            email: user.email,
+        });
+
+        console.log('Stripe user created')
+
+        let customer = undefined;
+
+        let meta = {
+            userId: user.id,
+        }
+
+        if (profileData.ref_id){
+            //@ts-ignore
+            //meta.referral = '7eac3d14-f51d-449b-a73a-7759e328e1ef'
+        }
+
+        if (customers.data.length > 0) {
+            customer = customers.data[0]
+        } else {
+            customer = await stripe.customers.create({
+                name: user.user_metadata.full_name,
+                email: user.email,
+                metadata: meta,
+            });
+        }
+
+        profileData = await prisma.user.update({data: {stripe_id: customer.id}, where: {uid: user.id}})
     }
 
     userId  = user.id;

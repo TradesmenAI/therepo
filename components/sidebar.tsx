@@ -48,6 +48,20 @@ export default function Sidebar() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [plan, setPlan] = useLocalStorage("buyPlan", "");
 
+    // useEffect(()=>{
+    //     //@ts-ignore
+    //     window.rewardful('ready', function() {
+    //         //@ts-ignore
+    //         if(window.Rewardful.referral) {
+    //             //@ts-ignore
+    //           console.log('Current referral ID: ', window.Rewardful.referral);
+    //         } else {
+    //           console.log('No referral present.');
+    //         }
+    //       });
+        
+    // }, [])
+
     useEffect(() => {
         if (session) {
             if (purchaseResult === 'error') {
