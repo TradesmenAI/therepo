@@ -99,6 +99,14 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     let used_messages = 0
 
+    if (!profileData){
+        console.error('Failed to find user profile')
+        
+        return res.status(500).json({
+            error: 'no_profile',
+            description: 'User data not found',
+        })
+    }
 
 
     if (profileData.twilio_number) {
