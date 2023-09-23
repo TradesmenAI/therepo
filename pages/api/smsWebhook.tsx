@@ -2,7 +2,7 @@ import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml, Twilio } from 'twilio';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
-import { dateDiffInDays } from './callStatusHandler';
+import { VoicemailPrefix, dateDiffInDays } from './callStatusHandler';
 
 
 function delay(ms: number) {
@@ -178,7 +178,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             })
             console.log(3)
 
-            const incomingMessagesLength = history.filter(h => h.direction === 'in').length;
+            const incomingMessagesLength = history.filter(h => h.direction === 'in' && !h.text.includes(VoicemailPrefix)).length;
 
             // if this is first message from user - notify tradesman
             if (incomingMessagesLength === 0 && !isTestNumber && user.business_number) {

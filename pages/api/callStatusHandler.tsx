@@ -64,12 +64,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         const from = req.body['From']   // Customer number 
         const to = req.body['To']       // Tradesmen twilio number
         const direction = req.body['Direction'] // must be 'inbound'
-        const subcall_id = req.body['DialCallSid']??'none'
+        const subcall_id = req.body['DialCallSid'] ?? 'none'
         const tw = new Twilio(accountSid, authToken);
 
         const recordingUrl = req.body['RecordingUrl']
 
-        if (recordingUrl){
+        if (recordingUrl) {
             status = 'user-voicemail-answered'
         }
 
@@ -223,11 +223,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         ]
                     })
 
-                    // console.log(`Existing msg count: ${existingMessages.length}`)
+                    console.log(`History length: ${history.length}`)
 
                     // if no previous messages - send intro message
                     // test number send every time
-                    if (history.length === 0 || from.includes('8396')) {
+                    if (history.length === 0) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
@@ -263,10 +263,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                         })
 
                         history.map((msg) => {
-                            botMessages.push({
-                                role: msg.direction === 'out' ? 'assistant' : 'user',
-                                content: msg.text
-                            })
+                            if (!msg.text.startsWith(VoicemailPrefix)) {
+                                botMessages.push({
+                                    role: msg.direction === 'out' ? 'assistant' : 'user',
+                                    content: msg.text
+                                })
+                            }
                         })
 
                         const response = await openai.createChatCompletion({
@@ -359,7 +361,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
                     }
                 }
 
-                if (status === 'user-voicemail-answered'){
+                if (status === 'user-voicemail-answered') {
                     await prisma.messageLog.create({
                         data: {
                             from,

@@ -3,6 +3,7 @@ import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe'
+import { VoicemailPrefix } from './callStatusHandler';
 
 export interface UserDataArgs {
     refId?: string
@@ -36,6 +37,24 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     const prisma = new PrismaClient()
+
+    // await prisma.messageLog.deleteMany({where:{customer_number: '+447977402007'}})
+
+    // const history = await prisma.messageLog.findMany({
+    //     where: {
+    //         user_email: 'dan@tradesmenai.co.uk',
+    //         customer_number: '+447977402007'
+    //     }, orderBy: [
+    //         {
+    //             id: 'asc'
+    //         }
+    //     ]
+    // })
+    // console.log(history)
+
+    // const incomingMessagesLength = history.filter(h => (h.direction === 'in' && !h.text.includes(VoicemailPrefix))).length;
+    
+    // console.log(incomingMessagesLength)
 
     const { data: { user }, } = await supabase.auth.getUser()
 
