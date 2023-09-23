@@ -1,6 +1,7 @@
 import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml } from 'twilio';
+import { HandleCall } from '../callStatusHandler';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -23,9 +24,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
    
     const status = req.body['CallStatus']
-    
+
     if (status !== 'ringing') {
-        return res.redirect(307, '/api/callStatusHandler')
+        return HandleCall(req, res)
     }
 
     const caller = req.body['From']

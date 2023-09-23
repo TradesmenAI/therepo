@@ -34,7 +34,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
-const ProtectedRoute: NextApiHandler = async (req, res) => {
+export async function HandleCall(req:any, res:any) {
     console.log(req.body)
 
 
@@ -389,6 +389,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     // rr.
 
     return Send(res, 200)
+}
+
+
+const ProtectedRoute: NextApiHandler = async (req, res) => {
+    return await HandleCall(req, res)
 }
 
 function Send(res: any, code: number) {
