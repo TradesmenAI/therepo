@@ -60,6 +60,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         }
     })
 
+    console.log(JSON.stringify(user))
 
     // hang up if no sub or no business number
     if (!user || !user.sub_id || !user.business_number?.trim()) {
