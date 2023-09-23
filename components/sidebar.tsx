@@ -75,7 +75,7 @@ export default function Sidebar() {
 
                 if (session.user.email){
                     //@ts-ignore
-                    window.rewardful('convert', { email: session.user.email })
+                    // window.rewardful('convert', { email: session.user.email })
                 }
             }
         }

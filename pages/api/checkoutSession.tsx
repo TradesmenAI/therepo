@@ -3,6 +3,8 @@ import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
 import { PrismaClient } from '@prisma/client'
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe'
+import { v4 as uuidv4 } from 'uuid';
+
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     // https://github.com/stripe/stripe-node#configuration
@@ -123,7 +125,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
           metadata: {
             id: userId
           },
-          
+          client_reference_id: (profileData.ref_id??uuidv4())
     }
 
     if (requestData.price_id === process.env.NEXT_PUBLIC_PRODUCT_TIER_1 || requestData.price_id === process.env.NEXT_PUBLIC_PRODUCT_TIER_5){
