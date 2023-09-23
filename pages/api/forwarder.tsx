@@ -76,7 +76,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log(1)
     const voicemail = await prisma.voicemail.findUnique({ where: { user_id: user.uid } })
+    console.log(voicemail)
     const useVoicemail = voicemail && user.voicemail_enabled;
+    console.log(user.voicemail_enabled)
+
     console.log(2)
     
     if (useVoicemail) {
