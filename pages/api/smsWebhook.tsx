@@ -183,7 +183,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             console.log(`incoming msg length: ${incomingMessagesLength}`)
 
             // if this is first message from user - notify tradesman
-            if (incomingMessagesLength === 0 && !isTestNumber && user.business_number) {
+            if (incomingMessagesLength === 1 && !isTestNumber && user.business_number) {
                 const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
                 await sendSms(txt, user.twilio_number!, user.business_number, user.email, user.uid, prisma, true)
             }
