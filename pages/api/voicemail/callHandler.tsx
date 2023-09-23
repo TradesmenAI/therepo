@@ -23,12 +23,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
    
     const status = req.body['CallStatus']
-    // if (status !== 'ringing') {
-    //     return res.status(200).end()
-    // }
+    
+    if (status !== 'ringing') {
+        return res.redirect(307, '/api/callStatusHandler')
+    }
 
     const caller = req.body['From']
     const targetNumber = req.body['To']
+
+    
 
 
     const rr = new twiml.VoiceResponse();

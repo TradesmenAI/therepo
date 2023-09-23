@@ -180,6 +180,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
             const incomingMessagesLength = history.filter(h => h.direction === 'in' && !h.text.includes(VoicemailPrefix)).length;
 
+            console.log(`incoming msg length: ${incomingMessagesLength}`)
+
             // if this is first message from user - notify tradesman
             if (incomingMessagesLength === 0 && !isTestNumber && user.business_number) {
                 const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`

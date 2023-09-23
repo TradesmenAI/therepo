@@ -40,21 +40,21 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     const prisma = new PrismaClient()
 
-    const twilioSignature = req.headers['x-twilio-signature'];
-    const url = process.env.TWILIO_FORWARD_CALL_HANDLER
+    // const twilioSignature = req.headers['x-twilio-signature'];
+    // const url = process.env.TWILIO_FORWARD_CALL_HANDLER
 
-    const isValidRequest = validateRequest(
-        authToken!,
-        //@ts-ignore
-        twilioSignature,
-        url,
-        req.body
-    );
+    // const isValidRequest = validateRequest(
+    //     authToken!,
+    //     //@ts-ignore
+    //     twilioSignature,
+    //     url,
+    //     req.body
+    // );
 
-    if (!isValidRequest) {
-        console.error('Not valid request signature')
-        return res.status(400).end()
-    }
+    // if (!isValidRequest) {
+    //     console.error('Not valid request signature')
+    //     return res.status(400).end()
+    // }
 
 
     try {
