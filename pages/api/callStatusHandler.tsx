@@ -255,6 +255,12 @@ export async function HandleCall(req:any, res:any) {
                             console.error('Error sending sms')
                             console.error(e)
                         }
+
+                        // if no history and user left voicemail - send notification about convo
+                        if (recordingUrl){
+                            const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
+                            await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
+                        }
                     } else {
                         // continue conversation
                         const botMessages: ChatCompletionRequestMessage[] = []
@@ -376,6 +382,8 @@ export async function HandleCall(req:any, res:any) {
                             message_uid: uuidv4()
                         }
                     })
+
+                    
                 }
 
             }

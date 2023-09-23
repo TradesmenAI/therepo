@@ -178,7 +178,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
             })
             console.log(3)
 
-            const incomingMessagesLength = history.filter(h => h.direction === 'in' && !h.text.includes(VoicemailPrefix)).length;
+            const incomingMessagesLength = history.filter(h => h.direction === 'in').length;
 
             console.log(`incoming msg length: ${incomingMessagesLength}`)
 
