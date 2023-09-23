@@ -60,6 +60,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     try {
         console.log('Incoming handler webhook')
 
+        console.log(req.body)
+
         let status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']   // Customer number 
         const to = req.body['To']       // Tradesmen twilio number
