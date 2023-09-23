@@ -102,7 +102,7 @@ export default function MessagesModal() {
 
                                     if (voicemail) {
                                         return (<Flex flexDir='row' key={index}>
-                                            <audio src='https://api.twilio.com/2010-04-01/Accounts/AC330fa21fb5b4983f5bbdc4e84591f130/Recordings/RE9ffee241f41f69b66c95b182f6c7f894' controls></audio>
+                                            <audio src={msg.text.replace(VoicemailPrefix, '')} controls></audio>
                                         </Flex>)
                                     }
 
