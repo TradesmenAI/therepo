@@ -35,6 +35,9 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
 export async function HandleCall(req: any, res: any, shouldReturn = true) {
+    console.log('Incoming handler webhook')
+
+    console.log('HandleCall()')
     console.log(req.body)
 
 
@@ -58,10 +61,6 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
 
 
     try {
-        console.log('Incoming handler webhook')
-
-        console.log(req.body)
-
         let status = req.body['DialCallStatus']  // 'completed' or 'no-answer'
         const from = req.body['From']   // Customer number 
         const to = req.body['To']       // Tradesmen twilio number
@@ -429,7 +428,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     return await HandleCall(req, res)
 }
 
-function Send(res: any, code: number) {
+export function Send(res: any, code: number) {
     res.setHeader('Content-Type', 'text/xml');
     return res.status(200).send('<Response/>')
 }

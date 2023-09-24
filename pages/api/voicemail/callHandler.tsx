@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml } from 'twilio';
-import { HandleCall } from '../callStatusHandler';
+import { HandleCall, Send } from '../callStatusHandler';
 
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -22,14 +22,19 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log(req.body)
 
+    const rr = new twiml.VoiceResponse();
+    res.setHeader('Content-Type', 'text/xml');
     
 
     const caller = req.body['From']
+    const status = req.body['CallStatus']
     const targetNumber = req.body['To']
 
-    const rr = new twiml.VoiceResponse();
-   
-    res.setHeader('Content-Type', 'text/xml');
+    if (status !== 'in-progress'){
+        await HandleCall(req, res, false)
+
+        return Send(res, 200);
+    }
 
     
     const user = await prisma.user.findFirst({
@@ -60,7 +65,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     res.send(rr.toString());
 
     await HandleCall(req, res, false)
-    
+
     return
 }
 
