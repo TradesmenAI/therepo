@@ -25,7 +25,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
    
     const status = req.body['CallStatus']
 
-    if (status !== 'ringing') {
+    if (status !== 'ringing' && status !== 'in-progress') {
+        console.log('Redirecting call in progress ...')
         return HandleCall(req, res)
     }
 
