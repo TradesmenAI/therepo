@@ -56,7 +56,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     }
 
     const conf = {
-        action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
+        action: process.env.TWILIO_FORWARD_CALL_HANDLER,
         playBeep: true,
         transcribe: false,
     }   
