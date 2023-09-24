@@ -66,6 +66,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
+        recordingStatusCallback: 'https://jsdfhskjfh.requestcatcher.com/'
     }
 
     console.log(JSON.stringify(conf))
