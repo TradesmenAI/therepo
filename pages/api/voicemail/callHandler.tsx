@@ -29,6 +29,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const caller = req.body['From']
     const status = req.body['CallStatus']
     const targetNumber = req.body['To']
+    const callId = req.body['CallSid']
 
     if (status !== 'in-progress'){
         await HandleCall(req, res, false)
@@ -43,6 +44,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         }
     })
 
+    await prisma.missedCalls.create({data:{call_id: callId, body: req.body}})
+
 
     // hang up if no sub or no business number
     if (!user || !user.sub_id || !user.business_number?.trim()) {
@@ -52,22 +55,17 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
-    const gt = rr.gather({action: process.env.TWILIO_FORWARD_CALL_HANDLER, actionOnEmptyResult: true, timeout: 3})
-    gt.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
     const conf = {
         action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
     }   
 
-    // rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     rr.record(conf)
 
 
     res.send(rr.toString());
-
-    // await HandleCall(req, res, false)
-
     return
 }
 

@@ -17,7 +17,7 @@ model User {
   twilio_number       String?
   business_number     String?
   service_enabled     Boolean  @default(true)
-  stripe_id           String?   @unique
+  stripe_id           String?  @unique
   email               String
   is_admin            Boolean  @default(false)
   name                String?
@@ -102,4 +102,10 @@ model MachineCalls {
 model Voicemail {
   user_id   String @id @unique
   recording Bytes
+}
+
+model MissedCalls {
+  call_id String @id @unique
+  body    String
+  deleted Boolean @default(false)
 }
