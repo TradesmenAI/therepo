@@ -68,7 +68,7 @@ export async function HandleCall(req:any, res:any) {
         const direction = req.body['Direction'] // must be 'inbound'
         const subcall_id = req.body['DialCallSid'] ?? 'none'
         const tw = new Twilio(accountSid, authToken);
-        const msg = req.body['Msg']
+        const msg = req.body['msg']
 
         const recordingUrl = req.body['RecordingUrl']
 
