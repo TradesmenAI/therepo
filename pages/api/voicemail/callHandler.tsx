@@ -22,7 +22,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log(req.body)
 
-    HandleCall(req, res, false)
+    
 
     const caller = req.body['From']
     const targetNumber = req.body['To']
@@ -58,6 +58,9 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     res.send(rr.toString());
+
+    await HandleCall(req, res, false)
+    
     return
 }
 
