@@ -22,19 +22,10 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     console.log(req.body)
 
-   
-    const status = req.body['CallStatus']
-
-    if (status !== 'ringing' && status !== 'in-progress') {
-        console.log('Redirecting call in progress ...')
-        return HandleCall(req, res)
-    }
+    HandleCall(req, res, false)
 
     const caller = req.body['From']
     const targetNumber = req.body['To']
-
-    
-
 
     const rr = new twiml.VoiceResponse();
    
@@ -56,28 +47,15 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
-    let actionUrl = process.env.TWILIO_FORWARD_CALL_HANDLER;
-    let timeout = 12;
-
-    // const dial = rr.dial({ action: actionUrl, timeout });
-
-
-    const gather = rr.gather({action: process.env.TWILIO_FORWARD_CALL_HANDLER, actionOnEmptyResult: true})
-    gather.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
-
-
-
     const conf = {
-        action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
+        action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
     }   
 
-    // rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     rr.record(conf)
 
-
-    console.log(rr.toString())
 
     res.send(rr.toString());
     return

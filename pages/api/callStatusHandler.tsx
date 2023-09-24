@@ -34,7 +34,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 
-export async function HandleCall(req:any, res:any) {
+export async function HandleCall(req: any, res: any, shouldReturn = true) {
     console.log(req.body)
 
 
@@ -76,7 +76,7 @@ export async function HandleCall(req:any, res:any) {
             status = 'user-voicemail-answered'
         }
 
-        if (msg === 'Gather End'){
+        if (msg === 'Gather End') {
             status = 'user-voicemail-not-answered'
         }
 
@@ -114,7 +114,11 @@ export async function HandleCall(req:any, res:any) {
 
             if (!user) {
                 console.error(`User with number [${to}] not found`)
-                return Send(res, 200)
+                if (shouldReturn) {
+                    return Send(res, 200)
+                } else {
+                    return;
+                }
             }
 
 
@@ -159,12 +163,20 @@ export async function HandleCall(req:any, res:any) {
                         console.error(e)
                     }
                 }
+                if (shouldReturn) {
+                    return Send(res, 200)
+                } else {
+                    return
+                }
 
-                return Send(res, 200)
             }
 
             if (!user.service_enabled) {
-                return Send(res, 200)
+                if (shouldReturn) {
+                    return Send(res, 200)
+                } else {
+                    return
+                }
             }
 
 
@@ -179,7 +191,11 @@ export async function HandleCall(req:any, res:any) {
             })
 
             if (!canSendSms) {
-                return Send(res, 200)
+                if (shouldReturn) {
+                    return Send(res, 200)
+                } else {
+                    return
+                }
             }
 
             // handle answering machine here
@@ -262,7 +278,7 @@ export async function HandleCall(req:any, res:any) {
                         }
 
                         // if no history and user left voicemail - send notification about convo
-                        if (recordingUrl){
+                        if (recordingUrl) {
                             const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
                             await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
                         }
@@ -388,7 +404,7 @@ export async function HandleCall(req:any, res:any) {
                         }
                     })
 
-                    
+
                 }
 
             }
@@ -401,7 +417,11 @@ export async function HandleCall(req:any, res:any) {
     // const rr = new twiml.VoiceResponse();
     // rr.
 
-    return Send(res, 200)
+    if (shouldReturn) {
+        return Send(res, 200)
+    } else {
+        return
+    }
 }
 
 
