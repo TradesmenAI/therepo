@@ -68,11 +68,16 @@ export async function HandleCall(req:any, res:any) {
         const direction = req.body['Direction'] // must be 'inbound'
         const subcall_id = req.body['DialCallSid'] ?? 'none'
         const tw = new Twilio(accountSid, authToken);
+        const msg = req.body['Msg']
 
         const recordingUrl = req.body['RecordingUrl']
 
         if (recordingUrl) {
             status = 'user-voicemail-answered'
+        }
+
+        if (msg === 'Gather End'){
+            status = 'user-voicemail-not-answered'
         }
 
 
@@ -178,7 +183,7 @@ export async function HandleCall(req:any, res:any) {
             }
 
             // handle answering machine here
-            if ((status === 'user-voicemail-answered' || status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
+            if ((status === 'user-voicemail-not-answered' || status === 'user-voicemail-answered' || status === 'no-answer' || status === 'busy' || answeredByMachine) && user && user.twilio_number && user.sub_id && user.bot_intro_message) {
                 const totalMessages = user.messages_per_month
                 // TODO: use date from sub date
                 const lastDay = Date.now() - (720 * 60 * 60 * 1000);
