@@ -37,6 +37,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     const rr = new twiml.VoiceResponse();
+   
     res.setHeader('Content-Type', 'text/xml');
 
     
@@ -61,13 +62,20 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     // const dial = rr.dial({ action: actionUrl, timeout });
 
 
+    rr.start({action: 'https://sdfafasdf.requestcatcher.com/'})
+
+    const gather = rr.gather({action: 'https://sdfafasdf.requestcatcher.com/'})
+    gather.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
+
+    
+
     const conf = {
         action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
     }   
 
-    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+    // rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     rr.record(conf)
 
     res.send(rr.toString());
