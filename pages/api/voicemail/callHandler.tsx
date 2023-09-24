@@ -60,8 +60,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     // const dial = rr.dial({ action: actionUrl, timeout });
 
-    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
-    
+
     const conf = {
         action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
@@ -73,6 +72,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     rr.record(conf)
 
+    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+    
     res.send(rr.toString());
     return
 }
