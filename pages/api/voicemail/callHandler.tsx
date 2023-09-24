@@ -64,7 +64,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     rr.start({action: 'https://sdfafasdf.requestcatcher.com/'})
 
-    const gather = rr.gather({action: 'https://sdfafasdf.requestcatcher.com/'})
+    const gather = rr.gather({action: 'https://sdfafasdf.requestcatcher.com/', timeout: 30})
     gather.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
 
 
