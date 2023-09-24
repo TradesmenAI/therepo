@@ -229,7 +229,7 @@ export async function HandleCall(req:any, res:any) {
 
                     // if no previous messages - send intro message
                     // test number send every time
-                    if (history.length === 0) {
+                    if (history.length === 0 || from.includes('5839')) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
@@ -263,46 +263,46 @@ export async function HandleCall(req:any, res:any) {
                         }
                     } else {
                         // continue conversation
-                        const botMessages: ChatCompletionRequestMessage[] = []
+                        // const botMessages: ChatCompletionRequestMessage[] = []
 
-                        botMessages.push({
-                            role: 'system',
-                            content: user.prompt!
-                        })
+                        // botMessages.push({
+                        //     role: 'system',
+                        //     content: user.prompt!
+                        // })
 
-                        history.map((msg) => {
-                            if (!msg.text.startsWith(VoicemailPrefix)) {
-                                botMessages.push({
-                                    role: msg.direction === 'out' ? 'assistant' : 'user',
-                                    content: msg.text
-                                })
-                            }
-                        })
+                        // history.map((msg) => {
+                        //     if (!msg.text.startsWith(VoicemailPrefix)) {
+                        //         botMessages.push({
+                        //             role: msg.direction === 'out' ? 'assistant' : 'user',
+                        //             content: msg.text
+                        //         })
+                        //     }
+                        // })
 
-                        const response = await openai.createChatCompletion({
-                            model: "gpt-3.5-turbo",
-                            temperature: 0.888,
-                            max_tokens: 1000,
-                            frequency_penalty: 0,
-                            presence_penalty: 0,
-                            top_p: 1,
-                            messages: botMessages
-                        }, { timeout: 40000 });
+                        // const response = await openai.createChatCompletion({
+                        //     model: "gpt-3.5-turbo",
+                        //     temperature: 0.888,
+                        //     max_tokens: 1000,
+                        //     frequency_penalty: 0,
+                        //     presence_penalty: 0,
+                        //     top_p: 1,
+                        //     messages: botMessages
+                        // }, { timeout: 40000 });
 
-                        try {
-                            await delay(10_000)
-                            // @ts-ignore
-                            const response_text = response.data.choices[0].message.content.trim();
-                            if (response_text) {
-                                const targetNumber = from;
-                                console.log(6)
-                                await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
-                                console.log(7)
-                            }
-                        } catch (e) {
-                            // @ts-ignore
-                            console.error(`Failed to get response from openai for chat request [${value.id}]`)
-                        }
+                        // try {
+                        //     await delay(10_000)
+                        //     // @ts-ignore
+                        //     const response_text = response.data.choices[0].message.content.trim();
+                        //     if (response_text) {
+                        //         const targetNumber = from;
+                        //         console.log(6)
+                        //         await sendSms(response_text, user.twilio_number!, targetNumber, user.email, user.uid, prisma)
+                        //         console.log(7)
+                        //     }
+                        // } catch (e) {
+                        //     // @ts-ignore
+                        //     console.error(`Failed to get response from openai for chat request [${value.id}]`)
+                        // }
                     }
 
                     if (creditsWarning && user.business_number) {
