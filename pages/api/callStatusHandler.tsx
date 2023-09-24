@@ -229,7 +229,7 @@ export async function HandleCall(req:any, res:any) {
 
                     // if no previous messages - send intro message
                     // test number send every time
-                    if (history.length === 0 || from.includes('5839')) {
+                    if (history.length === 0) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
