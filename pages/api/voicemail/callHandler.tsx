@@ -67,7 +67,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const gather = rr.gather({action: 'https://sdfafasdf.requestcatcher.com/'})
     gather.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
 
-    
+
 
     const conf = {
         action: process.env.TWILIO_FORWARD_CALL_HANDLER,finishOnKey: '#',
@@ -77,6 +77,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     // rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     rr.record(conf)
+
+    rr.stop()
 
     res.send(rr.toString());
     return
