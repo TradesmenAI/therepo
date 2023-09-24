@@ -47,6 +47,7 @@
     "formidable": "^3.5.1",
     "framer-motion": "^6.5.1",
     "fs": "^0.0.1-security",
+    "get-mp3-duration": "^1.0.0",
     "i": "^0.3.7",
     "inngest": "^2.0.0",
     "intl-tel-input": "^18.1.6",

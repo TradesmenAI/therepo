@@ -52,19 +52,21 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         return
     }
 
+    const gt = rr.gather({action: process.env.TWILIO_FORWARD_CALL_HANDLER, actionOnEmptyResult: true, timeout: 3})
+    gt.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`)
     const conf = {
         action: process.env.TWILIO_VOICEMAIL_HANDLE_CALL_HANDLER,finishOnKey: '#',
         playBeep: true,
         transcribe: false,
     }   
 
-    rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
+    // rr.play(`https://tradesmenaiportal.com/api/voicemail/downloadByCode?userId=${user.uid}&code=${process.env.WEBHOOK_SECRET_CUSTOM}`);
     rr.record(conf)
 
 
     res.send(rr.toString());
 
-    await HandleCall(req, res, false)
+    // await HandleCall(req, res, false)
 
     return
 }
