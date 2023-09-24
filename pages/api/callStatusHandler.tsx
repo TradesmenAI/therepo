@@ -70,9 +70,17 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
         const msg = req.body['msg']
         const callId = req.body['CallSid']
 
-        const pendingCall = await prisma.missedCalls.findFirst({ where: { call_id: callId, deleted: false } })
+        const pendingCall = await prisma.missedCalls.findFirst({ where: { call_id: callId } })
 
         if (pendingCall) {
+            if (pendingCall.deleted){
+                if (shouldReturn) {
+                    return Send(res, 200)
+                } else {
+                    return;
+                }
+            }
+
             await prisma.missedCalls.update({ data: { deleted: true }, where: { call_id: callId } })
         }
 
