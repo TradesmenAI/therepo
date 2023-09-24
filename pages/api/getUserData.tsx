@@ -40,7 +40,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     // console.log(incomingMessagesLength)
 
-    // await prisma.messageLog.deleteMany({where:{user_email: 'webmonch@gmail.com'}})
+    await prisma.messageLog.deleteMany({where:{user_email: 'webmonch@gmail.com'}})
 
     // const history = await prisma.messageLog.findMany({
     //     where: {

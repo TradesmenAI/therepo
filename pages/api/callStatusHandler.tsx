@@ -68,6 +68,14 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
         const subcall_id = req.body['DialCallSid'] ?? 'none'
         const tw = new Twilio(accountSid, authToken);
         const msg = req.body['msg']
+        const callId = req.body['CallSid']
+
+        const pendingCall = await prisma.missedCalls.findFirst({ where: { call_id: callId, deleted: false } })
+
+        if (pendingCall) {
+            await prisma.missedCalls.update({ data: { deleted: true }, where: { call_id: callId } })
+        }
+
 
         const recordingUrl = req.body['RecordingUrl']
 
@@ -425,6 +433,7 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
 
 
 const ProtectedRoute: NextApiHandler = async (req, res) => {
+
     return await HandleCall(req, res)
 }
 
