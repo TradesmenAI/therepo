@@ -44,7 +44,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         }
     })
 
-    await prisma.missedCalls.create({data:{call_id: callId, body: req.body}})
+    await prisma.missedCalls.create({data:{call_id: callId, body: JSON.stringify(req.body)}})
 
 
     // hang up if no sub or no business number
