@@ -294,7 +294,7 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
 
                         // if no history and user left voicemail - send notification about convo
                         if (recordingUrl) {
-                            const txt = `You are having a conversation with customer ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
+                            const txt = `You have a voicemail from ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
                             await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
                         }
                     } else {
