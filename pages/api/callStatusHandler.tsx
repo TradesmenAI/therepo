@@ -250,6 +250,12 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
                     //     }
                     // })
 
+                    // message fitter about voicemail every time
+                    if (recordingUrl) {
+                        const txt = `You have a voicemail from ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
+                        await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
+                    }
+
                     const history = await prisma.messageLog.findMany({
                         where: {
                             user_email: user.email,
@@ -290,12 +296,6 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
                         } catch (e) {
                             console.error('Error sending sms')
                             console.error(e)
-                        }
-
-                        // if no history and user left voicemail - send notification about convo
-                        if (recordingUrl) {
-                            const txt = `You have a voicemail from ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
-                            await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
                         }
                     } else {
                         // continue conversation
