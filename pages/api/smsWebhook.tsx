@@ -63,6 +63,8 @@ function outOfHours(profile:any) {
         canCall = false;
     }
 
+    console.log('Can call? ' + canCall)
+
     return canCall
 }
 
