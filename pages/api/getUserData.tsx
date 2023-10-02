@@ -100,12 +100,22 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
         try {
+            let outOfHoursMsg = await prisma.config.findFirst({where: {
+                key: 'generic_out_of_hours_message'
+            }})
+
+            let msg = ''
+            if (outOfHoursMsg && outOfHoursMsg.value){
+                msg = outOfHoursMsg.value
+            }
+
             // new user, create data
             profileData = await prisma.user.create({
                 data: {
                     uid: user.id,
                     email: user.email!,
-                    ref_id: requestData.refId ?? null
+                    ref_id: requestData.refId ?? null,
+                    out_of_hours_message: msg
                 }
             })
         } catch (e) {
@@ -149,6 +159,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         business_type: profileData.business_type,
         bot_intro_message: profileData.bot_intro_message,
         voicemail_enabled: profileData.voicemail_enabled,
+        outofhours_enabled: profileData.outofhours_enabled,
+        out_from_time: profileData.out_from_time,
+        to_from_time: profileData.to_from_time,
+        timezone: profileData.timezone,
+        out_of_hours_message: profileData.out_of_hours_message
     }
 
 

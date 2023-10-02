@@ -57,11 +57,11 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
     if (req.method === 'GET') {
         let data = await prisma.config.findFirst({where: {
-            key: 'no_credits_warning'
+            key: 'generic_out_of_hours_message'
         }})
 
         if (!data){
-            data = await prisma.config.create({data:{key:'no_credits_warning', value: ''}})
+            data = await prisma.config.create({data:{key:'generic_out_of_hours_message', value: ''}})
         }
 
         return res.status(200).json(data)
@@ -74,7 +74,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         await prisma.config.update({data: {
             value: reqData.value
         }, where: {
-            key: 'no_credits_warning'
+            key: 'generic_out_of_hours_message'
         }})
 
         return res.status(200).json({})

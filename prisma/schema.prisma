@@ -28,6 +28,12 @@ model User {
   ref_id              String?
   business_id         Int?
   voicemail_enabled   Boolean  @default(false)
+  outofhours_enabled  Boolean  @default(false)
+
+  out_from_time        String @default("22:00")
+  to_from_time         String @default("07:00")
+  timezone             Int    @default(1)
+  out_of_hours_message String @default("")
 }
 
 model Payment {
@@ -105,7 +111,7 @@ model Voicemail {
 }
 
 model MissedCalls {
-  call_id String @id @unique
+  call_id String  @id @unique
   body    String
   deleted Boolean @default(false)
 }

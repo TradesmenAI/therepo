@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { validateRequest, twiml, Twilio } from 'twilio';
 import { Configuration, OpenAIApi, ChatCompletionRequestMessage } from 'openai'
 import { VoicemailPrefix, dateDiffInDays } from './callStatusHandler';
-
+import { applyTimezoneToHours } from '../app';
 
 function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -20,6 +20,51 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+function outOfHours(profile:any) {
+    let fromHours = 0;
+    let fromMinutes = 0
+
+    let toHours = 0;
+    let toMinutes = 0
+
+    let fromParts = profile.out_from_time.split(':')
+    fromHours = parseInt(fromParts[0])
+    fromMinutes = parseInt(fromParts[1])
+
+    let toParts = profile.to_from_time.split(':')
+    toHours = parseInt(toParts[0])
+    toMinutes = parseInt(toParts[1])
+
+    const tz = profile.timezone;
+
+    const now = new Date();
+    let hours = now.getUTCHours();
+    let minutes = now.getUTCMinutes();
+
+    let tzFromHours = applyTimezoneToHours(fromHours, tz);
+    let tzToHours = applyTimezoneToHours(toHours, tz);
+    let offset = 0
+
+    if (tzToHours < tzFromHours){
+        offset = 24 - tzFromHours
+
+        tzFromHours = (offset + tzFromHours)%24
+        tzToHours += offset
+        hours += offset
+    }
+
+    tzFromHours += (fromMinutes/60)
+    tzToHours += toMinutes/60;
+    hours += minutes/60;
+
+    let canCall = true
+    
+    if (hours >= tzFromHours && hours <= tzToHours){
+        canCall = false;
+    }
+
+    return canCall
+}
 
 export const sendSms = async (text: string, from: string, to: string, user_email: string, user_id: string, prisma: PrismaClient, skipLog: boolean = false) => {
     const tw = new Twilio(accountSid, authToken);
@@ -164,6 +209,12 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         // If user didn't hit monthly limit send him a message
         if (canProceed) {
+            // If out of hours - send sms with special message and don't involve AI
+            if (outOfHours(user) && user.out_of_hours_message){
+                await sendSms(user.out_of_hours_message, user.twilio_number!, from, user.email, user.uid, prisma)
+                return res.status(200).end()
+            }
+
             console.log(2)
             // get message history for this conversation
             const history = await prisma.messageLog.findMany({

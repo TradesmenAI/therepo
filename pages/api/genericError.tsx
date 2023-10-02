@@ -56,9 +56,13 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
 
     if (req.method === 'GET') {
-        const data = await prisma.config.findFirst({where: {
+        let data = await prisma.config.findFirst({where: {
             key: 'generic_error'
         }})
+
+        if (!data){
+            data = await prisma.config.create({data:{key:'generic_error', value: ''}})
+        }
 
         return res.status(200).json(data)
     }

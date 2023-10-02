@@ -75,6 +75,7 @@ export default function BusinessPage() {
     const [m, setM] = useState('')
     const [er, setEr] = useState('')
     const [warn, setWarn] = useState('')
+    const [outOfHours, setOutOfHours] = useState('')
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
@@ -106,6 +107,19 @@ export default function BusinessPage() {
         const data = await res.json();
 
         setP(data.value)
+    }
+
+    const fetchOutOfHoursMsg = async()=>{
+        const res = await fetch('/api/genericOutOfHoursMessage', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        setOutOfHours(data.value)
     }
 
     const fetchError = async()=>{
@@ -201,6 +215,20 @@ export default function BusinessPage() {
         setS(false)
     }
 
+    const saveOutOfHours = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericOutOfHoursMessage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: outOfHours})
+        });
+
+        setS(false)
+    }
+
     useEffect(()=>{
        if (profile && profile.is_admin){
             fetchBusinesses()
@@ -208,6 +236,7 @@ export default function BusinessPage() {
             fetchMsg()
             fetchError()
             fetchWarn()
+            fetchOutOfHoursMsg()
        }
       }, [profile])
 
@@ -305,6 +334,12 @@ export default function BusinessPage() {
                     <Text>No credits warning</Text>
                     <Textarea value={warn} onChange={(e)=>setWarn(e.target.value)}/>
                     <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveWarn}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Out of hours message</Text>
+                    <Textarea value={outOfHours} onChange={(e)=>setOutOfHours(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveOutOfHours}>Save</Button>
                </Flex>
 
 
