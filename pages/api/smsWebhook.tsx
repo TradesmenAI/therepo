@@ -213,7 +213,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         if (canProceed) {
             // If out of hours - send sms with special message and don't involve AI
             if (user.outofhours_enabled && outOfHours(user) && user.out_of_hours_message){
-                await sendSms(user.out_of_hours_message, user.twilio_number!, from, user.email, user.uid, prisma)
+                await sendSms(user.out_of_hours_message, user.twilio_number!, from, user.email, user.uid, prisma, true)
                 return res.status(200).end()
             }
 
