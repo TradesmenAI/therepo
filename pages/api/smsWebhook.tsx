@@ -65,7 +65,7 @@ function outOfHours(profile:any) {
 
     console.log('Can call? ' + canCall)
 
-    return canCall
+    return !canCall
 }
 
 export const sendSms = async (text: string, from: string, to: string, user_email: string, user_id: string, prisma: PrismaClient, skipLog: boolean = false) => {
