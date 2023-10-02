@@ -210,7 +210,7 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
         // If user didn't hit monthly limit send him a message
         if (canProceed) {
             // If out of hours - send sms with special message and don't involve AI
-            if (outOfHours(user) && user.out_of_hours_message){
+            if (user.outofhours_enabled && outOfHours(user) && user.out_of_hours_message){
                 await sendSms(user.out_of_hours_message, user.twilio_number!, from, user.email, user.uid, prisma)
                 return res.status(200).end()
             }
