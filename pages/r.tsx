@@ -11,6 +11,8 @@ export default function R(){
             return;
         }
 
+
+        
         //@ts-ignore
         window.rewardful('ready', function() {
             //@ts-ignore
