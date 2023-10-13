@@ -310,6 +310,15 @@ export default function App() {
                             <FieldWithRename value={businessPhone} onUpdate={onUpdatePhone} onValidate={onValidatePhone} />
                         </Flex>
 
+                        <Flex width='100%' border='1px solid black' bgColor={'white'} gap='10px' flexDir='row' alignItems='center' justifyContent='center' marginTop={1} padding={2} borderRadius='8px'>
+                            <Text fontSize='15px' fontWeight='semibold' color={'black'}>Timezone (GMT)</Text>
+                            <Spacer />
+                            {upd === 'tz' && <Spinner size='sm' color='black' mr='4px' />}
+                                    <Select value={profile.timezone} onChange={(e) => onChangeTimezone(e.target.value)} w='80px'>
+                                        {timezone}
+                                    </Select>
+                        </Flex>
+
                         <Flex width='100%' bgColor={'white'} border='1px solid black' flexDir='row' alignItems='center' justifyContent='center' marginTop={2} padding={2} borderRadius='8px'>
                             <Text fontSize='15px' fontWeight='semibold' color={'black'}>* Bot intro message</Text>
                             <Spacer />
@@ -370,16 +379,6 @@ export default function App() {
                                     <Text w='65px'>Minutes</Text>
 
 
-                                </Flex>
-
-                                <Flex alignItems='center' w='100%' borderRadius='8px' p='5px' gap='5px'>
-                                    <Text w='50px'>GMT:</Text>
-                                    {upd === 'tz' && <Spinner size='sm' color='black' mr='4px' />}
-                                    <Select value={profile.timezone} onChange={(e) => onChangeTimezone(e.target.value)} w='80px'>
-                                        {timezone}
-                                    </Select>
-
-                                    
                                 </Flex>
 
                             </>)}

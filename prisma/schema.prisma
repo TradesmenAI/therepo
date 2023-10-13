@@ -115,3 +115,10 @@ model MissedCalls {
   body    String
   deleted Boolean @default(false)
 }
+
+model Reminders {
+  id            Int      @id @default(autoincrement())
+  phone         String
+  from          String
+  gmt           Int
+}

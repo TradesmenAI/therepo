@@ -254,6 +254,8 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
                     if (recordingUrl) {
                         const txt = `You have a voicemail from ${from}. Link: https://tradesmenaiportal.com/callLog?from=${encodeURIComponent(from)}`
                         await sendSms(txt, user.twilio_number!, user.business_number!, user.email, user.uid, prisma, true)
+
+                        await prisma.reminders.create({data: {phone: user.business_number!, from: user.twilio_number!, gmt: user.timezone}})
                     }
 
                     const history = await prisma.messageLog.findMany({

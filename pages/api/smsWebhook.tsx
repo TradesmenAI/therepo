@@ -211,6 +211,8 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
 
         // If user didn't hit monthly limit send him a message
         if (canProceed) {
+            await prisma.reminders.create({data: {phone: user.business_number!, from: user.twilio_number!, gmt: user.timezone}})
+
             // If out of hours - send sms with special message and don't involve AI
             if (user.outofhours_enabled && outOfHours(user) && user.out_of_hours_message){
                 await sendSms(user.out_of_hours_message, user.twilio_number!, from, user.email, user.uid, prisma, true)
