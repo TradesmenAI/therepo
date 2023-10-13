@@ -121,4 +121,5 @@ model Reminders {
   phone         String
   from          String
   gmt           Int
+  created_at DateTime @default(now())
 }

@@ -2,21 +2,20 @@ import { NextApiHandler } from 'next'
 import { PrismaClient } from '@prisma/client'
 import { sendSms } from './smsWebhook'
 import { applyTimezoneToHours } from '../app'
+import { DateTime } from "luxon";
 
-const LOCAL_TIME = 5
+const LOCAL_TIME = 17
 
+function canSend(userGtm: number, createdAt:Date) {
+    const utcTime = new Date().getTime()
+    const userOffsetMs = userGtm * 3600 * 1000
+    const currentLocalTimeMs = utcTime + userOffsetMs
+    const createdDateLocalTimeMs = createdAt.getTime() + userOffsetMs
 
-function canSend(userGtm: number) {
-    const tz = userGtm;
+    const reminderTime = new Date().setUTCHours(0,0,0,0)
+    const reminderLocalTimeMs = reminderTime + LOCAL_TIME * 3600 * 1000
 
-    let fromHours = LOCAL_TIME;
-
-    const now = new Date();
-    let hoursNow = now.getUTCHours();
-
-    let tzFromHours = applyTimezoneToHours(fromHours, tz);
-
-    if (hoursNow >= tzFromHours) {
+    if (currentLocalTimeMs > reminderLocalTimeMs && createdDateLocalTimeMs < reminderLocalTimeMs) {
         return true;
     }
 
@@ -29,15 +28,22 @@ const ProtectedRoute: NextApiHandler = async (req, res) => {
     const result = await prisma.reminders.findMany({
         where: {},
         distinct: ['phone'],
+        take: 10
     })
+
+    const txt = (await prisma.config.findFirst({
+        where: {
+            key: 'reminder_message'
+        }
+    }))!.value
 
     let sentPhones = []
 
     for (let i = 0; i < result.length; ++i) {
         const reminder = result[i];
-
-        if (canSend(reminder.gmt)) {
-            const txt = `You have unread messages. Link: https://tradesmenaiportal.com/callLog`
+     
+        if (canSend(reminder.gmt, reminder.created_at)) {
+            
 
             await sendSms(txt, reminder.from, reminder.phone, '', '', prisma, true)
 

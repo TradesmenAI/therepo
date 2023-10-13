@@ -74,6 +74,7 @@ export default function BusinessPage() {
     const [s, setS] = useState(false)
     const [m, setM] = useState('')
     const [er, setEr] = useState('')
+    const [rem, setRem] = useState('')
     const [warn, setWarn] = useState('')
     const [outOfHours, setOutOfHours] = useState('')
 
@@ -144,6 +145,33 @@ export default function BusinessPage() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({value: er})
+        });
+
+        setS(false)
+    }
+
+    const fetchReminderMessage = async()=>{
+        const res = await fetch('/api/genericReminderMessage', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        setRem(data.value)
+    }
+
+    const saveReminderMessage = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericReminderMessage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: rem})
         });
 
         setS(false)
@@ -237,6 +265,7 @@ export default function BusinessPage() {
             fetchError()
             fetchWarn()
             fetchOutOfHoursMsg()
+            fetchReminderMessage()
        }
       }, [profile])
 
@@ -340,6 +369,12 @@ export default function BusinessPage() {
                     <Text>Out of hours message</Text>
                     <Textarea value={outOfHours} onChange={(e)=>setOutOfHours(e.target.value)}/>
                     <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveOutOfHours}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Reminder message</Text>
+                    <Textarea value={rem} onChange={(e)=>setRem(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveReminderMessage}>Save</Button>
                </Flex>
 
 

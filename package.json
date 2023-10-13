@@ -12,21 +12,12 @@
     "prismaPush": "dotenv -e .env.local prisma db push ",
     "prismaStudio": "dotenv -e .env.local prisma studio "
   },
-  "pkg": {
-    "assets": [
-      "./node_modules/@ffmpeg-installer/**"
-    ]
-  },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@ffmpeg/core": "^0.12.1",
-    "@ffmpeg/ffmpeg": "^0.12.1",
-    "@ffmpeg/util": "^0.12.1",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@prisma/client": "^4.5.0",
     "@stripe/react-stripe-js": "^1.16.5",
@@ -52,6 +43,7 @@
     "inngest": "^2.0.0",
     "intl-tel-input": "^18.1.6",
     "lamejs": "^1.2.1",
+    "luxon": "^3.4.3",
     "micro": "^10.0.1",
     "micro-cors": "^0.1.1",
     "multer": "^1.4.5-lts.1",
@@ -78,6 +70,7 @@
     "@types/autosize": "^4.0.1",
     "@types/formidable": "^3.4.3",
     "@types/intl-tel-input": "^17.0.6",
+    "@types/luxon": "^3.3.2",
     "@types/multer": "^1.4.7",
     "@types/node": "18.11.6",
     "@types/react": "18.0.23",
