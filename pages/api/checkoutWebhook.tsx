@@ -70,8 +70,8 @@ const WebhookRoute: NextApiHandler = async (req, res) => {
         }
 
         if (stripeId === null){
-            console.error('Customer is NULL')
-            return res.status(500).send(`Customer is NULL`)
+            console.error('Customer was deleted')
+            return res.status(200).json({})
         }
 
         if (event.type === 'customer.subscription.deleted') {
