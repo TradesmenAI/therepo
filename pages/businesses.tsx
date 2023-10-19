@@ -77,6 +77,7 @@ export default function BusinessPage() {
     const [rem, setRem] = useState('')
     const [warn, setWarn] = useState('')
     const [outOfHours, setOutOfHours] = useState('')
+    const [lowCredit, setLowCredit] = useState('')
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef<HTMLButtonElement>(null)
@@ -145,6 +146,33 @@ export default function BusinessPage() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({value: er})
+        });
+
+        setS(false)
+    }
+
+    const fetchLowCredit = async()=>{
+        const res = await fetch('/api/genericLowCreditMessage', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        setLowCredit(data.value)
+    }
+
+    const saveLowCredit = async()=>{
+        setS(true)
+
+        const res = await fetch('/api/genericLowCreditMessage', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({value: lowCredit})
         });
 
         setS(false)
@@ -266,6 +294,7 @@ export default function BusinessPage() {
             fetchWarn()
             fetchOutOfHoursMsg()
             fetchReminderMessage()
+            fetchLowCredit()
        }
       }, [profile])
 
@@ -375,6 +404,12 @@ export default function BusinessPage() {
                     <Text>Reminder message</Text>
                     <Textarea value={rem} onChange={(e)=>setRem(e.target.value)}/>
                     <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveReminderMessage}>Save</Button>
+               </Flex>
+
+               <Flex flexDir='column' width='100%' gap={2}>
+                    <Text>Low credits message</Text>
+                    <Textarea value={lowCredit} onChange={(e)=>setLowCredit(e.target.value)}/>
+                    <Button size={'sm'} colorScheme='blue' w='100px' isDisabled={s} isLoading={s} onClick={saveLowCredit}>Save</Button>
                </Flex>
 
 
