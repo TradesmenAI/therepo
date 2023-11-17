@@ -277,6 +277,8 @@ export async function HandleCall(req: any, res: any, shouldReturn = true) {
                         const tw = new Twilio(accountSid, authToken);
 
                         try {
+                            await delay(10_000)
+                            
                             // Send intro message from bot to user
                             await tw.messages.create({
                                 from: user.twilio_number,
